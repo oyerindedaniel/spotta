@@ -1,0 +1,37 @@
+{
+  "name": "@repo/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:clear": "prisma migrate reset",
+    "postinstall": "prisma generate",
+    "lint": "eslint",
+    "check-format": "prettier --check \"**/*.{ts,tsx,md}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^20.12.7",
+    "dotenv-cli": "^7.4.1",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "prisma": "^5.13.0",
+    "typescript": "^5.3.3"
+  },
+  "prettier": "@repo/prettier-config",
+  "dependencies": {
+    "@prisma/client": "^5.13.0",
+    "dotenv": "^16.4.5"
+  }
+}

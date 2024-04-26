@@ -2,13 +2,12 @@
   "extends": "@repo/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist",
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@ui/*": ["./*"]
-      // "@ui/components/ui*": ["./components/ui*"],
-      // "react": ["./node_modules/@types/react"]
+      "@/*": ["./*"],
+      "@/components/*": ["components/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "tailwind.config.js", "postcss.config.js"],
   "exclude": ["node_modules", "dist"]
 }
