@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  transpilePackages: ["@repo/ui"],
+  reactStrictMode: true,
+
+  /** Enables hot reloading for local packages without a build step */
+  transpilePackages: ["@repo/api", "@repo/trpc", "@repo/db", "@repo/ui"],
 };
