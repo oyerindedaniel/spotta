@@ -1,7 +1,5 @@
 import { TRPCReactProvider } from "@repo/trpc/src/react";
 
-// import "@repo/ui/css/styles.css";
-
 import "@repo/ui/css/styles.css";
 
 import type { Metadata } from "next";
