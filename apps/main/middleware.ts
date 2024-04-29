@@ -1,1 +1,1 @@
-export { middleware } from "@repo/i18";
+export { middleware } from "@repo/i18n";

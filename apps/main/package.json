@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3009",
+    "dev": "next dev --port 3006",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings 0",
@@ -12,7 +12,7 @@
   "dependencies": {
     "@repo/api": "workspace:*",
     "@repo/db": "workspace:*",
-    "@repo/i18": "workspace:*",
+    "@repo/i18n": "workspace:*",
     "@repo/trpc": "workspace:*",
     "@repo/ui": "workspace:*",
     "@trpc/client": "11.0.0-rc.334",

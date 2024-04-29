@@ -6,10 +6,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { dir } from "i18next";
 
-import { languages } from "@repo/i18";
+import { languages, LanguagesType } from "@repo/i18n";
 
 export async function generateStaticParams() {
-  return languages.map((lng) => ({ lng }));
+  return languages.map((lng) => ({ lang: lng }));
 }
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,7 +24,7 @@ export default function RootLayout({
   params: { lng },
 }: {
   children: React.ReactNode;
-  params: { lng: string };
+  params: { lng: LanguagesType };
 }): JSX.Element {
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
