@@ -1,0 +1,36 @@
+{
+  "name": "@repo/i18",
+  "version": "0.1.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "./src/**/*.ts*",
+    "./public/**/*"
+  ],
+  "private": true,
+  "dependencies": {
+    "@formatjs/intl-localematcher": "^0.5.4",
+    "accept-language": "^3.0.18",
+    "i18next": "^23.11.2",
+    "i18next-browser-languagedetector": "^7.2.1",
+    "i18next-resources-to-backend": "^1.2.1",
+    "negotiator": "^0.6.3",
+    "next": "^14.1.1",
+    "react": "^18.2.0",
+    "react-i18next": "^14.1.1",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/negotiator": "^0.6.3",
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.2.61",
+    "dotenv-cli": "^7.4.1",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
+  },
+  "prettier": "@repo/prettier-config"
+}
