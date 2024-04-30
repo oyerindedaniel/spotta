@@ -14,8 +14,6 @@ export function Navbar() {
 
   const page = pathname.split("/").at(-1) as AuthPage;
 
-  console.log(page);
-
   return (
     <header>
       <div className="mb-6 flex w-full items-center justify-between px-14 py-3">
