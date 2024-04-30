@@ -3,14 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
   "prisma": {
     "schema": "src/prisma/schema.prisma"
   },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "db:push": "prisma db push",
+    "db:push": "prisma db push --force-reset",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
     "db:generate": "prisma generate",
@@ -29,6 +34,7 @@
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
     "prisma": "^5.13.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
   "prettier": "@repo/prettier-config",
