@@ -4,10 +4,11 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 270 25% 98%;
+    --foreground: 240 6% 7%;
 
-    --card: 0 0% 100%;
+    --brand-blue: 224 86% 64%;
+    --brand-primary: 213 86% 95% --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
@@ -36,9 +37,11 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 240 6% 7%;
+    --foreground: 270 25% 98%;
 
+    --brand-blue: 224 86% 64%;
+    --brand-primary: 240 5% 15%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
 

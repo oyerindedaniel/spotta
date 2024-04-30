@@ -3,7 +3,13 @@ import { NextResponse } from "next/server";
 import { match as matchLocale } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
 
-import { fallbackLng, languages as ourLanguages } from "./settings";
+import { fallbackLng, languages, languages as ourLanguages } from "./settings";
+
+export const config = {
+  matcher: ["/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)"],
+};
+
+const cookieName = "i18next";
 
 function getLocale(request: NextRequest): string | undefined {
   // Negotiator expects plain object so we need to transform headers
@@ -22,8 +28,28 @@ function getLocale(request: NextRequest): string | undefined {
   return locale;
 }
 
+const i18nConfig = {
+  locales: languages,
+  defaultLocale: fallbackLng,
+};
+
 export function middleware(request: NextRequest) {
+  // return i18nRouter(request, i18nConfig);
   const pathname = request.nextUrl.pathname;
+
+  // Matchers not working
+  if (
+    [
+      "/manifest.json",
+      "/favicon.ico",
+      "/api",
+      "/_next/static",
+      "/_next/image",
+      // Your other files in `public`
+    ].some((prefix) => pathname.startsWith(prefix))
+  ) {
+    return;
+  }
 
   // Check if there is any supported locale in the pathname
   const pathnameIsMissingLocale = ourLanguages.every(
@@ -33,14 +59,19 @@ export function middleware(request: NextRequest) {
 
   // Redirect if there is no locale
   if (pathnameIsMissingLocale) {
-    const locale = getLocale(request);
+    let locale = getLocale(request);
 
-    console.log({ locale, pathname, requestUrl: request.url });
+    const storedLocaleCookie = request.cookies.get(cookieName);
 
-    console.log(
-      `/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}`,
-      request.url,
-    );
+    if (storedLocaleCookie) {
+      locale = storedLocaleCookie.value;
+    } else {
+      // cookies().set(cookieName, locale as string, {
+      //   httpOnly: true,
+      //   path: "/",
+      //   maxAge: 30 * 24 * 60 * 60,
+      // });
+    }
 
     // e.g. incoming request is /reviews
     // The new URL is now /en/reviews
@@ -52,8 +83,3 @@ export function middleware(request: NextRequest) {
     );
   }
 }
-
-export const config = {
-  // Matcher ignoring `/_next/` and `/api/`
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
-};

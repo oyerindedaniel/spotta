@@ -10,21 +10,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 
 model User {
     id        String      @id @default(uuid())
-    name      String      @unique
-    slug      String      @unique
+    firstName String
+    lastName String
+    password String
+    email  String
+    phone String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    tokenFamilies  TokenFamily[]
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model TokenFamily {
+  id             String          @id @default(uuid())
+  user           User          @relation(fields: [userId], references: [id])
+  userId         String
+  createdAt      DateTime      @default(now())
+  updatedAt DateTime @updatedAt
+  invalidatedAt DateTime?
+  refreshTokens  RefreshToken[]
+}
 
-    @@index([name])
+model RefreshToken {
+  id           String      @id @default(uuid())
+  token        String   @unique
+  tokenFamily          TokenFamily          @relation(fields: [ tokenFamilyId], references: [id])
+  tokenFamilyId        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
