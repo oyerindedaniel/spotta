@@ -2,14 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Logo, LogoDark } from "@/assets";
 
 import { ModeToggle } from "@repo/ui";
 
+type AuthPage = "login" | "register";
+
 export function Navbar() {
+  const pathname = usePathname();
+
+  const page = pathname.split("/").at(-1) as AuthPage;
+
+  console.log(page);
+
   return (
     <header>
-      <div className="flex w-full items-center justify-between px-14 py-3">
+      <div className="mb-6 flex w-full items-center justify-between px-14 py-3">
         <div>
           <Image
             alt="Spotta"
@@ -34,8 +43,11 @@ export function Navbar() {
           <nav>
             <ul>
               <li>
-                <Link href="/login" className="font-semibold text-typo-blue">
-                  Login
+                <Link
+                  href={page === "login" ? "/register" : "/login"}
+                  className="font-semibold text-brand-blue"
+                >
+                  {page === "login" ? "Register" : "Login"}
                 </Link>
               </li>
             </ul>

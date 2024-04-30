@@ -7,9 +7,8 @@
     --background: 270 25% 98%;
     --foreground: 240 6% 7%;
 
-    --typo-blue: 224 86% 64%;
-
-    --card: 0 0% 100%;
+    --brand-blue: 224 86% 64%;
+    --brand-primary: 213 86% 95% --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
@@ -41,8 +40,8 @@
     --background: 240 6% 7%;
     --foreground: 270 25% 98%;
 
-    --typo-blue: 224 86% 64%;
-
+    --brand-blue: 224 86% 64%;
+    --brand-primary: 240 5% 15%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
 
