@@ -1,17 +1,21 @@
+import { LanguagesType, NamespaceType } from "./types";
+
 export const fallbackLng = "en" as const;
 export const languages = [fallbackLng, "fr"] as const;
 export const defaultNS = "common" as const;
 
+let isLanguageDetector = true;
+
 export function getOptions(
-  lng: (typeof languages)[number] = fallbackLng,
-  ns: string | string[] = defaultNS,
+  lng: LanguagesType = fallbackLng,
+  ns: NamespaceType = defaultNS,
 ) {
   return {
-    // debug: true,
+    debug: false,
     supportedLngs: languages,
     // preload: languages,
+    ...(isLanguageDetector ? {} : { lng }), // detect the language on client side (using language detector)
     fallbackLng,
-    lng,
     fallbackNS:
       Array.isArray(ns) && ns.length > 1
         ? ns.filter((ns) => ns !== defaultNS)

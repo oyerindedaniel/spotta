@@ -4,6 +4,8 @@ import "@repo/ui/css/styles.css";
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/providers/theme-provider";
 import { dir } from "i18next";
 
 import { languages, LanguagesType } from "@repo/i18n";
@@ -28,8 +30,17 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
-      <body className={inter.className}>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+      <body className={cn("bg-background", inter.className)}>
+        <TRPCReactProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            // disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );

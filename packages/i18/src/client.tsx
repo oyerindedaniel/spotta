@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import i18next from "i18next";
 // import LocizeBackend from 'i18next-locize-backend'
 import LanguageDetector from "i18next-browser-languagedetector";
+// import XHR from "i18next-http-backend";
 import resourcesToBackend from "i18next-resources-to-backend";
 import {
   initReactI18next,
@@ -23,33 +24,31 @@ const initialize = () => {
   }
   hasInit = true;
 
-  // on client side the normal singleton is ok
   i18next
-    .use(initReactI18next)
+    // .use(XHR)
     .use(LanguageDetector)
+    .use(initReactI18next)
     .use(
-      resourcesToBackend(
-        (language: string, namespace: string) =>
-          import(`../public/locales/${language}/${namespace}.json`),
-      ),
+      resourcesToBackend((language: string, namespace: string) => {
+        return import(`../public/locales/${language}/${namespace}.json`);
+      }),
     )
     // .use(LocizeBackend) // locize backend could be used on client side, but prefer to keep it in sync with server side
     .init({
       ...getOptions(),
-      lng: undefined, // let detect the language on client side (using language detector)
       detection: {
-        order: ["path", "htmlTag", "cookie", "navigator"],
+        order: ["path", "htmlTag", "localStorage", "navigator"],
       },
       preload: runsOnServerSide ? languages : [],
-    });
+    } satisfies i18OptionsType);
 };
 
 export function useClientTranslation({
-  lng = "en",
+  lng,
   ns = defaultNS,
   options = {},
 }: {
-  lng?: LanguagesType;
+  lng: LanguagesType;
   ns?: NamespaceType;
   options?: i18OptionsType;
 }) {
@@ -62,10 +61,22 @@ export function useClientTranslation({
   const { i18n } = ret;
 
   if (runsOnServerSide && i18n.resolvedLanguage !== lng) {
+    // ON LOAD OR REFRESH
+    // Next picks the resolvedLanguage has "en" always
+    // On the client it then try to get the resolvedLanguage based on the detection order
+    // CAUSING HYDRATION ERROR
+    // therefore we have to pass the lng allows to the hook
+    // console.log("----------runserverside", {
+    //   resolvedLng: i18n.resolvedLanguage,
+    //   lng,
+    // });
     i18n.changeLanguage(lng);
   } else {
+    // console.log("----------client", {
+    //   resolvedLng: i18n.resolvedLanguage,
+    //   lng,
+    // });
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    // runs on initial render
     useEffect(() => {
       if (i18n.resolvedLanguage === lng) return;
       i18n.changeLanguage(lng);
