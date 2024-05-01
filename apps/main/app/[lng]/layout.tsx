@@ -4,6 +4,7 @@ import "@repo/ui/css/styles.css";
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { dir } from "i18next";
@@ -31,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
       <body className={cn("bg-background", inter.className)}>
-        <TRPCReactProvider>
+        <TRPCReactProvider cookies={cookies().toString()}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

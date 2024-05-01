@@ -8,7 +8,8 @@
  */
 
 // import type { Session } from "@acme/auth";
-import { initTRPC, TRPCError } from "@trpc/server";
+import { initTRPC } from "@trpc/server";
+import cookie from "cookie";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -27,7 +28,15 @@ import { db } from "@repo/db";
  * @see https://trpc.io/docs/server/context
  */
 
-export const createTRPCContext = (opts: {}) => {
+const newHeader = new Headers();
+
+export const createTRPCContext = async (opts: {
+  headers: Headers;
+  resHeaders?: Headers;
+}) => {
+  const { headers } = opts;
+  // const session = await db.
+
   return {
     db,
     ...opts,
