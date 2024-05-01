@@ -43,7 +43,7 @@ export function Navbar() {
               <li>
                 <Link
                   href={page === "login" ? "/register" : "/login"}
-                  className="font-semibold text-brand-blue"
+                  className="font-semibold uppercase text-brand-blue"
                 >
                   {page === "login" ? "Register" : "Login"}
                 </Link>

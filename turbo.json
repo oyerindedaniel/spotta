@@ -1,9 +1,11 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "experimentalUI": true,
+  "globalDotEnv": [".env"],
   "globalDependencies": ["**/.env.*local"],
   "pipeline": {
     "build": {
+      "dotEnv": [".env"],
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },

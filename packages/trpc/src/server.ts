@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import { createCaller, createTRPCContext } from "@repo/api";
 
@@ -11,9 +11,11 @@ import { createCaller, createTRPCContext } from "@repo/api";
  */
 const createContext = cache(() => {
   const heads = new Headers(headers());
-  heads.set("x-trpc-source", "rsc");
+  heads.set("cookies", cookies.toString());
 
-  return createTRPCContext({});
+  return createTRPCContext({
+    headers: heads,
+  });
 });
 
 export const api = createCaller(createContext);
