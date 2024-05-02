@@ -4,7 +4,7 @@ import {
   ACCESS_TOKEN_SECRET,
   AUTH_DURATION,
   REFRESH_TOKEN_SECRET,
-} from "../config/index.js";
+} from "../config";
 
 function generateAccessToken(userId: number): string {
   return jwt.sign({ userId }, ACCESS_TOKEN_SECRET, {

@@ -24,15 +24,18 @@ export const OPTIONS = () => {
   return response;
 };
 
+const createContext = async (req: NextRequest) => {
+  return createTRPCContext({
+    headers: req.headers,
+  });
+};
+
 const handler = async (req: NextRequest) => {
   const response = await fetchRequestHandler({
     endpoint: "/api/trpc",
     router: appRouter,
     req,
-    createContext: () =>
-      createTRPCContext({
-        headers: req.headers,
-      }),
+    createContext: () => createContext(req),
     onError({ error, path }) {
       console.error(`>>> tRPC Error on '${path}'`, error);
     },

@@ -7,6 +7,7 @@ type CookieOptions = Omit<CookieSerializeOptions, "sameSite"> & {
 export const ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_SECRET!;
 export const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET!;
 export const AUTH_DURATION = process.env.AUTH_DURATION!;
+export const COOKIE_NAME = process.env.COOKIE_NAME!;
 
 export const COOKIE_CONFIG: CookieOptions = {
   httpOnly: true,

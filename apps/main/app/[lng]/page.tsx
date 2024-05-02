@@ -1,6 +1,7 @@
 "use client";
 
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
+import { api } from "@repo/trpc/src/react";
 import { Button } from "@repo/ui";
 
 export default function Page({
@@ -9,6 +10,10 @@ export default function Page({
   params: { lng: LanguagesType };
 }): JSX.Element {
   const { t, i18n } = useClientTranslation({ lng });
+
+  const isSiteOkay = api.auth.getSession.useQuery();
+
+  console.log("issiteoks", isSiteOkay.data);
 
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
   return (

@@ -8,12 +8,15 @@
  */
 
 // import type { Session } from "@acme/auth";
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import cookie from "cookie";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@repo/db";
+
+import { COOKIE_NAME } from "./config";
+import { verifyToken } from "./middleware/auth";
 
 /**
  * 1. CONTEXT
@@ -28,18 +31,20 @@ import { db } from "@repo/db";
  * @see https://trpc.io/docs/server/context
  */
 
-const newHeader = new Headers();
-
-export const createTRPCContext = async (opts: {
-  headers: Headers;
-  resHeaders?: Headers;
-}) => {
+export const createTRPCContext = async (opts: { headers: Headers }) => {
   const { headers } = opts;
-  // const session = await db.
+  const cookies = cookie.parse(headers?.get?.("cookie") ?? "");
+  const accessToken = cookies[COOKIE_NAME] ?? "";
+  const tokenPayload = await verifyToken(accessToken);
+
+  const session = tokenPayload?.id
+    ? { user: await db.user.findUnique({ where: { id: tokenPayload.id } }) }
+    : null;
 
   return {
     db,
     ...opts,
+    session,
   };
 };
 
@@ -96,14 +101,14 @@ export const publicProcedure = t.procedure;
  *
  * @see https://trpc.io/docs/procedures
  */
-// export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-//   if (!ctx.session?.user) {
-//     throw new TRPCError({ code: "UNAUTHORIZED" });
-//   }
-//   return next({
-//     ctx: {
-//       // infers the `session` as non-nullable
-//       session: { ...ctx.session, user: ctx.session.user },
-//     },
-//   });
-// });
+export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.session?.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
