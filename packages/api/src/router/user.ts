@@ -1,6 +1,6 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 import { registerSchema } from "@repo/validations";
 
