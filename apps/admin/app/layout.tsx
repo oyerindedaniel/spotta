@@ -1,4 +1,7 @@
+import { TRPCReactProvider } from "@repo/trpc/src/react";
+
 import "@repo/ui/css/styles.css";
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
@@ -16,7 +19,9 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <TRPCReactProvider>{children}</TRPCReactProvider>
+      </body>
     </html>
   );
 }

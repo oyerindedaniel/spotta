@@ -3,12 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
-    }
-  },
+  "main": "./src/index.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -21,7 +16,9 @@
   "dependencies": {
     "@prisma/client": "^5.13.0",
     "@repo/db": "workspace:*",
+    "@repo/validations": "workspace:*",
     "@trpc/server": "11.0.0-rc.334",
+    "bcryptjs": "^2.4.3",
     "cookie": "^0.6.0",
     "crypto-js": "^4.2.0",
     "date-fns": "^3.6.0",
@@ -34,6 +31,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/bcryptjs": "^2.4.6",
     "@types/cookie": "^0.6.0",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.7",
@@ -42,6 +40,9 @@
     "prettier": "^3.2.5",
     "prisma": "^5.13.0",
     "typescript": "^5.3.3"
+  },
+  "browser": {
+    "crypto": false
   },
   "prettier": "@repo/prettier-config"
 }

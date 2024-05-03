@@ -1,4 +1,4 @@
-import { TRPCReactProvider } from "@repo/trpc/src/react";
+// import { TRPCReactProvider } from "@repo/trpc/src/react";
 
 import "@repo/ui/css/styles.css";
 
@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { dir } from "i18next";
 
 import { languages, LanguagesType } from "@repo/i18n";
+import { TRPCReactProvider } from "@repo/trpc/src/react";
 
 export async function generateStaticParams() {
   return languages.map((lng) => ({ lang: lng }));
