@@ -18,7 +18,7 @@ async function verifyToken(token: string): Promise<TokenPayload | null> {
     }
     return null;
   } catch (error) {
-    console.log("Error verifying token:", error);
+    console.error("Error verifying token:", error);
     return null;
   }
 }
