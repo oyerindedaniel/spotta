@@ -7,13 +7,13 @@ import {
 } from "../config";
 
 function generateAccessToken(userId: number): string {
-  return jwt.sign({ userId }, ACCESS_TOKEN_SECRET, {
+  return jwt.sign({ id: userId }, ACCESS_TOKEN_SECRET, {
     expiresIn: `${AUTH_DURATION}m`,
   });
 }
 
 function generateRefreshToken(userId: number): string {
-  return jwt.sign({ userId }, REFRESH_TOKEN_SECRET, {
+  return jwt.sign({ id: userId }, REFRESH_TOKEN_SECRET, {
     expiresIn: `${AUTH_DURATION}m`,
   });
 }

@@ -25,6 +25,11 @@ export const OPTIONS = () => {
 };
 
 const createContext = async (req: NextRequest) => {
+  console.log(
+    "-------------------------------------",
+    req.headers,
+    "-------------------------------------------",
+  );
   return createTRPCContext({
     headers: req.headers,
   });

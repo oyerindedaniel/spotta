@@ -7,5 +7,14 @@ module.exports = {
   },
 
   /** Enables hot reloading for local packages without a build step */
-  transpilePackages: ["@repo/api", "@repo/trpc", "@repo/db", "@repo/ui"],
+  transpilePackages: [
+    "@repo/api",
+    "@repo/trpc",
+    "@repo/db",
+    "@repo/ui",
+    "@repo/hooks",
+    "@repo/trpc",
+    "@repo/i18n",
+    "@repo/validations",
+  ],
 };
