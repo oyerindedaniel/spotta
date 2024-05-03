@@ -2,10 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
+import { api } from "@repo/trpc/src/react";
 import {
   Button,
   Form,
@@ -40,8 +42,17 @@ export default function LoginPage({
     },
   });
 
-  const onSubmit = () => {
-    console.log("DANIEL");
+  const mutateCreateUser = api.user.create.useMutation({
+    onSuccess: () => {
+      form.reset();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const onSubmit = (data: Register) => {
+    mutateCreateUser.mutate(data);
   };
 
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
@@ -165,11 +176,11 @@ export default function LoginPage({
             className="mt-6 w-full text-base uppercase"
             type="submit"
             size="lg"
-            // disabled={mutation.isPending}
+            disabled={mutateCreateUser.isPending}
           >
-            {/* {mutation.isPending && (
+            {mutateCreateUser.isPending && (
               <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-            )} */}
+            )}
             Sign Up
           </Button>
         </form>

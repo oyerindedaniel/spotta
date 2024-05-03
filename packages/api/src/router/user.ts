@@ -1,6 +1,7 @@
 import type { TRPCRouterRecord } from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
+import _ from "lodash";
 
 import { registerSchema } from "@repo/validations";
 
@@ -13,7 +14,6 @@ export const userRouter = {
     .mutation(async ({ ctx, input }) => {
       const { firstName, lastName, password, confirmPassword, email, phone } =
         input;
-
       const { db } = ctx;
 
       const emailExists = await db.user.findUnique({
@@ -61,6 +61,8 @@ export const userRouter = {
         },
       });
 
-      return newUser;
+      return {
+        data: { ..._.omit(newUser, ["password"]) },
+      };
     }),
 } satisfies TRPCRouterRecord;
