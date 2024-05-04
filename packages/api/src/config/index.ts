@@ -10,7 +10,7 @@ export const REFRESH_TOKEN_SECRET =
   process.env.JWT_REFRESH_SECRET ?? "No_Secret-Refresh!";
 export const AUTH_DURATION = process.env.AUTH_DURATION ?? 15;
 export const COOKIE_NAME = process.env.COOKIE_NAME ?? "access_token";
-export const SALT_ROUNDS = process.env.SALT_ROUNDS ?? 20;
+export const SALT_ROUNDS = process.env.SALT_ROUNDS ?? 10;
 
 export const COOKIE_CONFIG: CookieOptions = {
   httpOnly: true,
