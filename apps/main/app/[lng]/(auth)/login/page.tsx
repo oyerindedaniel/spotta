@@ -43,7 +43,7 @@ export default function LoginPage({
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
   return (
     <div>
-      <h5 className="mb-4 text-center text-xl font-medium">Sign In</h5>
+      <h5 className="mb-6 text-center text-xl font-medium">Sign In</h5>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
