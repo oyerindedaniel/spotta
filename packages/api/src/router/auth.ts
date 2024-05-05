@@ -106,7 +106,7 @@ export const authRouter = {
         where: {
           refreshTokens: {
             some: {
-              token,
+              token: refreshToken.id,
             },
           },
         },
@@ -116,6 +116,10 @@ export const authRouter = {
       });
 
       if (!session) {
+        throw error;
+      }
+
+      if (session.invalidatedAt && isPast(session.invalidatedAt)) {
         throw error;
       }
 
@@ -135,6 +139,23 @@ export const authRouter = {
 
       const newRefreshToken = generateRefreshToken(session.user);
       const newAccessToken = generateAccessToken(session.user);
+
+      await db.refreshToken.create({
+        data: {
+          session: { connect: { id: session.id } },
+          token: newRefreshToken,
+          expires: addMinutes(new Date(), Number(AUTH_DURATION)),
+        },
+      });
+
+      await db.refreshToken.update({
+        where: {
+          id: refreshToken.id,
+        },
+        data: {
+          expires: new Date(),
+        },
+      });
 
       const currentDate = new Date();
       cookies().set({
