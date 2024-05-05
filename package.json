@@ -3,13 +3,16 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "dotenv -- turbo dev",
+    "dev": " dotenv -e .env -- turbo dev --concurrency 12",
+    "dev:main": "dotenv -e .env -c -- turbo run dev --filter=@repo/main",
+    "dev:admin": "dotenv -e .env -c -- turbo run dev --filter=@repo/admin",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "dotenv-cli": "^7.4.1",
     "prettier": "^3.2.5",
     "turbo": "latest"
   },

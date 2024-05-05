@@ -16,5 +16,6 @@ module.exports = {
     "@repo/trpc",
     "@repo/i18n",
     "@repo/validations",
+    "@repo/utils",
   ],
 };

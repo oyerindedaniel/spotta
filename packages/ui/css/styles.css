@@ -8,7 +8,11 @@
     --foreground: 240 6% 7%;
 
     --brand-blue: 224 86% 64%;
-    --brand-primary: 213 86% 95% --card: 0 0% 100%;
+    --brand-primary: 213 86% 95%;
+
+    --brand-plain: 200 41% 99%;
+
+    --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
@@ -42,6 +46,9 @@
 
     --brand-blue: 224 86% 64%;
     --brand-primary: 240 5% 15%;
+
+    --brand-plain: 0 0% 5%;
+
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
 

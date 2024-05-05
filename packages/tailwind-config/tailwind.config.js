@@ -26,6 +26,7 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         brand: {
+          plain: "hsl(var(--brand-plain))",
           blue: "hsl(var(--brand-blue))",
           primary: "hsl(var(--brand-primary))",
         },

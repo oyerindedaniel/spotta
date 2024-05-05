@@ -1,0 +1,10 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": "src",
+    "paths": {}
+  },
+  "include": ["src", "emails/emails"],
+  "exclude": ["node_modules", "dist"]
+}

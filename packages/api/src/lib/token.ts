@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 
 import {
@@ -6,15 +7,15 @@ import {
   REFRESH_TOKEN_SECRET,
 } from "../config";
 
-function generateAccessToken(userId: number): string {
-  return jwt.sign({ id: userId }, ACCESS_TOKEN_SECRET, {
+function generateAccessToken(user: User): string {
+  return jwt.sign({ id: user.id }, ACCESS_TOKEN_SECRET, {
     expiresIn: `${AUTH_DURATION}m`,
   });
 }
 
-function generateRefreshToken(userId: number): string {
-  return jwt.sign({ id: userId }, REFRESH_TOKEN_SECRET, {
-    expiresIn: `${AUTH_DURATION}m`,
+function generateRefreshToken(user: User): string {
+  return jwt.sign({ id: user.id }, REFRESH_TOKEN_SECRET, {
+    expiresIn: `${Number(AUTH_DURATION)}m`,
   });
 }
 
