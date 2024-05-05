@@ -43,7 +43,7 @@ export const getGoogleOauthToken = async ({
 
     return data;
   } catch (err: any) {
-    console.log("Failed to fetch Google Oauth Tokens");
+    console.log("Failed to fetch google OAuth tokens");
     throw err;
   }
 };

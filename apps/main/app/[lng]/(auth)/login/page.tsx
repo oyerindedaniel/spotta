@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Icons } from "@/assets";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AuthService } from "@prisma/client";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,10 +19,10 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  GithubButton,
   GoogleButton,
   Input,
 } from "@repo/ui";
-import { getBaseUrl } from "@repo/utils";
 import { loginSchema } from "@repo/validations";
 
 import AuthSeparator from "../_components/separator";
@@ -39,14 +40,13 @@ export default function LoginPage({
   const pathname = usePathname();
 
   const code = searchParams?.get?.("code");
-  const authService = searchParams?.get?.("authService");
+  const authService = searchParams?.get?.("authService") as AuthService;
   const redirectUrl = searchParams?.get?.("state");
 
-  const { t, i18n } = useClientTranslation({ lng });
+  console.log({ code });
+  console.log({ authService });
 
-  console.log(
-    `${getBaseUrl()}/${window.location.pathname.split("/")[1]}/login?authService=google`,
-  );
+  const { t, i18n } = useClientTranslation({ lng });
 
   const mutateLogin = api.auth.login.useMutation({
     onSuccess: (data) => {
@@ -58,7 +58,17 @@ export default function LoginPage({
     },
   });
 
-  const mutateOauthLogin = api.user.googleoauth.useMutation({
+  const mutateGoogleOauthLogin = api.user.googleoauth.useMutation({
+    onSuccess: (data) => {
+      form.reset();
+      console.log(data.data);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const mutateGithubOauthLogin = api.user.githuboauth.useMutation({
     onSuccess: (data) => {
       form.reset();
       console.log(data.data);
@@ -82,8 +92,13 @@ export default function LoginPage({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      if (authService === "GOOGLE" && code) {
-        mutateOauthLogin.mutate({ code });
+      if (authService?.toUpperCase() === "GOOGLE" && code) {
+        mutateGoogleOauthLogin.mutate({ code });
+      }
+
+      if (authService?.toUpperCase() === "GITHUB" && code) {
+        console.log("here");
+        mutateGithubOauthLogin.mutate({ code });
       }
     }
   }, [pathname, code, redirectUrl]);
@@ -139,15 +154,37 @@ export default function LoginPage({
           <AuthSeparator>{"Or"}</AuthSeparator>
           <GoogleButton
             className="flex gap-3 border border-gray-300 bg-transparent shadow-sm dark:border-white"
-            isLoading={mutateOauthLogin.isPending}
+            isLoading={mutateGoogleOauthLogin.isPending}
           >
             <Image alt="Spotta" height={25} src={Icons.google} width={25} />
-            {mutateOauthLogin.isPending ? (
+            {mutateGoogleOauthLogin.isPending ? (
               <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               "Log in with Google"
             )}
           </GoogleButton>
+          <GithubButton
+            className="flex gap-3 border border-gray-300 bg-transparent shadow-sm dark:border-white"
+            isLoading={false}
+          >
+            <div>
+              <Image
+                alt="Github"
+                className="block dark:hidden"
+                height={25}
+                src={Icons.github}
+                width={25}
+              />
+              <Image
+                alt="Github"
+                className="hidden dark:block"
+                height={25}
+                src={Icons.githubDark}
+                width={25}
+              />
+            </div>
+            {"Log in with Github"}
+          </GithubButton>
         </form>
       </Form>
     </div>

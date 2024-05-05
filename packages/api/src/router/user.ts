@@ -9,6 +9,7 @@ import _ from "lodash";
 import { oauthSchema, registerSchema } from "@repo/validations";
 
 import { AUTH_DURATION, COOKIE_NAME, SALT_ROUNDS } from "../config";
+import { getGithubOauthToken, getGithubUser } from "../lib/github-oauth";
 import { getGoogleOauthToken, getGoogleUser } from "../lib/google-oauth";
 import { generateAccessToken, generateRefreshToken } from "../lib/token";
 import { publicProcedure } from "../trpc";
@@ -105,6 +106,89 @@ export const userRouter = {
             lastName: family_name,
             firstName: given_name,
             authService: "GOOGLE",
+            isConfirmed: true,
+          },
+        });
+      } else {
+        user = findUser;
+      }
+
+      const accessToken = generateAccessToken(user);
+      const refreshToken = generateRefreshToken(user);
+
+      const session = await db.session.create({
+        data: {
+          user: { connect: { id: user.id } },
+          refreshTokens: {
+            create: {
+              token: refreshToken,
+              expires: addMinutes(new Date(), Number(AUTH_DURATION) * 2),
+            },
+          },
+        },
+      });
+
+      if (!session) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "An error occurred",
+        });
+      }
+
+      const currentDate = new Date();
+      cookies().set({
+        name: COOKIE_NAME,
+        value: accessToken,
+        httpOnly: true,
+        sameSite: "lax",
+        expires: addMinutes(currentDate, Number(AUTH_DURATION)),
+      });
+
+      return {
+        data: { ..._.omit(user, ["password"]) },
+      };
+    }),
+  githuboauth: publicProcedure
+    .input(oauthSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { headers, db } = ctx;
+
+      const { code } = input;
+
+      const { access_token: githubAccessToken } = await getGithubOauthToken({
+        code,
+      });
+
+      const { avatar_url, email, login, name } = await getGithubUser({
+        access_token: githubAccessToken,
+      });
+
+      const nameParts = name.split(" ");
+
+      const firstName = nameParts?.[0] ?? name;
+      const lastName = nameParts?.[1] ?? name;
+
+      if (!email && !login) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Github account missing both email and username",
+        });
+      }
+
+      let user: User;
+
+      const findUser = await db.user.findUnique({
+        where: { email: email ?? login },
+      });
+
+      if (!findUser) {
+        user = await db.user.create({
+          data: {
+            email: email?.toLowerCase() ?? login,
+            picture: avatar_url,
+            lastName,
+            firstName,
+            authService: "GITHUB",
             isConfirmed: true,
           },
         });

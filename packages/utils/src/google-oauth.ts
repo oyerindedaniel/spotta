@@ -1,6 +1,8 @@
 import { getBaseUrl } from "./function";
 
 export function generateGoogleRedirectUri() {
+  if (typeof window === "undefined") return;
+
   const baseUrl = getBaseUrl();
   const language = window.location.pathname.split("/")[1];
   return `${baseUrl}/${language}/login?authService=google`;

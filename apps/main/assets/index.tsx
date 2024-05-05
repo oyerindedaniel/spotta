@@ -1,3 +1,5 @@
+import githubDark from "./github-mark-white.svg";
+import github from "./github-mark.svg";
 import google from "./google.svg";
 import logoDark from "./spotta-dark.svg";
 import logo from "./spotta.svg";
@@ -8,6 +10,8 @@ export const Icons = {
   logo,
   logoDark,
   google,
+  github,
+  githubDark,
   googleTest: (props: IconProps) => (
     <svg
       width="24"
