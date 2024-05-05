@@ -46,8 +46,6 @@ export const VercelInviteUserEmail = ({
 }: VercelInviteUserEmailProps) => {
   const previewText = `Join ${invitedByUsername} on Vercel`;
 
-  console.log(BASE_URL);
-
   return (
     <Html>
       <Head />

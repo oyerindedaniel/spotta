@@ -15,7 +15,7 @@ function generateAccessToken(user: User): string {
 
 function generateRefreshToken(user: User): string {
   return jwt.sign({ id: user.id }, REFRESH_TOKEN_SECRET, {
-    expiresIn: `${Number(AUTH_DURATION)}m`,
+    expiresIn: `${Number(AUTH_DURATION) * 2}m`,
   });
 }
 

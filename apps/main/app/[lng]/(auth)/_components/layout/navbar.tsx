@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Logo, LogoDark } from "@/assets";
+import { Icons } from "@/assets";
 
 import { ModeToggle } from "@repo/ui";
 
@@ -23,7 +23,7 @@ export function Navbar() {
             className="block dark:hidden"
             height={120}
             priority
-            src={Logo}
+            src={Icons.logo}
             width={120}
           />
           <Image
@@ -31,7 +31,7 @@ export function Navbar() {
             className="hidden dark:block"
             height={120}
             priority
-            src={LogoDark}
+            src={Icons.logoDark}
             width={120}
           />
         </div>

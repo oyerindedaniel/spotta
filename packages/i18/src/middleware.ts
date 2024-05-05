@@ -36,6 +36,7 @@ const i18nConfig = {
 export function middleware(request: NextRequest) {
   // return i18nRouter(request, i18nConfig);
   const pathname = request.nextUrl.pathname;
+  const search = request.nextUrl.search;
 
   // Matchers not working
   if (
@@ -77,7 +78,7 @@ export function middleware(request: NextRequest) {
     // The new URL is now /en/reviews
     return NextResponse.redirect(
       new URL(
-        `/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}`,
+        `/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}${search}`,
         request.url,
       ),
     );

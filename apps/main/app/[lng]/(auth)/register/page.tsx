@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Icons } from "@/assets";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
@@ -15,9 +17,13 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  GithubButton,
+  GoogleButton,
   Input,
 } from "@repo/ui";
 import { registerSchema } from "@repo/validations";
+
+import AuthSeparator from "../_components/separator";
 
 type Register = z.infer<typeof registerSchema>;
 
@@ -173,7 +179,7 @@ export default function LoginPage({
           </div> */}
 
           <Button
-            className="mt-6 w-full text-base uppercase"
+            className="mt-6 w-full uppercase"
             type="submit"
             size="lg"
             disabled={mutateCreateUser.isPending}
@@ -183,6 +189,36 @@ export default function LoginPage({
             )}
             Sign Up
           </Button>
+          <AuthSeparator>{"Or"}</AuthSeparator>
+          <GoogleButton
+            className="flex gap-3 border border-gray-300 bg-transparent shadow-sm dark:border-white"
+            isLoading={false}
+          >
+            <Image alt="Google" height={25} src={Icons.google} width={25} />
+            {"Sign Up with Google"}
+          </GoogleButton>
+          <GithubButton
+            className="flex gap-3 border border-gray-300 bg-transparent shadow-sm dark:border-white"
+            isLoading={false}
+          >
+            <div>
+              <Image
+                alt="Github"
+                className="block dark:hidden"
+                height={25}
+                src={Icons.github}
+                width={25}
+              />
+              <Image
+                alt="Github"
+                className="hidden dark:block"
+                height={25}
+                src={Icons.githubDark}
+                width={25}
+              />
+            </div>
+            {"Sign Up with Github"}
+          </GithubButton>
         </form>
       </Form>
     </div>
