@@ -1,6 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Image from "next/image";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Icons } from "@/assets";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
@@ -15,9 +18,13 @@ import {
   FormField,
   FormItem,
   FormMessage,
+  GoogleButton,
   Input,
 } from "@repo/ui";
+import { getBaseUrl } from "@repo/utils";
 import { loginSchema } from "@repo/validations";
+
+import AuthSeparator from "../_components/separator";
 
 type Login = z.infer<typeof loginSchema>;
 
@@ -28,9 +35,30 @@ export default function LoginPage({
 }): JSX.Element {
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  const code = searchParams?.get?.("code");
+  const authService = searchParams?.get?.("authService");
+  const redirectUrl = searchParams?.get?.("state");
+
   const { t, i18n } = useClientTranslation({ lng });
 
+  console.log(
+    `${getBaseUrl()}/${window.location.pathname.split("/")[1]}/login?authService=google`,
+  );
+
   const mutateLogin = api.auth.login.useMutation({
+    onSuccess: (data) => {
+      form.reset();
+      console.log(data.data);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const mutateOauthLogin = api.user.googleoauth.useMutation({
     onSuccess: (data) => {
       form.reset();
       console.log(data.data);
@@ -48,11 +76,17 @@ export default function LoginPage({
     },
   });
 
-  console.log(form.formState.errors);
-
   const onSubmit = (data: Login) => {
     mutateLogin.mutate(data);
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (authService === "GOOGLE" && code) {
+        mutateOauthLogin.mutate({ code });
+      }
+    }
+  }, [pathname, code, redirectUrl]);
 
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
   return (
@@ -102,6 +136,18 @@ export default function LoginPage({
             )}
             Sign In
           </Button>
+          <AuthSeparator>{"Or"}</AuthSeparator>
+          <GoogleButton
+            className="flex gap-3 border border-gray-300 bg-transparent shadow-sm dark:border-white"
+            isLoading={mutateOauthLogin.isPending}
+          >
+            <Image alt="Spotta" height={25} src={Icons.google} width={25} />
+            {mutateOauthLogin.isPending ? (
+              <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Log in with Google"
+            )}
+          </GoogleButton>
         </form>
       </Form>
     </div>

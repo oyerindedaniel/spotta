@@ -7,18 +7,18 @@ import { ACCESS_TOKEN_SECRET } from "../config";
 
 type TokenPayload = Pick<User, "id">;
 
-async function verifyToken(token: string): Promise<TokenPayload | null> {
+async function verifyToken(token: string): Promise<{ user: User } | null> {
   try {
     const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET) as TokenPayload;
     const user = await db.user.findUnique({
       where: { id: decoded.id },
     });
     if (user) {
-      return { id: user.id };
+      return { user };
     }
     return null;
   } catch (error) {
-    // console.error("Error verifying token:", error);
+    console.log("Error verifying token");
     return null;
   }
 }

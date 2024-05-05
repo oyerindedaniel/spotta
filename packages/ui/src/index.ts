@@ -7,4 +7,5 @@ export * from "./components/ui/separator";
 export * from "./components/ui/tooltip";
 
 // SHARED
+export * from "./shared/google-button";
 export * from "./shared/mode-toggler";

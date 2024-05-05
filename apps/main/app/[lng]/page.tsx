@@ -15,7 +15,7 @@ export default function Page({
 
   console.log("issiteoks", isSiteOkay.data);
 
-  // console.log({ resolvedLanguage: i18n.resolvedLanguage });
+  console.log({ resolvedLanguage: i18n.resolvedLanguage });
 
   return (
     <main className="bg-blue-300">

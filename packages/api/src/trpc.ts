@@ -33,14 +33,12 @@ import { verifyToken } from "./middleware/auth";
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const { headers } = opts;
-  // console.log("terminal link --------------", headers);
+  console.log("terminal link --------------", headers);
   const cookies = cookie.parse(headers?.get?.("cookie") ?? "");
   const accessToken = cookies[COOKIE_NAME] ?? "";
-  const tokenPayload = await verifyToken(accessToken);
+  const session = await verifyToken(accessToken);
 
-  const session = tokenPayload?.id
-    ? { user: await db.user.findUnique({ where: { id: tokenPayload.id } }) }
-    : null;
+  console.log("session----------------------------", session);
 
   return {
     db,

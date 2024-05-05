@@ -14,6 +14,7 @@ import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const authRouter = {
   getSession: publicProcedure.query(({ ctx }) => {
+    console.log("new date ----------------------", new Date());
     return "live fuck u";
   }),
   login: publicProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {
@@ -35,7 +36,7 @@ export const authRouter = {
       throw error;
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await bcrypt.compare(password, user?.password ?? "");
 
     if (!passwordMatch) {
       throw error;
@@ -50,7 +51,7 @@ export const authRouter = {
         refreshTokens: {
           create: {
             token: refreshToken,
-            expires: addMinutes(new Date(), Number(AUTH_DURATION)),
+            expires: addMinutes(new Date(), Number(AUTH_DURATION) * 2),
           },
         },
       },
@@ -129,9 +130,6 @@ export const authRouter = {
             id: session.id,
           },
           data: { invalidatedAt: new Date() },
-          include: {
-            user: true,
-          },
         });
 
         throw error;
@@ -144,7 +142,7 @@ export const authRouter = {
         data: {
           session: { connect: { id: session.id } },
           token: newRefreshToken,
-          expires: addMinutes(new Date(), Number(AUTH_DURATION)),
+          expires: addMinutes(new Date(), Number(AUTH_DURATION) * 2),
         },
       });
 
@@ -172,4 +170,8 @@ export const authRouter = {
         },
       };
     }),
+  logout: protectedProcedure.mutation(({ ctx }) => {
+    cookies().delete(COOKIE_NAME);
+    return true;
+  }),
 } satisfies TRPCRouterRecord;

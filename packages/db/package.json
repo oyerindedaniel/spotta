@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "db:push": "prisma db push --force-reset",
+    "db:push": "prisma db push --force-reset pnpm db:generate",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
     "db:generate": "prisma generate",
