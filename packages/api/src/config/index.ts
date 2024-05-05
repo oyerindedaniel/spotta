@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { CookieSerializeOptions } from "cookie";
 
 type CookieOptions = Omit<CookieSerializeOptions, "sameSite"> & {

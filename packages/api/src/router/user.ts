@@ -65,4 +65,11 @@ export const userRouter = {
         data: { ..._.omit(newUser, ["password"]) },
       };
     }),
+  googleoauth: publicProcedure.query(({ ctx }) => {
+    const { headers } = ctx;
+
+    console.log("from googleoauth------------------------------", headers);
+
+    return "";
+  }),
 } satisfies TRPCRouterRecord;

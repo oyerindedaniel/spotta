@@ -51,9 +51,12 @@ model Session {
 
 model RefreshToken {
   id           String      @id @default(uuid())
-  token        String   @unique
+  token        String  @unique
+  expires    DateTime
   session          Session         @relation(fields: [sessionId], references: [id])
   sessionId        String
+
+ @@unique([token, sessionId])
 }
 
 model VerificationToken {

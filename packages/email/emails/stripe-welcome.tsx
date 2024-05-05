@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   Body,
   Button,
@@ -11,12 +12,10 @@ import {
   Section,
   Text,
 } from "@react-email/components";
-import * as React from "react";
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "";
+import { BASE_URL } from "../src/config";
 
+const baseUrl = BASE_URL;
 export const StripeWelcomeEmail = () => (
   <Html>
     <Head />

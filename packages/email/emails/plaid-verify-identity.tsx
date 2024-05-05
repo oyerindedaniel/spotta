@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   Body,
   Container,
@@ -9,15 +10,14 @@ import {
   Section,
   Text,
 } from "@react-email/components";
-import * as React from "react";
+
+import { BASE_URL } from "../src/config";
 
 interface PlaidVerifyIdentityEmailProps {
   validationCode?: string;
 }
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "";
+const baseUrl = BASE_URL;
 
 export const PlaidVerifyIdentityEmail = ({
   validationCode,
