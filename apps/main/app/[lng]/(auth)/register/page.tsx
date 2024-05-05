@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Icons } from "@/assets";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
@@ -33,6 +33,9 @@ export default function LoginPage({
   params: { lng: LanguagesType };
 }): JSX.Element {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const redirectUrl = searchParams?.get?.("redirectUrl");
 
   const { t, i18n } = useClientTranslation({ lng });
 
@@ -51,6 +54,7 @@ export default function LoginPage({
   const mutateCreateUser = api.user.create.useMutation({
     onSuccess: () => {
       form.reset();
+      router.push("/login");
     },
     onError: (error) => {
       console.error(error);
@@ -187,7 +191,7 @@ export default function LoginPage({
             {mutateCreateUser.isPending && (
               <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Sign Up
+            {mutateCreateUser.isPending ? "Signing up" : " Sign Up"}
           </Button>
           <AuthSeparator>{"Or"}</AuthSeparator>
           <GoogleButton
@@ -198,25 +202,25 @@ export default function LoginPage({
             {"Sign Up with Google"}
           </GoogleButton>
           <GithubButton
-            className="flex gap-3 border border-gray-300 bg-transparent shadow-sm dark:border-white"
+            className="border border-gray-300 bg-transparent shadow-sm dark:border-white"
             isLoading={false}
           >
-            <div>
+            <span className="mr-3 inline-block">
               <Image
                 alt="Github"
                 className="block dark:hidden"
-                height={25}
+                height={30}
                 src={Icons.github}
-                width={25}
+                width={30}
               />
               <Image
                 alt="Github"
                 className="hidden dark:block"
-                height={25}
+                height={30}
                 src={Icons.githubDark}
-                width={25}
+                width={30}
               />
-            </div>
+            </span>
             {"Sign Up with Github"}
           </GithubButton>
         </form>

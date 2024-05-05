@@ -5,18 +5,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icons } from "@/assets";
 
+import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { ModeToggle } from "@repo/ui";
+import { assignRedirectUrl } from "@repo/utils";
 
 type AuthPage = "login" | "register";
 
-export function Navbar() {
+export function Navbar({ lng }: { lng: LanguagesType }) {
   const pathname = usePathname();
+  const { t, i18n } = useClientTranslation({ lng });
 
   const page = pathname.split("/").at(-1) as AuthPage;
 
+  const resolvedLanguage = i18n.resolvedLanguage;
+
   return (
     <header>
-      <div className="mb-6 flex w-full items-center justify-between px-14 py-3">
+      <div className="mb-6 flex w-full items-center justify-between px-6 py-3 md:px-14">
         <div>
           <Image
             alt="Spotta"
@@ -42,7 +47,11 @@ export function Navbar() {
             <ul>
               <li>
                 <Link
-                  href={page === "login" ? "/register" : "/login"}
+                  href={
+                    page === "login"
+                      ? `${assignRedirectUrl({ redirectUrl: `${pathname}`, goToPageUrl: `/register` })}`
+                      : `${assignRedirectUrl({ redirectUrl: `${pathname === `/${resolvedLanguage}/register` ? "/" : pathname}`, goToPageUrl: `/login` })}`
+                  }
                   className="font-semibold uppercase text-brand-blue"
                 >
                   {page === "login" ? "Register" : "Login"}
