@@ -1,18 +1,8 @@
-import { getBaseUrl } from "./function";
-
-export function generateGoogleRedirectUri() {
-  if (typeof window === "undefined") return;
-
-  const baseUrl = getBaseUrl();
-  const language = window.location.pathname.split("/")[1];
-  return `${baseUrl}/${language}/login?authService=google`;
-}
-
 export const getGoogleUrl = (from: string) => {
   const rootUrl = `https://accounts.google.com/o/oauth2/v2/auth`;
 
   const options = {
-    redirect_uri: `${generateGoogleRedirectUri()}` as string,
+    redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL as string,
     client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string,
     access_type: "offline",
     response_type: "code",

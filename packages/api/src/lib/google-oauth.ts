@@ -30,6 +30,8 @@ export const getGoogleOauthToken = async ({
     redirect_uri: GOOGLE_OAUTH_REDIRECT,
     grant_type: "authorization_code",
   };
+
+  console.log(options);
   try {
     const { data } = await axios.post<GoogleOauthToken>(
       rootURl,

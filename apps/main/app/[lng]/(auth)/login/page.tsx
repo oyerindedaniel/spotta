@@ -41,14 +41,16 @@ export default function LoginPage({
 
   const code = searchParams?.get?.("code");
   const authService = searchParams?.get?.("authService") as AuthService;
-  const redirectUrl = searchParams?.get?.("state");
+  const state = searchParams?.get?.("state"); // For OAuth
+  const redirectUrl = searchParams?.get?.("redirectUrl");
 
   const { t, i18n } = useClientTranslation({ lng });
 
   const mutateLogin = api.auth.login.useMutation({
     onSuccess: (data) => {
+      const { isConfirmed } = data.data;
       form.reset();
-      console.log(data.data);
+      router.push(isConfirmed ? redirectUrl ?? "/" : "/email-confirmation");
     },
     onError: (error) => {
       console.error(error);
@@ -58,7 +60,7 @@ export default function LoginPage({
   const mutateGoogleOauthLogin = api.user.googleoauth.useMutation({
     onSuccess: (data) => {
       form.reset();
-      console.log(data.data);
+      router.push(state ?? "/");
     },
     onError: (error) => {
       console.error(error);
@@ -68,7 +70,7 @@ export default function LoginPage({
   const mutateGithubOauthLogin = api.user.githuboauth.useMutation({
     onSuccess: (data) => {
       form.reset();
-      console.log(data.data);
+      router.push(state ?? "/");
     },
     onError: (error) => {
       console.error(error);
@@ -94,11 +96,10 @@ export default function LoginPage({
       }
 
       if (authService?.toUpperCase() === "GITHUB" && code) {
-        console.log("here");
         mutateGithubOauthLogin.mutate({ code });
       }
     }
-  }, [pathname, code, redirectUrl]);
+  }, [pathname, code, state]);
 
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
   return (
@@ -144,43 +145,59 @@ export default function LoginPage({
             disabled={mutateLogin.isPending}
           >
             {mutateLogin.isPending && (
-              <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+              <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
             )}
-            Sign In
+            {mutateLogin.isPending ? "Signing in" : "Sign In"}
           </Button>
           <AuthSeparator>{"Or"}</AuthSeparator>
           <GoogleButton
-            className="flex gap-3 border border-gray-300 bg-transparent shadow-sm dark:border-white"
+            className="border border-gray-300 bg-transparent shadow-sm dark:border-white"
             isLoading={mutateGoogleOauthLogin.isPending}
           >
-            <Image alt="Spotta" height={25} src={Icons.google} width={25} />
+            <Image
+              alt="Spotta"
+              className="mr-3"
+              height={25}
+              src={Icons.google}
+              width={25}
+            />
             {mutateGoogleOauthLogin.isPending ? (
-              <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+              <span className="flex">
+                <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+                <span>Signing in with Google</span>
+              </span>
             ) : (
               "Log in with Google"
             )}
           </GoogleButton>
           <GithubButton
-            className="flex gap-3 border border-gray-300 bg-transparent shadow-sm dark:border-white"
-            isLoading={false}
+            className="border border-gray-300 bg-transparent shadow-sm dark:border-white"
+            isLoading={mutateGithubOauthLogin.isPending}
           >
-            <div>
+            <span className="mr-3 inline-block">
               <Image
                 alt="Github"
                 className="block dark:hidden"
-                height={25}
+                height={30}
                 src={Icons.github}
-                width={25}
+                width={30}
               />
               <Image
                 alt="Github"
                 className="hidden dark:block"
-                height={25}
+                height={30}
                 src={Icons.githubDark}
-                width={25}
+                width={30}
               />
-            </div>
-            {"Log in with Github"}
+            </span>
+            {mutateGithubOauthLogin.isPending ? (
+              <span className="flex w-full items-center">
+                <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
+                <span>Signing in with Github</span>
+              </span>
+            ) : (
+              "Log in with Github"
+            )}
           </GithubButton>
         </form>
       </Form>

@@ -33,7 +33,7 @@ import { verifyToken } from "./middleware/auth";
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const { headers } = opts;
-  console.log("terminal link --------------", headers);
+  // console.log("terminal link --------------", headers);
   const cookies = cookie.parse(headers?.get?.("cookie") ?? "");
   const accessToken = cookies[COOKIE_NAME] ?? "";
   const session = await verifyToken(accessToken);

@@ -48,7 +48,7 @@ export const getGithubOauthToken = async ({
     return data;
   } catch (err: any) {
     console.log("Failed to fetch github OAuth tokens");
-    throw null;
+    throw err;
   }
 };
 
