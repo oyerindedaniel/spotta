@@ -34,7 +34,6 @@ export const getGithubOauthToken = async ({
     redirect_uri: GITHUB_OAUTH_REDIRECT,
   };
 
-  console.log(options);
   try {
     const { data } = await axios.post<GithubOauthToken>(
       rootURl,

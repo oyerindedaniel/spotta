@@ -43,9 +43,6 @@ export default function LoginPage({
   const authService = searchParams?.get?.("authService") as AuthService;
   const redirectUrl = searchParams?.get?.("state");
 
-  console.log({ code });
-  console.log({ authService });
-
   const { t, i18n } = useClientTranslation({ lng });
 
   const mutateLogin = api.auth.login.useMutation({
