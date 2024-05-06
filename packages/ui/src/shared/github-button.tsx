@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { getGithubUrl } from "@repo/utils";
+import { generateAndValidateState, getGithubUrl } from "@repo/utils";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "..";
@@ -21,9 +21,11 @@ export const GithubButton: React.FC<Props> = ({
   const pathname = usePathname();
   const redirectUrl = searchParams?.get?.("redirectUrl");
 
+  const { create } = generateAndValidateState();
+
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setGithubUrl(getGithubUrl(redirectUrl ?? "/"));
+      setGithubUrl(getGithubUrl(create(redirectUrl ?? "/")));
     }
   }, [pathname]);
 

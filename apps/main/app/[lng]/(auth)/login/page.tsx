@@ -23,6 +23,7 @@ import {
   GoogleButton,
   Input,
 } from "@repo/ui";
+import { generateAndValidateState } from "@repo/utils";
 import { loginSchema } from "@repo/validations";
 
 import AuthSeparator from "../_components/separator";
@@ -39,10 +40,17 @@ export default function LoginPage({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
+  const { validate } = generateAndValidateState();
+
   const code = searchParams?.get?.("code");
-  const authService = searchParams?.get?.("authService") as AuthService;
+  const authService = searchParams
+    ?.get?.("authService")
+    ?.toUpperCase() as AuthService;
+
   const state = searchParams?.get?.("state"); // For OAuth
   const redirectUrl = searchParams?.get?.("redirectUrl");
+
+  const { isValid, redirectUrl: redirectUrlState } = validate(state ?? "");
 
   const { t, i18n } = useClientTranslation({ lng });
 
@@ -60,7 +68,7 @@ export default function LoginPage({
   const mutateGoogleOauthLogin = api.user.googleoauth.useMutation({
     onSuccess: (data) => {
       form.reset();
-      router.push(state ?? "/");
+      router.push(redirectUrlState ?? "/");
     },
     onError: (error) => {
       console.error(error);
@@ -70,7 +78,7 @@ export default function LoginPage({
   const mutateGithubOauthLogin = api.user.githuboauth.useMutation({
     onSuccess: (data) => {
       form.reset();
-      router.push(state ?? "/");
+      router.push(redirectUrlState ?? "/");
     },
     onError: (error) => {
       console.error(error);
@@ -91,11 +99,13 @@ export default function LoginPage({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      if (authService?.toUpperCase() === "GOOGLE" && code) {
+      if (!code || !isValid) return;
+
+      if (authService === "GOOGLE") {
         mutateGoogleOauthLogin.mutate({ code });
       }
 
-      if (authService?.toUpperCase() === "GITHUB" && code) {
+      if (authService === "GITHUB") {
         mutateGithubOauthLogin.mutate({ code });
       }
     }
