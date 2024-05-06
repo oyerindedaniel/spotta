@@ -6,12 +6,18 @@ import bcrypt from "bcryptjs";
 import { addMinutes } from "date-fns";
 import _ from "lodash";
 
+import { PlaidVerifyIdentityEmailTemplate, sendMail } from "@repo/email";
 import { oauthSchema, registerSchema } from "@repo/validations";
 
 import { AUTH_DURATION, COOKIE_NAME, SALT_ROUNDS } from "../config";
-import { getGithubOauthToken, getGithubUser } from "../lib/github-oauth";
-import { getGoogleOauthToken, getGoogleUser } from "../lib/google-oauth";
-import { generateAccessToken, generateRefreshToken } from "../lib/token";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  getGithubOauthToken,
+  getGithubUser,
+  getGoogleOauthToken,
+  getGoogleUser,
+} from "../lib";
 import { publicProcedure } from "../trpc";
 
 export const userRouter = {
@@ -65,6 +71,15 @@ export const userRouter = {
           password: hashedPassword,
           phone,
         },
+      });
+
+      const confirmationStatus = await sendMail({
+        email: email || "",
+        subject: "Spotta subject",
+        text: "Spotta text",
+        html: PlaidVerifyIdentityEmailTemplate({
+          validationCode: "20202",
+        }),
       });
 
       return {

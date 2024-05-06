@@ -7,6 +7,7 @@ import {
   Html,
   Img,
   Link,
+  render,
   Section,
   Text,
 } from "@react-email/components";
@@ -19,7 +20,11 @@ interface PlaidVerifyIdentityEmailProps {
 
 const baseUrl = BASE_URL;
 
-export const PlaidVerifyIdentityEmail = ({
+export const PlaidVerifyIdentityEmailTemplate = (
+  props: PlaidVerifyIdentityEmailProps,
+) => render(<PlaidVerifyIdentityEmail {...props} />);
+
+const PlaidVerifyIdentityEmail = ({
   validationCode,
 }: PlaidVerifyIdentityEmailProps) => (
   <Html>

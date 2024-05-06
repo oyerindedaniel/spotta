@@ -109,7 +109,7 @@ export default function LoginPage({
         mutateGithubOauthLogin.mutate({ code });
       }
     }
-  }, [pathname, code, state]);
+  }, [pathname, code, isValid, authService]);
 
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
   return (

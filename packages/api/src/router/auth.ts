@@ -9,13 +9,13 @@ import { z } from "zod";
 import { loginSchema } from "@repo/validations";
 
 import { AUTH_DURATION, COOKIE_NAME } from "../config";
-import { generateAccessToken, generateRefreshToken } from "../lib/token";
+import { generateAccessToken, generateRefreshToken } from "../lib";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const authRouter = {
-  getSession: publicProcedure.query(({ ctx }) => {
-    console.log("new date ----------------------", new Date());
-    return "live fuck u";
+  getSession: protectedProcedure.query(({ ctx }) => {
+    const { session } = ctx;
+    return session.user;
   }),
   login: publicProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {
     const { email, password } = input;
