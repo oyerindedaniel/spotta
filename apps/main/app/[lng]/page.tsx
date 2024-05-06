@@ -18,7 +18,7 @@ export default function Page({
   return (
     <main className="bg-blue-300">
       {isSiteOkay.isFetching && <h1>Loading...</h1>}
-      {isSiteOkay && isSiteOkay.data && <h1>{isSiteOkay.data}</h1>}
+      {isSiteOkay && isSiteOkay.data && <h1>{isSiteOkay.data.firstName}</h1>}
       <p>Daniel</p>
 
       <Button

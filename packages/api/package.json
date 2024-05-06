@@ -16,6 +16,7 @@
   "dependencies": {
     "@prisma/client": "^5.13.0",
     "@repo/db": "workspace:*",
+    "@repo/email": "workspace:*",
     "@repo/validations": "workspace:*",
     "@repo/utils": "workspace:*",
     "@trpc/server": "11.0.0-rc.334",

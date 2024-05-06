@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { getGoogleUrl } from "@repo/utils";
+import { generateAndValidateState, getGoogleUrl } from "@repo/utils";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "..";
@@ -19,11 +19,13 @@ export const GoogleButton: React.FC<Props> = ({
   const [googleUrl, setGoogleUrl] = useState("");
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const redirectUrl = searchParams?.get?.("redirectUrl");
+  const redirectUrl = searchParams?.get?.("redirectUrl") as string;
+
+  const { create } = generateAndValidateState();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setGoogleUrl(getGoogleUrl(redirectUrl ?? "/"));
+      setGoogleUrl(getGoogleUrl(create(redirectUrl ?? "/")));
     }
   }, [pathname]);
 

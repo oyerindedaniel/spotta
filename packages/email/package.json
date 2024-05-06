@@ -2,15 +2,20 @@
   "name": "@repo/email",
   "version": "0.1.0",
   "main": "./src/index.ts",
-  "files": [],
+  "workspaces": [
+    ".react-email"
+  ],
   "private": true,
   "scripts": {
     "dev": "pnpm with-env email dev --port 2010",
+    "build": "tsc --project ./",
+    "export": "email export",
     "with-env": "dotenv -e ./.env --"
   },
   "dependencies": {
     "@react-email/components": "0.0.17",
     "@react-email/tailwind": "^0.0.16",
+    "nodemailer": "^6.9.13",
     "react": "^18.2.0",
     "react-email": "2.1.2"
   },
@@ -19,6 +24,7 @@
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^20.12.8",
+    "@types/nodemailer": "^6.4.15",
     "@types/react": "18.2.33",
     "@types/react-dom": "18.2.14",
     "dotenv-cli": "^7.4.1",
