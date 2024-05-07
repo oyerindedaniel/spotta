@@ -25,13 +25,9 @@ import { registerSchema } from "@repo/validations";
 
 import AuthSeparator from "../_components/separator";
 
-type Register = z.infer<typeof registerSchema>;
+type RegisterType = z.infer<typeof registerSchema>;
 
-export default function LoginPage({
-  params: { lng },
-}: {
-  params: { lng: LanguagesType };
-}): JSX.Element {
+export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -39,7 +35,7 @@ export default function LoginPage({
 
   const { t, i18n } = useClientTranslation({ lng });
 
-  const form = useForm<Register>({
+  const form = useForm<RegisterType>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
@@ -61,7 +57,7 @@ export default function LoginPage({
     },
   });
 
-  const onSubmit = (data: Register) => {
+  const onSubmit = (data: RegisterType) => {
     mutateCreateUser.mutate(data);
   };
 
