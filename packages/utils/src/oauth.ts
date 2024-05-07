@@ -12,12 +12,18 @@ export function generateAndValidateState(): StateValidator {
   function createState(redirectUrl: string) {
     const nonce = Math.random().toString(36).substring(2);
     const storedData = { redirectUrl };
-    localStorage.setItem(nonce, JSON.stringify(storedData));
+    if (typeof window !== "undefined") {
+      localStorage.setItem(nonce, JSON.stringify(storedData));
+    }
+
     return nonce;
   }
 
   function validateState(responseState: string): ValidationResult {
-    const storedDataString = localStorage.getItem(responseState);
+    let storedDataString;
+    if (typeof window !== "undefined") {
+      storedDataString = localStorage.getItem(responseState);
+    }
 
     if (storedDataString) {
       const storedData = JSON.parse(storedDataString);

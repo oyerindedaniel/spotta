@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icons } from "@/assets";
+import { User } from "@prisma/client";
 
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { ModeToggle } from "@repo/ui";
@@ -11,7 +12,13 @@ import { assignRedirectUrl } from "@repo/utils";
 
 type AuthPage = "login" | "register";
 
-export function Navbar({ lng }: { lng: LanguagesType }) {
+export function Navbar({
+  lng,
+  session,
+}: {
+  lng: LanguagesType;
+  session: User | null;
+}) {
   const pathname = usePathname();
   const { t, i18n } = useClientTranslation({ lng });
 
@@ -46,16 +53,20 @@ export function Navbar({ lng }: { lng: LanguagesType }) {
           <nav>
             <ul>
               <li>
-                <Link
-                  href={
-                    page === "login"
-                      ? `${assignRedirectUrl({ redirectUrl: `${pathname}`, goToPageUrl: `/register` })}`
-                      : `${assignRedirectUrl({ redirectUrl: `${pathname === `/${resolvedLanguage}/register` ? "/" : pathname}`, goToPageUrl: `/login` })}`
-                  }
-                  className="font-semibold uppercase text-brand-blue"
-                >
-                  {page === "login" ? "Register" : "Login"}
-                </Link>
+                {session ? (
+                  <Link href="/">Authenticated</Link>
+                ) : (
+                  <Link
+                    href={
+                      page === "login"
+                        ? `${assignRedirectUrl({ redirectUrl: `${pathname}`, goToPageUrl: `${lng}/register` })}`
+                        : `${assignRedirectUrl({ redirectUrl: `${pathname === `/${lng}/register` ? "/" : pathname}`, goToPageUrl: `${lng}/login` })}`
+                    }
+                    className="font-semibold uppercase text-brand-blue"
+                  >
+                    {page === "login" ? "Register" : "Login"}
+                  </Link>
+                )}
               </li>
             </ul>
           </nav>

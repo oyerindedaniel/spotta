@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Icons } from "@/assets";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AuthService } from "@prisma/client";
+import { AuthService, User } from "@prisma/client";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -26,14 +26,16 @@ import {
 import { generateAndValidateState } from "@repo/utils";
 import { loginSchema } from "@repo/validations";
 
-import AuthSeparator from "../_components/separator";
+import AuthSeparator from "./separator";
 
-type Login = z.infer<typeof loginSchema>;
+type LoginType = z.infer<typeof loginSchema>;
 
-export default function LoginPage({
-  params: { lng },
+export default function Login({
+  lng,
+  session,
 }: {
-  params: { lng: LanguagesType };
+  lng: LanguagesType;
+  session: User | null;
 }): JSX.Element {
   const router = useRouter();
 
@@ -85,7 +87,7 @@ export default function LoginPage({
     },
   });
 
-  const form = useForm<Login>({
+  const form = useForm<LoginType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -93,7 +95,7 @@ export default function LoginPage({
     },
   });
 
-  const onSubmit = (data: Login) => {
+  const onSubmit = (data: LoginType) => {
     mutateLogin.mutate(data);
   };
 

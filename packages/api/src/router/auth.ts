@@ -13,9 +13,9 @@ import { generateAccessToken, generateRefreshToken } from "../lib";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const authRouter = {
-  getSession: protectedProcedure.query(({ ctx }) => {
+  getSession: publicProcedure.query(({ ctx }) => {
     const { session } = ctx;
-    return session.user;
+    return session?.user ?? null;
   }),
   login: publicProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {
     const { email, password } = input;
