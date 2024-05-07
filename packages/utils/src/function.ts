@@ -22,3 +22,9 @@ export const getRedirectUrlOrDefault = (url: string): string => {
   const redirectUrl = new URL(url).searchParams.get("redirectUrl");
   return redirectUrl ? redirectUrl : url;
 };
+
+export function getInitials(name: string): string {
+  const parts: string[] = name.split(" ");
+  const initials: string[] = parts.map((part) => part.charAt(0));
+  return initials.join("").toUpperCase();
+}

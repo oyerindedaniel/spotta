@@ -22,6 +22,7 @@ import {
   GithubButton,
   GoogleButton,
   Input,
+  useToast,
 } from "@repo/ui";
 import { generateAndValidateState } from "@repo/utils";
 import { loginSchema } from "@repo/validations";
@@ -41,6 +42,7 @@ export default function Login({
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const { toast } = useToast();
 
   const { validate } = generateAndValidateState();
 
@@ -60,16 +62,29 @@ export default function Login({
     onSuccess: (data) => {
       const { isConfirmed } = data.data;
       form.reset();
-      router.push(isConfirmed ? redirectUrl ?? "/" : "/email-confirmation");
+      router.push(true ? redirectUrl ?? "/" : "/email-confirmation");
+      router.refresh();
+      toast({
+        variant: "success",
+        description: "Login successful",
+      });
     },
     onError: (error) => {
       console.error(error);
+      toast({
+        variant: "destructive",
+        description: "",
+      });
+      router.refresh();
     },
   });
 
   const mutateGoogleOauthLogin = api.user.googleoauth.useMutation({
     onSuccess: (data) => {
       form.reset();
+      toast({
+        description: "Login successful",
+      });
       router.push(redirectUrlState ?? "/");
     },
     onError: (error) => {
@@ -80,6 +95,9 @@ export default function Login({
   const mutateGithubOauthLogin = api.user.githuboauth.useMutation({
     onSuccess: (data) => {
       form.reset();
+      toast({
+        description: "Login successful",
+      });
       router.push(redirectUrlState ?? "/");
     },
     onError: (error) => {

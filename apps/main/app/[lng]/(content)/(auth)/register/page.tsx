@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
+import { useAuth } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
 
 import Register from "../_components/register";
 
@@ -10,7 +10,7 @@ export default async function RegisterPage({
 }: {
   params: { lng: LanguagesType };
 }) {
-  const session = await api.auth.getSession();
+  const session = await useAuth();
 
   if (session) {
     redirect("/");

@@ -2,13 +2,29 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Icons } from "@/assets";
 import { User } from "@prisma/client";
 
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
-import { ModeToggle } from "@repo/ui";
-import { assignRedirectUrl } from "@repo/utils";
+import { api } from "@repo/trpc/src/react";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+  ModeToggle,
+  useToast,
+} from "@repo/ui";
+import { assignRedirectUrl, getInitials } from "@repo/utils";
 
 type AuthPage = "login" | "register";
 
@@ -20,16 +36,36 @@ export function Navbar({
   session: User | null;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { toast } = useToast();
+
   const { t, i18n } = useClientTranslation({ lng });
 
   const page = pathname.split("/").at(-1) as AuthPage;
 
   const resolvedLanguage = i18n.resolvedLanguage;
 
+  const { firstName, lastName, picture } = session ?? {};
+
+  const mutateLogout = api.auth.logout.useMutation({
+    onSuccess: () => {
+      router.push("/");
+      router.refresh();
+      toast({
+        variant: "success",
+        description: "Logout successful",
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+      router.refresh();
+    },
+  });
+
   return (
     <header>
       <div className="mb-6 flex w-full items-center justify-between px-6 py-3 md:px-14">
-        <div>
+        <Link href="/">
           <Image
             alt="Spotta"
             className="block dark:hidden"
@@ -46,7 +82,7 @@ export function Navbar({
             src={Icons.logoDark}
             width={120}
           />
-        </div>
+        </Link>
 
         <div className="flex items-center gap-8">
           <ModeToggle />
@@ -54,7 +90,42 @@ export function Navbar({
             <ul>
               <li>
                 {session ? (
-                  <Link href="/">Authenticated</Link>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild className="cursor-pointer">
+                      <Avatar>
+                        <AvatarImage
+                          src={picture ?? ""}
+                          alt={`@${firstName}`}
+                        />
+                        <AvatarFallback>
+                          {getInitials(`${firstName} ${lastName}`)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56">
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                          Profile
+                          <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Button
+                          type="button"
+                          onClick={() => mutateLogout.mutate()}
+                          variant="unstyled"
+                          size="sm"
+                          className="w-full cursor-pointer"
+                        >
+                          Log out
+                          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                        </Button>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 ) : (
                   <Link
                     href={

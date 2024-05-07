@@ -1,7 +1,6 @@
 "use client";
 
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
-import { api } from "@repo/trpc/src/react";
 import { Button } from "@repo/ui";
 
 export default function Page({
@@ -11,14 +10,10 @@ export default function Page({
 }): JSX.Element {
   const { t, i18n } = useClientTranslation({ lng });
 
-  const isSiteOkay = api.auth.getSession.useQuery();
-
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
 
   return (
     <main className="bg-blue-300">
-      {isSiteOkay.isFetching && <h1>Loading...</h1>}
-      {isSiteOkay && isSiteOkay.data && <h1>{isSiteOkay.data.firstName}</h1>}
       <p>Daniel</p>
 
       <Button

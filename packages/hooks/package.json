@@ -12,11 +12,19 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@prisma/client": "^5.13.0",
+    "@repo/db": "workspace:*",
+    "@repo/api": "workspace:*",
+    "@repo/trpc": "workspace:*",
+    "react": "^18.2.0"
+  },
   "devDependencies": {
+    "@types/react": "^18.2.61",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "prisma": "^5.13.0",
     "@types/node": "^20.12.7",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
