@@ -16,6 +16,11 @@ GOOGLE
 GITHUB
 }
 
+enum OtpType {
+FORGOT_PASSWORD
+RESET_PASSWORD
+}
+
 enum Role {
   USER
   ADMIN
@@ -36,7 +41,8 @@ model User {
     emailVerified DateTime?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-        verificationToken VerificationToken[]
+    verificationTokens VerificationToken[]
+    Otps Otp[]
     sessions  Session[]
 }
 
@@ -64,6 +70,16 @@ model VerificationToken {
     id           String      @id @default(uuid())
     token      String   @unique
     expires    DateTime
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+}
+
+model Otp {
+    id           String      @id @default(uuid())
+    otp      String   @unique
+    expires    DateTime
+    type    OtpType
+    createdAt DateTime @default(now())
   user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
 }

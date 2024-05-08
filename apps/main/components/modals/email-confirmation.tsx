@@ -13,7 +13,7 @@ export function EmailConfirmation() {
 
   const isModalOpen = isOpen && type === "emailConfirmation";
 
-  const { email } = data;
+  const { emailConfirmation: email } = data;
 
   const handleClose = () => {
     onClose();

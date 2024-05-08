@@ -1,15 +1,23 @@
-import type { TRPCRouterRecord } from "@trpc/server";
 import { cookies } from "next/headers";
 import { User } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
+import { TRPCError, TRPCRouterRecord } from "@trpc/server";
 import bcrypt from "bcryptjs";
-import { addMinutes, isPast } from "date-fns";
+import { addMinutes, isAfter, isPast } from "date-fns";
 import _ from "lodash";
 import { v4 as uuid } from "uuid";
 import { z } from "zod";
 
-import { sendMail, SpottaEmailTemplate } from "@repo/email";
-import { oauthSchema, registerSchema } from "@repo/validations";
+import {
+  sendMail,
+  SpottaEmailTemplate,
+  SpottaForgotPasswordEmailTemplate,
+} from "@repo/email";
+import {
+  forgotPasswordConfirmationSchema,
+  forgotPasswordSchema,
+  oauthSchema,
+  registerSchema,
+} from "@repo/validations";
 
 import {
   AUTH_DURATION,
@@ -26,6 +34,7 @@ import {
   getGoogleUser,
 } from "../lib";
 import { publicProcedure } from "../trpc";
+import { generateRandomNumber } from "../utils";
 
 export const userRouter = {
   create: publicProcedure
@@ -79,7 +88,7 @@ export const userRouter = {
           email: email.toLowerCase(),
           password: hashedPassword,
           phone,
-          verificationToken: {
+          verificationTokens: {
             create: [{ token, expires: addMinutes(new Date(), 30) }],
           },
         },
@@ -144,7 +153,7 @@ export const userRouter = {
       const accessToken = generateAccessToken(user);
       const refreshToken = generateRefreshToken(user);
 
-      const session = await db.session.create({
+      await db.session.create({
         data: {
           user: { connect: { id: user.id } },
           refreshTokens: {
@@ -220,7 +229,7 @@ export const userRouter = {
       const accessToken = generateAccessToken(user);
       const refreshToken = generateRefreshToken(user);
 
-      const session = await db.session.create({
+      await db.session.create({
         data: {
           user: { connect: { id: user.id } },
           refreshTokens: {
@@ -262,7 +271,11 @@ export const userRouter = {
         },
       });
 
-      if (!findToken || isPast(findToken.expires)) {
+      if (
+        !findToken ||
+        isPast(findToken.expires) ||
+        findToken.user.isConfirmed
+      ) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "The token is not available or has expired.",
@@ -280,5 +293,102 @@ export const userRouter = {
       });
 
       return true;
+    }),
+  forgotPassword: publicProcedure
+    .input(forgotPasswordSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { db } = ctx;
+
+      const { email } = input;
+
+      const user = await db.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User not found or account deactivated.",
+        });
+      }
+
+      if (user.authService !== "CREDENTIALS") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot change password for non-credentials based accounts.",
+        });
+      }
+
+      const codePin = generateRandomNumber(6);
+
+      await db.otp.create({
+        data: {
+          user: { connect: { id: user.id } },
+          otp: codePin,
+          expires: addMinutes(new Date(), 30),
+          type: "FORGOT_PASSWORD",
+        },
+      });
+
+      await sendMail({
+        email,
+        subject: "Spotta Forgot Password Email Verfication",
+        html: SpottaForgotPasswordEmailTemplate({
+          codePin,
+        }),
+      });
+
+      return true;
+    }),
+  forgotPasswordConfirmation: publicProcedure
+    .input(forgotPasswordConfirmationSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { db } = ctx;
+
+      const { otp, password, confirmPassword } = input;
+
+      const findOtp = await db.otp.findUnique({
+        where: { otp, type: "FORGOT_PASSWORD" },
+        include: {
+          user: true,
+        },
+      });
+
+      if (
+        !findOtp ||
+        isPast(findOtp?.expires) ||
+        isAfter(findOtp?.user?.updatedAt, findOtp?.createdAt)
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "The otp is not available or has expired.",
+        });
+      }
+
+      const user = findOtp.user;
+
+      if (password !== confirmPassword) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Passwords don't match",
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
+      const updatedUser = await db.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          password: hashedPassword,
+        },
+      });
+
+      return {
+        data: { ..._.omit(updatedUser, ["password"]) },
+      };
     }),
 } satisfies TRPCRouterRecord;
