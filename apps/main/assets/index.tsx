@@ -1,8 +1,10 @@
+import email from "./email.svg";
 import githubDark from "./github-mark-white.svg";
 import github from "./github-mark.svg";
 import google from "./google.svg";
 import logoDark from "./spotta-dark.svg";
 import logo from "./spotta.svg";
+import verification from "./verification.svg";
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -12,6 +14,8 @@ export const Icons = {
   google,
   github,
   githubDark,
+  email,
+  verification,
   googleTest: (props: IconProps) => (
     <svg
       width="24"

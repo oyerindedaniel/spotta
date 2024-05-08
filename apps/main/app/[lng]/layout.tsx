@@ -5,6 +5,7 @@ import "@repo/ui/css/styles.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { ModalProvider } from "@/providers/modal-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { dir } from "i18next";
 
@@ -42,6 +43,7 @@ export default function RootLayout({
           >
             {children}
             <Toaster />
+            <ModalProvider />
           </ThemeProvider>
         </TRPCReactProvider>
       </body>

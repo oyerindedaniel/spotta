@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Icons } from "@/assets";
+import { useModal } from "@/hooks/use-modal-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthService, User } from "@prisma/client";
 import { ReloadIcon } from "@radix-ui/react-icons";
@@ -27,7 +28,7 @@ import {
 import { generateAndValidateState } from "@repo/utils";
 import { loginSchema } from "@repo/validations";
 
-import AuthSeparator from "./separator";
+import AuthSeparator from "./ui/separator";
 
 type LoginType = z.infer<typeof loginSchema>;
 
@@ -44,6 +45,8 @@ export default function Login({
   const pathname = usePathname();
   const { toast } = useToast();
 
+  const { onOpen } = useModal();
+
   const { validate } = generateAndValidateState();
 
   const code = searchParams?.get?.("code");
@@ -59,10 +62,14 @@ export default function Login({
   const { t, i18n } = useClientTranslation({ lng });
 
   const mutateLogin = api.auth.login.useMutation({
-    onSuccess: (data) => {
-      const { isConfirmed } = data.data;
+    onSuccess: ({ data }) => {
+      const { isConfirmed, email } = data;
       form.reset();
-      router.push(true ? redirectUrl ?? "/" : "/email-confirmation");
+      if (isConfirmed) {
+        router.push(redirectUrl ?? "/");
+      } else {
+        onOpen({ type: "emailConfirmation", data: { email } });
+      }
       router.refresh();
       toast({
         variant: "success",
@@ -133,7 +140,7 @@ export default function Login({
 
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
   return (
-    <div>
+    <div className="mx-auto my-6 w-full max-w-[26rem] rounded-lg bg-brand-plain p-4 px-5 shadow-md">
       <h5 className="mb-6 text-center text-xl font-medium">Sign In</h5>
       <Form {...form}>
         <form
