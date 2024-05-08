@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal-store";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -47,6 +47,8 @@ type FormDataType<T extends ForgotPasswordEnum> =
 export function ForgotPassword() {
   const { isOpen, onClose, type, data } = useModal();
 
+  const isModalOpen = isOpen && type === "forgotPassword";
+
   const { toast } = useToast();
 
   const { forgotPassword: session } = data;
@@ -56,8 +58,6 @@ export function ForgotPassword() {
   const [status, setStatus] = useState<ForgotPasswordEnum>(
     ForgotPasswordEnum.ForgotPassword,
   );
-
-  const isModalOpen = isOpen && type === "forgotPassword";
 
   const handleClose = () => {
     onClose();
@@ -85,6 +85,10 @@ export function ForgotPassword() {
       confirmPassword: "",
     },
   });
+
+  useEffect(() => {
+    form.reset();
+  }, [isModalOpen]);
 
   const mutateForgotPassword = api.user.forgotPassword.useMutation({
     onSuccess: (_, variables) => {

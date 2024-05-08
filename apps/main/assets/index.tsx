@@ -2,6 +2,9 @@ import email from "./email.svg";
 import githubDark from "./github-mark-white.svg";
 import github from "./github-mark.svg";
 import google from "./google.svg";
+import profile from "./profile.svg";
+import reviews from "./reviews.svg";
+import settings from "./settings.svg";
 import logoDark from "./spotta-dark.svg";
 import logo from "./spotta.svg";
 import verification from "./verification.svg";
@@ -16,6 +19,9 @@ export const Icons = {
   githubDark,
   email,
   verification,
+  profile,
+  settings,
+  reviews,
   googleTest: (props: IconProps) => (
     <svg
       width="24"
