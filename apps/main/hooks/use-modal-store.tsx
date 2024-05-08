@@ -1,9 +1,11 @@
+import { User } from "@prisma/client";
 import { create } from "zustand";
 
-export type ModalType = "emailConfirmation";
+export type ModalType = "emailConfirmation" | "forgotPassword";
 
 interface ModalData {
-  email?: string;
+  emailConfirmation?: string;
+  forgotPassword?: User | null;
 }
 
 interface ModalStore {

@@ -58,7 +58,10 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
       if (isConfirmed) {
         router.push("/login");
       } else {
-        onOpen({ type: "emailConfirmation", data: { email } });
+        onOpen({
+          type: "emailConfirmation",
+          data: { emailConfirmation: email },
+        });
       }
     },
     onError: (error) => {
@@ -69,6 +72,8 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
   const onSubmit = (data: RegisterType) => {
     mutateCreateUser.mutate(data);
   };
+
+  const isPending = mutateCreateUser.isPending;
 
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
   return (
@@ -170,24 +175,25 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
             className="mt-6 w-full uppercase"
             type="submit"
             size="lg"
-            disabled={mutateCreateUser.isPending}
+            disabled={isPending}
           >
             {mutateCreateUser.isPending && (
               <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
             )}
             {mutateCreateUser.isPending ? "Signing up" : " Sign Up"}
           </Button>
+
           <AuthSeparator>{"Or"}</AuthSeparator>
           <GoogleButton
             className="flex gap-3 border border-gray-300 bg-transparent shadow-sm dark:border-white"
-            isLoading={false}
+            isLoading={isPending}
           >
             <Image alt="Google" height={25} src={Icons.google} width={25} />
             {"Sign Up with Google"}
           </GoogleButton>
           <GithubButton
             className="border border-gray-300 bg-transparent shadow-sm dark:border-white"
-            isLoading={false}
+            isLoading={isPending}
           >
             <span className="mr-3 inline-block">
               <Image

@@ -80,7 +80,7 @@ export default function Login({
       console.error(error);
       toast({
         variant: "destructive",
-        description: "",
+        description: error?.message,
       });
       router.refresh();
     },
@@ -95,7 +95,12 @@ export default function Login({
       router.push(redirectUrlState ?? "/");
     },
     onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: error?.message,
+      });
       console.error(error);
+      router.refresh();
     },
   });
 
@@ -108,7 +113,12 @@ export default function Login({
       router.push(redirectUrlState ?? "/");
     },
     onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: error?.message,
+      });
       console.error(error);
+      router.refresh();
     },
   });
 
@@ -137,6 +147,11 @@ export default function Login({
       }
     }
   }, [pathname, code, isValid, authService]);
+
+  const isPending =
+    mutateGithubOauthLogin.isPending ||
+    mutateGoogleOauthLogin.isPending ||
+    mutateLogin.isPending;
 
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
   return (
@@ -179,17 +194,24 @@ export default function Login({
             className="mt-6 w-full text-base uppercase"
             type="submit"
             size="lg"
-            disabled={mutateLogin.isPending}
+            disabled={isPending}
           >
             {mutateLogin.isPending && (
               <ReloadIcon className="mr-2 h-5 w-5 animate-spin" />
             )}
             {mutateLogin.isPending ? "Signing in" : "Sign In"}
           </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => onOpen({ type: "forgotPassword" })}
+          >
+            Forgot Password
+          </Button>
           <AuthSeparator>{"Or"}</AuthSeparator>
           <GoogleButton
             className="border border-gray-300 bg-transparent shadow-sm dark:border-white"
-            isLoading={mutateGoogleOauthLogin.isPending}
+            isLoading={isPending}
           >
             <Image
               alt="Spotta"
@@ -209,7 +231,7 @@ export default function Login({
           </GoogleButton>
           <GithubButton
             className="border border-gray-300 bg-transparent shadow-sm dark:border-white"
-            isLoading={mutateGithubOauthLogin.isPending}
+            isLoading={isPending}
           >
             <span className="mr-3 inline-block">
               <Image

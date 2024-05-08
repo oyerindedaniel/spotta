@@ -1,15 +1,15 @@
-import type { TRPCRouterRecord } from "@trpc/server";
 import { cookies } from "next/headers";
-import { TRPCError } from "@trpc/server";
+import { TRPCError, TRPCRouterRecord } from "@trpc/server";
 import bcrypt from "bcryptjs";
 import { addMinutes, isPast } from "date-fns";
 import _ from "lodash";
+import { v4 as uuid } from "uuid";
 import { z } from "zod";
 
-import { PlaidVerifyIdentityEmailTemplate, sendMail } from "@repo/email";
+import { sendMail, SpottaEmailTemplate } from "@repo/email";
 import { loginSchema } from "@repo/validations";
 
-import { AUTH_DURATION, COOKIE_NAME } from "../config";
+import { AUTH_DURATION, COOKIE_NAME, MAIN_SITE_URL } from "../config";
 import { generateAccessToken, generateRefreshToken } from "../lib";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
@@ -43,6 +43,28 @@ export const authRouter = {
       throw error;
     }
 
+    if (!user.isConfirmed) {
+      const token = uuid();
+
+      const verificationLink = `${MAIN_SITE_URL}/verify-email?token=${token}`;
+
+      await db.verificationToken.create({
+        data: {
+          user: { connect: { id: user.id } },
+          token,
+          expires: addMinutes(new Date(), 30),
+        },
+      });
+
+      await sendMail({
+        email,
+        subject: "Spotta Email Verfication",
+        html: SpottaEmailTemplate({
+          verificationLink,
+        }),
+      });
+    }
+
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
@@ -57,13 +79,6 @@ export const authRouter = {
         },
       },
     });
-
-    if (!session) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "An error occurred",
-      });
-    }
 
     const currentDate = new Date();
     cookies().set({
