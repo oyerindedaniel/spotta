@@ -68,7 +68,10 @@ export default function Login({
       if (isConfirmed) {
         router.push(redirectUrl ?? "/");
       } else {
-        onOpen({ type: "emailConfirmation", data: { email } });
+        onOpen({
+          type: "emailConfirmation",
+          data: { emailConfirmation: email },
+        });
       }
       router.refresh();
       toast({
@@ -214,7 +217,7 @@ export default function Login({
             isLoading={isPending}
           >
             <Image
-              alt="Spotta"
+              alt="Google"
               className="mr-3"
               height={25}
               src={Icons.google}

@@ -48,7 +48,7 @@ export default function VerifyEmail({
       ) : (
         <div className="flex flex-col">
           <Image
-            alt="Spotta"
+            alt="Verification success"
             className="mx-auto mb-4"
             height={120}
             src={Icons.verification}

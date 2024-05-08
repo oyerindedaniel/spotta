@@ -3,7 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { NON_DASHBOARD_PAGES } from "@/app/[lng]/constants";
 import { Icons } from "@/assets";
+import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";
 
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
@@ -13,6 +15,7 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
+  buttonVariants,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -63,7 +66,12 @@ export function Navbar({
   });
 
   return (
-    <header>
+    <header
+      className={cn(
+        "w-full",
+        NON_DASHBOARD_PAGES.includes(pathname) ? "block" : "fixed top-0 z-50",
+      )}
+    >
       <div className="flex w-full items-center justify-between px-6 py-3 md:px-14">
         <Link href="/">
           <Image
@@ -106,9 +114,20 @@ export function Navbar({
                       <DropdownMenuLabel>My Account</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuGroup>
-                        <DropdownMenuItem>
-                          Profile
-                          <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href="profile"
+                            className={cn(
+                              "w-full cursor-pointer",
+                              buttonVariants({
+                                size: "xs",
+                                variant: "unstyled",
+                              }),
+                            )}
+                          >
+                            Profile
+                            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                          </Link>
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
                       <DropdownMenuSeparator />
