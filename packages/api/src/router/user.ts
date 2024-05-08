@@ -3,13 +3,20 @@ import { cookies } from "next/headers";
 import { User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
-import { addMinutes } from "date-fns";
+import { addMinutes, isPast } from "date-fns";
 import _ from "lodash";
+import { v4 as uuid } from "uuid";
+import { z } from "zod";
 
-import { PlaidVerifyIdentityEmailTemplate, sendMail } from "@repo/email";
+import { sendMail, SpottaEmailTemplate } from "@repo/email";
 import { oauthSchema, registerSchema } from "@repo/validations";
 
-import { AUTH_DURATION, COOKIE_NAME, SALT_ROUNDS } from "../config";
+import {
+  AUTH_DURATION,
+  COOKIE_NAME,
+  MAIN_SITE_URL,
+  SALT_ROUNDS,
+} from "../config";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -63,6 +70,8 @@ export const userRouter = {
 
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
+      const token = uuid();
+
       const newUser = await db.user.create({
         data: {
           firstName,
@@ -70,15 +79,19 @@ export const userRouter = {
           email: email.toLowerCase(),
           password: hashedPassword,
           phone,
+          verificationToken: {
+            create: [{ token, expires: addMinutes(new Date(), 30) }],
+          },
         },
       });
 
-      const confirmationStatus = await sendMail({
-        email: email || "",
-        subject: "Spotta subject",
-        text: "Spotta text",
-        html: PlaidVerifyIdentityEmailTemplate({
-          validationCode: "20202",
+      const verificationLink = `${MAIN_SITE_URL}/verify-email?token=${token}`;
+
+      await sendMail({
+        email,
+        subject: "Spotta Email Verfication",
+        html: SpottaEmailTemplate({
+          verificationLink,
         }),
       });
 
@@ -142,13 +155,6 @@ export const userRouter = {
           },
         },
       });
-
-      if (!session) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "An error occurred",
-        });
-      }
 
       const currentDate = new Date();
       cookies().set({
@@ -226,13 +232,6 @@ export const userRouter = {
         },
       });
 
-      if (!session) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "An error occurred",
-        });
-      }
-
       const currentDate = new Date();
       cookies().set({
         name: COOKIE_NAME,
@@ -245,5 +244,41 @@ export const userRouter = {
       return {
         data: { ..._.omit(user, ["password"]) },
       };
+    }),
+  emailConfirmation: publicProcedure
+    .input(
+      z.object({
+        token: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { db } = ctx;
+      const { token } = input;
+
+      const findToken = await db.verificationToken.findUnique({
+        where: { token },
+        include: {
+          user: true,
+        },
+      });
+
+      if (!findToken || isPast(findToken.expires)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "The token is not available or has expired.",
+        });
+      }
+
+      const userId = findToken.user.id;
+
+      await db.user.update({
+        where: { id: userId },
+        data: {
+          isConfirmed: true,
+          emailVerified: new Date(),
+        },
+      });
+
+      return true;
     }),
 } satisfies TRPCRouterRecord;

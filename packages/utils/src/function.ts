@@ -28,3 +28,14 @@ export function getInitials(name: string): string {
   const initials: string[] = parts.map((part) => part.charAt(0));
   return initials.join("").toUpperCase();
 }
+
+export function getEmailProviderLink(email: string) {
+  const domainMatch = email.match(/@(.+)/);
+
+  if (domainMatch && domainMatch.length > 1) {
+    const domain = domainMatch[1];
+    return `https://${domain}`;
+  } else {
+    return null;
+  }
+}
