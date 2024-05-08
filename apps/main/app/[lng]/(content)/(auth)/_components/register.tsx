@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Icons } from "@/assets";
+import { useModal } from "@/hooks/use-modal-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
@@ -23,13 +24,15 @@ import {
 } from "@repo/ui";
 import { registerSchema } from "@repo/validations";
 
-import AuthSeparator from "../_components/separator";
+import AuthSeparator from "./ui/separator";
 
 type RegisterType = z.infer<typeof registerSchema>;
 
 export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const { onOpen } = useModal();
 
   const redirectUrl = searchParams?.get?.("redirectUrl");
 
@@ -48,9 +51,15 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
   });
 
   const mutateCreateUser = api.user.create.useMutation({
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
+      const { isConfirmed, email } = data;
       form.reset();
-      router.push("/login");
+
+      if (isConfirmed) {
+        router.push("/login");
+      } else {
+        onOpen({ type: "emailConfirmation", data: { email } });
+      }
     },
     onError: (error) => {
       console.error(error);
@@ -63,7 +72,7 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
 
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
   return (
-    <div>
+    <div className="mx-auto my-6 w-full max-w-[26rem] rounded-lg bg-brand-plain p-4 px-5 shadow-md">
       <h5 className="mb-6 text-center text-xl font-medium">Sign Up</h5>
       <Form {...form}>
         <form
@@ -77,7 +86,7 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
               render={({ field }) => (
                 <FormItem className="flex-[50%]">
                   <FormControl>
-                    <Input required placeholder="First name" {...field} />
+                    <Input placeholder="First name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -89,7 +98,7 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
               render={({ field }) => (
                 <FormItem className="flex-[50%]">
                   <FormControl>
-                    <Input required placeholder="Last name" {...field} />
+                    <Input placeholder="Last name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -103,7 +112,6 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
               <FormItem>
                 <FormControl>
                   <Input
-                    required
                     type="tel"
                     // pattern="[0-9]"
                     placeholder="Phone number"
@@ -121,7 +129,6 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
               <FormItem>
                 <FormControl>
                   <Input
-                    required
                     type="email"
                     placeholder="Enter email address"
                     {...field}
@@ -137,12 +144,7 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
             render={({ field }) => (
               <FormItem className="flex-[50%]">
                 <FormControl>
-                  <Input
-                    required
-                    type="password"
-                    placeholder="Password"
-                    {...field}
-                  />
+                  <Input type="password" placeholder="Password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -155,7 +157,6 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
               <FormItem className="self-top flex-[50%]">
                 <FormControl>
                   <Input
-                    required
                     type="password"
                     placeholder="Confirm Password"
                     {...field}
@@ -165,19 +166,6 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
               </FormItem>
             )}
           />
-
-          {/* <div className="flex items-center justify-between">
-            <p>Already have an account?</p>
-            <Button
-              type="button"
-              onClick={() => router.push("/sign-in")}
-              className="m-0 ml-auto inline h-fit p-0 text-[#979797]"
-              variant="unstyled"
-            >
-              Sign in
-            </Button>
-          </div> */}
-
           <Button
             className="mt-6 w-full uppercase"
             type="submit"

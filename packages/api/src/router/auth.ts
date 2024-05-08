@@ -6,6 +6,7 @@ import { addMinutes, isPast } from "date-fns";
 import _ from "lodash";
 import { z } from "zod";
 
+import { PlaidVerifyIdentityEmailTemplate, sendMail } from "@repo/email";
 import { loginSchema } from "@repo/validations";
 
 import { AUTH_DURATION, COOKIE_NAME } from "../config";

@@ -64,7 +64,7 @@ export function Navbar({
 
   return (
     <header>
-      <div className="mb-6 flex w-full items-center justify-between px-6 py-3 md:px-14">
+      <div className="flex w-full items-center justify-between px-6 py-3 md:px-14">
         <Link href="/">
           <Image
             alt="Spotta"

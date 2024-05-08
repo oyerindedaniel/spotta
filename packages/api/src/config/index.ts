@@ -19,6 +19,7 @@ export const GITHUB_CLIENT_ID = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID ?? "";
 export const GITHUB_CLIENT_SECRET = process.env.NEXT_PUBLIC_GITHUB_SECRET ?? "";
 export const GITHUB_OAUTH_REDIRECT =
   process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URL ?? "";
+export const MAIN_SITE_URL = process.env.NEXT_PUBLIC_MAIN_SITE_URL ?? "";
 
 export const COOKIE_CONFIG: CookieOptions = {
   httpOnly: true,

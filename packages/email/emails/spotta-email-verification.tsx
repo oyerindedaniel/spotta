@@ -1,35 +1,34 @@
-import * as React from "react";
 import {
   Body,
   Container,
   Head,
   Heading,
   Html,
-  Img,
   Link,
   Preview,
+  render,
   Text,
 } from "@react-email/components";
 
 import { BASE_URL } from "../src/config";
 
-interface NotionMagicLinkEmailProps {
-  loginCode?: string;
+interface SpottaEmailProps {
+  verificationLink: string;
 }
 
 const baseUrl = BASE_URL;
+export const SpottaEmailTemplate = (props: SpottaEmailProps) =>
+  render(<SpottaEmail {...props} />);
 
-export const NotionMagicLinkEmail = ({
-  loginCode,
-}: NotionMagicLinkEmailProps) => (
+export const SpottaEmail = ({ verificationLink }: SpottaEmailProps) => (
   <Html>
     <Head />
-    <Preview>Log in with this magic link</Preview>
+    <Preview>Spotta Verification Email</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Login</Heading>
+        <Heading style={h1}>Spotta Verification Email</Heading>
         <Link
-          href="https://notion.so"
+          href={verificationLink}
           target="_blank"
           style={{
             ...link,
@@ -37,12 +36,12 @@ export const NotionMagicLinkEmail = ({
             marginBottom: "16px",
           }}
         >
-          Click here to log in with this magic link
+          Click here to verify with this link
         </Link>
         <Text style={{ ...text, marginBottom: "14px" }}>
-          Or, copy and paste this temporary login code:
+          Or, copy and paste this verification link:
         </Text>
-        <code style={code}>{loginCode}</code>
+        <code style={code}>{verificationLink}</code>
         <Text
           style={{
             ...text,
@@ -51,47 +50,18 @@ export const NotionMagicLinkEmail = ({
             marginBottom: "16px",
           }}
         >
-          If you didn&apos;t try to login, you can safely ignore this email.
-        </Text>
-        <Text
-          style={{
-            ...text,
-            color: "#ababab",
-            marginTop: "12px",
-            marginBottom: "38px",
-          }}
-        >
-          Hint: You can set a permanent password in Settings & members → My
-          account.
-        </Text>
-        <Img
-          src={`${baseUrl}/static/notion-logo.png`}
-          width="32"
-          height="32"
-          alt="Notion's Logo"
-        />
-        <Text style={footer}>
-          <Link
-            href="https://notion.so"
-            target="_blank"
-            style={{ ...link, color: "#898989" }}
-          >
-            Notion.so
-          </Link>
-          , the all-in-one-workspace
-          <br />
-          for your notes, tasks, wikis, and databases.
+          If you didn&apos;t send this email, you can safely ignore it.
         </Text>
       </Container>
     </Body>
   </Html>
 );
 
-NotionMagicLinkEmail.PreviewProps = {
-  loginCode: "sparo-ndigo-amurt-secan",
-} as NotionMagicLinkEmailProps;
+SpottaEmail.PreviewProps = {
+  verificationLink: "sparo-ndigo-amurt-secan",
+} as SpottaEmailProps;
 
-export default NotionMagicLinkEmail;
+export default SpottaEmail;
 
 const main = {
   backgroundColor: "#ffffff",

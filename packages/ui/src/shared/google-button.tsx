@@ -2,8 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { generateAndValidateState, getGoogleUrl } from "@repo/utils";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "..";
 
 interface Props extends React.ComponentProps<typeof Button> {
@@ -16,18 +15,8 @@ export const GoogleButton: React.FC<Props> = ({
   isLoading,
   ...rest
 }) => {
-  const [googleUrl, setGoogleUrl] = useState("");
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const redirectUrl = searchParams?.get?.("redirectUrl") as string;
-
-  const { create } = generateAndValidateState();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setGoogleUrl(getGoogleUrl(create(redirectUrl ?? "/")));
-    }
-  }, [pathname]);
 
   return (
     <Button
@@ -35,8 +24,11 @@ export const GoogleButton: React.FC<Props> = ({
       className={cn("w-full", className)}
       variant="unstyled"
       size="lg"
-      onClick={() => window.location.assign(googleUrl || "")}
-      disabled={!googleUrl || isLoading}
+      onClick={() => {
+        const { create } = generateAndValidateState();
+        window.location.assign(getGoogleUrl(create(redirectUrl ?? "/")) ?? "");
+      }}
+      disabled={isLoading}
       {...rest}
     >
       {children}

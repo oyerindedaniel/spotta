@@ -2,8 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { generateAndValidateState, getGithubUrl } from "@repo/utils";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "..";
 
 interface Props extends React.ComponentProps<typeof Button> {
@@ -16,18 +15,8 @@ export const GithubButton: React.FC<Props> = ({
   isLoading,
   ...rest
 }) => {
-  const [githubUrl, setGithubUrl] = useState("");
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const redirectUrl = searchParams?.get?.("redirectUrl");
-
-  const { create } = generateAndValidateState();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setGithubUrl(getGithubUrl(create(redirectUrl ?? "/")));
-    }
-  }, [pathname]);
 
   return (
     <Button
@@ -35,8 +24,11 @@ export const GithubButton: React.FC<Props> = ({
       className={cn("w-full", className)}
       variant="unstyled"
       size="lg"
-      onClick={() => window.location.assign(githubUrl || "")}
-      disabled={!githubUrl || isLoading}
+      onClick={() => {
+        const { create } = generateAndValidateState();
+        window.location.assign(getGithubUrl(create(redirectUrl ?? "/")) ?? "");
+      }}
+      disabled={isLoading}
       {...rest}
     >
       {children}
