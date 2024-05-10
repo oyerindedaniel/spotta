@@ -1,4 +1,5 @@
-import { type NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
+import { userAgent } from "next/server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
 import { appRouter, createTRPCContext } from "@repo/api";
@@ -25,8 +26,10 @@ export const OPTIONS = () => {
 };
 
 const createContext = async (req: NextRequest) => {
+  const ua = userAgent(req);
   return createTRPCContext({
     headers: req.headers,
+    userAgent: ua,
   });
 };
 

@@ -28,7 +28,12 @@ export default function VerifyEmail({
 
   const emailConfirmation = api.user.emailConfirmation.useQuery(
     { token },
-    { refetchOnReconnect: false, refetchOnWindowFocus: false, retry: false },
+    {
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      refetchInterval: false,
+      retry: false,
+    },
   );
 
   return (

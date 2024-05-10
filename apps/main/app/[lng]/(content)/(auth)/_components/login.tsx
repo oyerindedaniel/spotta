@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Icons } from "@/assets";
 import { useModal } from "@/hooks/use-modal-store";
+import { useSessionStore } from "@/hooks/use-session";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthService, User } from "@prisma/client";
 import { ReloadIcon } from "@radix-ui/react-icons";
@@ -41,6 +42,8 @@ export default function Login({
 }): JSX.Element {
   const router = useRouter();
 
+  const { setData } = useSessionStore();
+
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { toast } = useToast();
@@ -63,7 +66,7 @@ export default function Login({
 
   const mutateLogin = api.auth.login.useMutation({
     onSuccess: ({ data }) => {
-      const { isConfirmed, email } = data;
+      const { isConfirmed, email, refreshToken, sessionId } = data;
       form.reset();
       if (isConfirmed) {
         router.push(redirectUrl ?? "/");
@@ -74,6 +77,7 @@ export default function Login({
         });
       }
       router.refresh();
+      setData({ refreshToken, sessionId });
       toast({
         variant: "success",
         description: "Login successful",
@@ -90,12 +94,14 @@ export default function Login({
   });
 
   const mutateGoogleOauthLogin = api.user.googleoauth.useMutation({
-    onSuccess: (data) => {
+    onSuccess: ({ data }) => {
+      const { refreshToken, sessionId } = data;
       form.reset();
       toast({
         description: "Login successful",
       });
       router.push(redirectUrlState ?? "/");
+      setData({ refreshToken, sessionId });
     },
     onError: (error) => {
       toast({
@@ -108,12 +114,14 @@ export default function Login({
   });
 
   const mutateGithubOauthLogin = api.user.githuboauth.useMutation({
-    onSuccess: (data) => {
+    onSuccess: ({ data }) => {
+      const { refreshToken, sessionId } = data;
       form.reset();
       toast({
         description: "Login successful",
       });
       router.push(redirectUrlState ?? "/");
+      setData({ refreshToken, sessionId });
     },
     onError: (error) => {
       toast({
@@ -185,7 +193,7 @@ export default function Login({
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem className="flex-[50%]">
+              <FormItem>
                 <FormControl>
                   <Input type="password" placeholder="Password" {...field} />
                 </FormControl>

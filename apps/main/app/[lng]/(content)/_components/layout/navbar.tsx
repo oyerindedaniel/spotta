@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { NON_DASHBOARD_PAGES } from "@/app/[lng]/constants";
 import { Icons } from "@/assets";
+import { useSessionStore } from "@/hooks/use-session";
 import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";
 
@@ -29,6 +30,8 @@ import {
 } from "@repo/ui";
 import { assignRedirectUrl, getInitials } from "@repo/utils";
 
+import SheetSidebar from "../../(dashboard)/_components/layout/sheet-sidebar";
+
 type AuthPage = "login" | "register";
 
 export function Navbar({
@@ -42,6 +45,11 @@ export function Navbar({
   const router = useRouter();
   const { toast } = useToast();
 
+  const {
+    data: { refreshToken },
+    updateData,
+  } = useSessionStore();
+
   const { t, i18n } = useClientTranslation({ lng });
 
   const page = pathname.split("/").at(-1) as AuthPage;
@@ -53,6 +61,7 @@ export function Navbar({
   const mutateLogout = api.auth.logout.useMutation({
     onSuccess: () => {
       router.push("/");
+      updateData({ refreshToken: "", sessionId: "" });
       router.refresh();
       toast({
         variant: "success",
@@ -68,29 +77,35 @@ export function Navbar({
   return (
     <header
       className={cn(
-        "w-full",
+        "w-full bg-background",
         NON_DASHBOARD_PAGES.includes(pathname) ? "block" : "fixed top-0 z-50",
       )}
     >
       <div className="flex w-full items-center justify-between px-6 py-3 md:px-14">
-        <Link href="/">
-          <Image
-            alt="Spotta"
-            className="block dark:hidden"
-            height={120}
-            priority
-            src={Icons.logo}
-            width={120}
-          />
-          <Image
-            alt="Spotta"
-            className="hidden dark:block"
-            height={120}
-            priority
-            src={Icons.logoDark}
-            width={120}
-          />
-        </Link>
+        <div className="flex items-center gap-4">
+          <div className="block md:hidden">
+            <SheetSidebar lng={lng} />
+          </div>
+
+          <Link href="/">
+            <Image
+              alt="Spotta"
+              className="block dark:hidden"
+              height={120}
+              priority
+              src={Icons.logo}
+              width={120}
+            />
+            <Image
+              alt="Spotta"
+              className="hidden dark:block"
+              height={120}
+              priority
+              src={Icons.logoDark}
+              width={120}
+            />
+          </Link>
+        </div>
 
         <div className="flex items-center gap-8">
           <ModeToggle />
@@ -134,10 +149,11 @@ export function Navbar({
                       <DropdownMenuItem asChild>
                         <Button
                           type="button"
-                          onClick={() => mutateLogout.mutate()}
+                          onClick={() => mutateLogout.mutate({ refreshToken })}
                           variant="unstyled"
                           size="sm"
                           className="w-full cursor-pointer"
+                          disabled={mutateLogout.isPending}
                         >
                           Log out
                           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

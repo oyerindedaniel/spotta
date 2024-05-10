@@ -9,7 +9,12 @@ import { z } from "zod";
 import { sendMail, SpottaEmailTemplate } from "@repo/email";
 import { loginSchema } from "@repo/validations";
 
-import { AUTH_DURATION, COOKIE_NAME, MAIN_SITE_URL } from "../config";
+import {
+  AUTH_DURATION,
+  COOKIE_NAME,
+  MAIN_SITE_URL,
+  SESSION_COOKIE_NAME,
+} from "../config";
 import { generateAccessToken, generateRefreshToken } from "../lib";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
@@ -20,7 +25,9 @@ export const authRouter = {
   }),
   login: publicProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {
     const { email, password } = input;
-    const { db } = ctx;
+    const { db, userAgent } = ctx;
+
+    const { os, browser } = userAgent || {};
 
     const error = new TRPCError({
       code: "UNAUTHORIZED",
@@ -71,6 +78,8 @@ export const authRouter = {
     const session = await db.session.create({
       data: {
         user: { connect: { id: user.id } },
+        os: os?.name ?? "",
+        browser: browser?.name ?? "",
         refreshTokens: {
           create: {
             token: refreshToken,
@@ -81,6 +90,7 @@ export const authRouter = {
     });
 
     const currentDate = new Date();
+
     cookies().set({
       name: COOKIE_NAME,
       value: accessToken,
@@ -89,10 +99,19 @@ export const authRouter = {
       expires: addMinutes(currentDate, Number(AUTH_DURATION)),
     });
 
+    cookies().set({
+      name: SESSION_COOKIE_NAME,
+      value: session.id,
+      httpOnly: true,
+      sameSite: "lax",
+      expires: addMinutes(currentDate, Number(AUTH_DURATION) * 2),
+    });
+
     return {
       data: {
         ..._.omit(user, ["password"]),
         refreshToken,
+        sessionId: session.id,
       },
     };
   }),
@@ -105,7 +124,7 @@ export const authRouter = {
     .query(async ({ ctx, input }) => {
       const { refreshToken: token } = input;
 
-      const { db } = ctx;
+      const { db, session: user } = ctx;
 
       const error = new TRPCError({ code: "UNAUTHORIZED" });
 
@@ -113,30 +132,16 @@ export const authRouter = {
         where: {
           token,
         },
+        include: { session: true },
       });
 
       if (!refreshToken) {
         throw error;
       }
 
-      const session = await db.session.findFirst({
-        where: {
-          refreshTokens: {
-            some: {
-              token: refreshToken.id,
-            },
-          },
-        },
-        include: {
-          user: true,
-        },
-      });
+      const session = refreshToken.session;
 
-      if (!session) {
-        throw error;
-      }
-
-      if (session.invalidatedAt && isPast(session.invalidatedAt)) {
+      if (session.invalidatedAt) {
         throw error;
       }
 
@@ -151,8 +156,8 @@ export const authRouter = {
         throw error;
       }
 
-      const newRefreshToken = generateRefreshToken(session.user);
-      const newAccessToken = generateAccessToken(session.user);
+      const newRefreshToken = generateRefreshToken(user.user);
+      const newAccessToken = generateAccessToken(user.user);
 
       await db.refreshToken.create({
         data: {
@@ -186,8 +191,43 @@ export const authRouter = {
         },
       };
     }),
-  logout: protectedProcedure.mutation(({ ctx }) => {
-    cookies().delete(COOKIE_NAME);
-    return true;
-  }),
+  logout: protectedProcedure
+    .input(
+      z.object({
+        refreshToken: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { refreshToken: token } = input;
+
+      const { db } = ctx;
+
+      const error = new TRPCError({ code: "UNAUTHORIZED" });
+
+      const refreshToken = await db.refreshToken.findUnique({
+        where: {
+          token,
+        },
+        include: { session: true },
+      });
+
+      if (!refreshToken) {
+        throw error;
+      }
+
+      const session = refreshToken.session;
+
+      await db.session.update({
+        where: {
+          id: session.id,
+        },
+        data: { invalidatedAt: new Date() },
+      });
+
+      cookies().delete(COOKIE_NAME);
+
+      return {
+        data: true,
+      };
+    }),
 } satisfies TRPCRouterRecord;

@@ -8,7 +8,7 @@ export type SideBarLink = {
 
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
-export type SideBarLinks = SideBarLink[];
+export type SideBarLinks = Array<SideBarLink>;
 
 export const SIDEBAR_LINKS: SideBarLinks = [
   {

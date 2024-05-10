@@ -17,6 +17,7 @@ import {
   forgotPasswordSchema,
   oauthSchema,
   registerSchema,
+  resetPasswordSchema,
 } from "@repo/validations";
 
 import {
@@ -24,6 +25,7 @@ import {
   COOKIE_NAME,
   MAIN_SITE_URL,
   SALT_ROUNDS,
+  SESSION_COOKIE_NAME,
 } from "../config";
 import {
   generateAccessToken,
@@ -33,7 +35,7 @@ import {
   getGoogleOauthToken,
   getGoogleUser,
 } from "../lib";
-import { publicProcedure } from "../trpc";
+import { protectedProcedure, publicProcedure } from "../trpc";
 import { generateRandomNumber } from "../utils";
 
 export const userRouter = {
@@ -111,7 +113,9 @@ export const userRouter = {
   googleoauth: publicProcedure
     .input(oauthSchema)
     .mutation(async ({ ctx, input }) => {
-      const { headers, db } = ctx;
+      const { db, userAgent } = ctx;
+
+      const { os, browser } = userAgent ?? {};
 
       const { code } = input;
 
@@ -153,9 +157,11 @@ export const userRouter = {
       const accessToken = generateAccessToken(user);
       const refreshToken = generateRefreshToken(user);
 
-      await db.session.create({
+      const session = await db.session.create({
         data: {
           user: { connect: { id: user.id } },
+          os: os?.name ?? "",
+          browser: browser?.name ?? "",
           refreshTokens: {
             create: {
               token: refreshToken,
@@ -174,14 +180,28 @@ export const userRouter = {
         expires: addMinutes(currentDate, Number(AUTH_DURATION)),
       });
 
+      cookies().set({
+        name: SESSION_COOKIE_NAME,
+        value: session.id,
+        httpOnly: true,
+        sameSite: "lax",
+        expires: addMinutes(currentDate, Number(AUTH_DURATION) * 2),
+      });
+
       return {
-        data: { ..._.omit(user, ["password"]) },
+        data: {
+          ..._.omit(user, ["password"]),
+          refreshToken,
+          sessionId: session.id,
+        },
       };
     }),
   githuboauth: publicProcedure
     .input(oauthSchema)
     .mutation(async ({ ctx, input }) => {
-      const { headers, db } = ctx;
+      const { headers, db, userAgent } = ctx;
+
+      const { os, browser } = userAgent ?? {};
 
       const { code } = input;
 
@@ -229,9 +249,11 @@ export const userRouter = {
       const accessToken = generateAccessToken(user);
       const refreshToken = generateRefreshToken(user);
 
-      await db.session.create({
+      const session = await db.session.create({
         data: {
           user: { connect: { id: user.id } },
+          os: os?.name ?? "",
+          browser: browser?.name ?? "",
           refreshTokens: {
             create: {
               token: refreshToken,
@@ -249,9 +271,20 @@ export const userRouter = {
         sameSite: "lax",
         expires: addMinutes(currentDate, Number(AUTH_DURATION)),
       });
+      cookies().set({
+        name: SESSION_COOKIE_NAME,
+        value: session.id,
+        httpOnly: true,
+        sameSite: "lax",
+        expires: addMinutes(currentDate, Number(AUTH_DURATION) * 2),
+      });
 
       return {
-        data: { ..._.omit(user, ["password"]) },
+        data: {
+          ..._.omit(user, ["password"]),
+          refreshToken,
+          sessionId: session.id,
+        },
       };
     }),
   emailConfirmation: publicProcedure
@@ -292,7 +325,9 @@ export const userRouter = {
         },
       });
 
-      return true;
+      return {
+        data: true,
+      };
     }),
   forgotPassword: publicProcedure
     .input(forgotPasswordSchema)
@@ -340,7 +375,9 @@ export const userRouter = {
         }),
       });
 
-      return true;
+      return {
+        data: true,
+      };
     }),
   forgotPasswordConfirmation: publicProcedure
     .input(forgotPasswordConfirmationSchema)
@@ -389,6 +426,95 @@ export const userRouter = {
 
       return {
         data: { ..._.omit(updatedUser, ["password"]) },
+      };
+    }),
+  resetPassword: protectedProcedure
+    .input(resetPasswordSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+      const { newPassword, confirmNewPassword, oldPassword } = input;
+      const { id, password } = session.user;
+
+      const error = new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Invalid credentials",
+      });
+
+      const oldPasswordMatch = await bcrypt.compare(
+        oldPassword,
+        password ?? "",
+      );
+
+      if (!oldPasswordMatch) {
+        throw error;
+      }
+
+      if (newPassword !== confirmNewPassword) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Passwords don't match",
+        });
+      }
+
+      const hashedNewPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+      await db.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          password: hashedNewPassword,
+        },
+      });
+
+      return {
+        data: true,
+      };
+    }),
+  sessions: protectedProcedure.query(async ({ ctx }) => {
+    const { session, db } = ctx;
+
+    const { id } = session.user;
+
+    const activeSessions = await db.session.findMany({
+      where: {
+        user: { id },
+        invalidatedAt: null,
+        refreshTokens: {
+          some: { expires: { gt: addMinutes(new Date(), 30) } },
+        },
+      },
+    });
+
+    return {
+      data: activeSessions ?? [],
+    };
+  }),
+  updateSession: protectedProcedure
+    .input(
+      z.object({
+        sessionId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+
+      const { sessionId: activeSessionId } = session.user;
+
+      const { sessionId } = input;
+
+      await db.session.update({
+        where: {
+          id: sessionId,
+          NOT: { id: activeSessionId },
+        },
+        data: {
+          invalidatedAt: new Date(),
+        },
+      });
+
+      return {
+        data: true,
       };
     }),
 } satisfies TRPCRouterRecord;
