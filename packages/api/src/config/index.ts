@@ -10,6 +10,8 @@ export const REFRESH_TOKEN_SECRET =
   process.env.JWT_REFRESH_SECRET ?? "No_Secret-Refresh!";
 export const AUTH_DURATION = process.env.AUTH_DURATION ?? 30;
 export const COOKIE_NAME = process.env.COOKIE_NAME ?? "access_token";
+export const SESSION_COOKIE_NAME =
+  process.env.SESSION_COOKIE_NAME ?? "session_token";
 export const SALT_ROUNDS = process.env.SALT_ROUNDS ?? 10;
 export const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
 export const GOOGLE_CLIENT_SECRET = process.env.NEXT_PUBLIC_GOOGLE_SECRET ?? "";

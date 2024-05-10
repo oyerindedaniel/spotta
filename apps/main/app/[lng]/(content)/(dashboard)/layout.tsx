@@ -22,10 +22,10 @@ export default async function Layout({
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 top-0 z-10 w-[200px] bg-background pt-[100px]">
+      <div className="fixed bottom-0 left-0 top-0 z-10 w-[200px] -translate-x-full bg-background pt-[100px] md:translate-x-0">
         <Sidebar sidebarItems={SIDEBAR_LINKS} lng={lng} />
       </div>
-      <div className="relative right-0 ml-[200px] mt-[64px] h-full min-h-[calc(100vh-64px)] bg-white p-8 dark:bg-[#18181B]">
+      <div className="relative right-0 mt-[64px] h-full min-h-[calc(100vh-64px)] bg-white p-8 dark:bg-[#18181B] md:ml-[200px]">
         {children}
       </div>
     </>

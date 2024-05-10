@@ -8,6 +8,7 @@
  */
 
 // import type { Session } from "@acme/auth";
+import { userAgent } from "next/server";
 import { initTRPC, TRPCError } from "@trpc/server";
 import cookie from "cookie";
 import superjson from "superjson";
@@ -15,7 +16,7 @@ import { ZodError } from "zod";
 
 import { db } from "@repo/db";
 
-import { COOKIE_NAME } from "./config";
+import { COOKIE_NAME, SESSION_COOKIE_NAME } from "./config";
 import { verifyToken } from "./middleware/auth";
 
 /**
@@ -31,12 +32,17 @@ import { verifyToken } from "./middleware/auth";
  * @see https://trpc.io/docs/server/context
  */
 
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async (opts: {
+  headers: Headers;
+  userAgent?: ReturnType<typeof userAgent>;
+}) => {
   const { headers } = opts;
   // console.log("terminal link --------------", headers);
   const cookies = cookie.parse(headers?.get?.("cookie") ?? "");
   const accessToken = cookies[COOKIE_NAME] ?? "";
-  const session = await verifyToken(accessToken);
+  const sessionId = cookies[SESSION_COOKIE_NAME] ?? "";
+
+  const session = await verifyToken({ accessToken, sessionId });
 
   console.log("session----------------------------", session);
 

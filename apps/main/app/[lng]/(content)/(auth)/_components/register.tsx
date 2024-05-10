@@ -89,7 +89,7 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
               control={form.control}
               name="firstName"
               render={({ field }) => (
-                <FormItem className="flex-[50%]">
+                <FormItem>
                   <FormControl>
                     <Input placeholder="First name" {...field} />
                   </FormControl>
@@ -101,7 +101,7 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
               control={form.control}
               name="lastName"
               render={({ field }) => (
-                <FormItem className="flex-[50%]">
+                <FormItem>
                   <FormControl>
                     <Input placeholder="Last name" {...field} />
                   </FormControl>
@@ -147,7 +147,7 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem className="flex-[50%]">
+              <FormItem>
                 <FormControl>
                   <Input type="password" placeholder="Password" {...field} />
                 </FormControl>
@@ -159,7 +159,7 @@ export default function Register({ lng }: { lng: LanguagesType }): JSX.Element {
             control={form.control}
             name="confirmPassword"
             render={({ field }) => (
-              <FormItem className="self-top flex-[50%]">
+              <FormItem>
                 <FormControl>
                   <Input
                     type="password"
