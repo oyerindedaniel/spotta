@@ -165,7 +165,7 @@ export const userRouter = {
           refreshTokens: {
             create: {
               token: refreshToken,
-              expires: addMinutes(new Date(), Number(AUTH_DURATION) * 2),
+              expires: addMinutes(new Date(), Number(AUTH_DURATION)),
             },
           },
         },
@@ -185,7 +185,7 @@ export const userRouter = {
         value: session.id,
         httpOnly: true,
         sameSite: "lax",
-        expires: addMinutes(currentDate, Number(AUTH_DURATION) * 2),
+        expires: addMinutes(currentDate, Number(AUTH_DURATION)),
       });
 
       return {
@@ -257,7 +257,7 @@ export const userRouter = {
           refreshTokens: {
             create: {
               token: refreshToken,
-              expires: addMinutes(new Date(), Number(AUTH_DURATION) * 2),
+              expires: addMinutes(new Date(), Number(AUTH_DURATION)),
             },
           },
         },
@@ -276,7 +276,7 @@ export const userRouter = {
         value: session.id,
         httpOnly: true,
         sameSite: "lax",
-        expires: addMinutes(currentDate, Number(AUTH_DURATION) * 2),
+        expires: addMinutes(currentDate, Number(AUTH_DURATION)),
       });
 
       return {
@@ -481,7 +481,7 @@ export const userRouter = {
         user: { id },
         invalidatedAt: null,
         refreshTokens: {
-          some: { expires: { gt: addMinutes(new Date(), 30) } },
+          some: { expires: { gt: new Date() } },
         },
       },
     });

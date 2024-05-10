@@ -83,7 +83,7 @@ export const authRouter = {
         refreshTokens: {
           create: {
             token: refreshToken,
-            expires: addMinutes(new Date(), Number(AUTH_DURATION) * 2),
+            expires: addMinutes(new Date(), Number(AUTH_DURATION)),
           },
         },
       },
@@ -104,7 +104,7 @@ export const authRouter = {
       value: session.id,
       httpOnly: true,
       sameSite: "lax",
-      expires: addMinutes(currentDate, Number(AUTH_DURATION) * 2),
+      expires: addMinutes(currentDate, Number(AUTH_DURATION)),
     });
 
     return {
@@ -163,16 +163,7 @@ export const authRouter = {
         data: {
           session: { connect: { id: session.id } },
           token: newRefreshToken,
-          expires: addMinutes(new Date(), Number(AUTH_DURATION) * 2),
-        },
-      });
-
-      await db.refreshToken.update({
-        where: {
-          id: refreshToken.id,
-        },
-        data: {
-          expires: new Date(),
+          expires: addMinutes(new Date(), Number(AUTH_DURATION)),
         },
       });
 
@@ -183,6 +174,15 @@ export const authRouter = {
         httpOnly: true,
         sameSite: "lax",
         expires: addMinutes(currentDate, Number(AUTH_DURATION)),
+      });
+
+      await db.refreshToken.update({
+        where: {
+          id: refreshToken.id,
+        },
+        data: {
+          expires: new Date(),
+        },
       });
 
       return {
@@ -225,6 +225,7 @@ export const authRouter = {
       });
 
       cookies().delete(COOKIE_NAME);
+      cookies().delete(SESSION_COOKIE_NAME);
 
       return {
         data: true,
