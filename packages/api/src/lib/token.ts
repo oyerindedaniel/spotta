@@ -9,13 +9,13 @@ import {
 
 function generateAccessToken(user: User): string {
   return jwt.sign({ id: user.id }, ACCESS_TOKEN_SECRET, {
-    expiresIn: `${AUTH_DURATION}m`,
+    expiresIn: `${Number(AUTH_DURATION)}m`,
   });
 }
 
 function generateRefreshToken(user: User): string {
   return jwt.sign({ id: user.id }, REFRESH_TOKEN_SECRET, {
-    expiresIn: `${Number(AUTH_DURATION) * 2}m`,
+    expiresIn: `${Number(AUTH_DURATION)}m`,
   });
 }
 
