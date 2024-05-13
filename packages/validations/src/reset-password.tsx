@@ -2,7 +2,7 @@ import * as z from "zod";
 
 const resetPasswordSchema = z
   .object({
-    oldPassword: z.string().trim().min(1, { message: "Required" }),
+    oldPassword: z.string().min(1, { message: "Old password is required" }),
     newPassword: z
       .string()
       .min(8, { message: "Password must be at least 8 characters long" })
