@@ -16,6 +16,7 @@
   "dependencies": {
     "@prisma/client": "^5.13.0",
     "@repo/db": "workspace:*",
+    "@repo/api": "workspace:*",
     "@repo/email": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/utils": "workspace:*",
@@ -53,9 +54,6 @@
     "prettier": "^3.2.5",
     "prisma": "^5.13.0",
     "typescript": "^5.3.3"
-  },
-  "browser": {
-    "crypto": false
   },
   "prettier": "@repo/prettier-config"
 }
