@@ -16,7 +16,7 @@ import { ZodError } from "zod";
 
 import { db } from "@repo/db";
 
-import { COOKIE_NAME, SESSION_COOKIE_NAME } from "./config";
+import { COOKIE_NAME } from "./config";
 import { verifyToken } from "./middleware/auth";
 
 /**
@@ -40,9 +40,8 @@ export const createTRPCContext = async (opts: {
   // console.log("terminal link --------------", headers);
   const cookies = cookie.parse(headers?.get?.("cookie") ?? "");
   const accessToken = cookies[COOKIE_NAME] ?? "";
-  const sessionId = cookies[SESSION_COOKIE_NAME] ?? "";
 
-  const session = await verifyToken({ accessToken, sessionId });
+  const session = await verifyToken(accessToken);
 
   console.log("session----------------------------", session);
 

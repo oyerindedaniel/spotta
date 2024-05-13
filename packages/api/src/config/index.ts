@@ -23,8 +23,10 @@ export const GITHUB_OAUTH_REDIRECT =
   process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URL ?? "";
 export const MAIN_SITE_URL = process.env.NEXT_PUBLIC_MAIN_SITE_URL ?? "";
 
-export const COOKIE_CONFIG: CookieOptions = {
-  httpOnly: true,
+export const REDIS_SESSION_DEFAULT_EXPIRE = 86400;
+
+export const COOKIE_CONFIG: any = {
+  httpOnly: "true",
   secure: Boolean(Number(process.env.COOKIE_SECURE! || 0)),
   sameSite: process.env.COOKIE_SAME_SITE! || "lax",
 };

@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { User } from "@prisma/client";
+import { Session, User } from "@prisma/client";
 import { TRPCError, TRPCRouterRecord } from "@trpc/server";
 import bcrypt from "bcryptjs";
 import { addMinutes, isAfter, isPast } from "date-fns";
@@ -12,6 +12,7 @@ import {
   SpottaEmailTemplate,
   SpottaForgotPasswordEmailTemplate,
 } from "@repo/email";
+import { RefreshTokenRedisObj } from "@repo/types";
 import {
   forgotPasswordConfirmationSchema,
   forgotPasswordSchema,
@@ -22,11 +23,13 @@ import {
 
 import {
   AUTH_DURATION,
+  COOKIE_CONFIG,
   COOKIE_NAME,
   MAIN_SITE_URL,
+  REDIS_SESSION_DEFAULT_EXPIRE,
   SALT_ROUNDS,
-  SESSION_COOKIE_NAME,
 } from "../config";
+import { redis } from "../config/redis";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -154,38 +157,37 @@ export const userRouter = {
         user = findUser;
       }
 
-      const accessToken = generateAccessToken(user);
-      const refreshToken = generateRefreshToken(user);
-
       const session = await db.session.create({
         data: {
           user: { connect: { id: user.id } },
           os: os?.name ?? "",
           browser: browser?.name ?? "",
-          refreshTokens: {
-            create: {
-              token: refreshToken,
-              expires: addMinutes(new Date(), Number(AUTH_DURATION)),
-            },
-          },
         },
       });
 
       const currentDate = new Date();
+
+      const accessToken = generateAccessToken({ user, session });
+      const refreshToken = generateRefreshToken({ session });
+
+      const refreshTokens = [];
+
+      const refreshTokenSchema = {
+        token: refreshToken,
+        expires: addMinutes(currentDate, Number(AUTH_DURATION)),
+        userId: user.id,
+      };
+
+      refreshTokens.push(refreshTokenSchema);
+
+      await redis.set(session.id, JSON.stringify(refreshTokens));
+      await redis.expire(session.id, REDIS_SESSION_DEFAULT_EXPIRE);
+
       cookies().set({
         name: COOKIE_NAME,
         value: accessToken,
-        httpOnly: true,
-        sameSite: "lax",
         expires: addMinutes(currentDate, Number(AUTH_DURATION)),
-      });
-
-      cookies().set({
-        name: SESSION_COOKIE_NAME,
-        value: session.id,
-        httpOnly: true,
-        sameSite: "lax",
-        expires: addMinutes(currentDate, Number(AUTH_DURATION)),
+        ...COOKIE_CONFIG,
       });
 
       return {
@@ -199,7 +201,7 @@ export const userRouter = {
   githuboauth: publicProcedure
     .input(oauthSchema)
     .mutation(async ({ ctx, input }) => {
-      const { headers, db, userAgent } = ctx;
+      const { db, userAgent } = ctx;
 
       const { os, browser } = userAgent ?? {};
 
@@ -246,37 +248,37 @@ export const userRouter = {
         user = findUser;
       }
 
-      const accessToken = generateAccessToken(user);
-      const refreshToken = generateRefreshToken(user);
-
       const session = await db.session.create({
         data: {
           user: { connect: { id: user.id } },
           os: os?.name ?? "",
           browser: browser?.name ?? "",
-          refreshTokens: {
-            create: {
-              token: refreshToken,
-              expires: addMinutes(new Date(), Number(AUTH_DURATION)),
-            },
-          },
         },
       });
 
       const currentDate = new Date();
+
+      const accessToken = generateAccessToken({ user, session });
+      const refreshToken = generateRefreshToken({ session });
+
+      const refreshTokens = [];
+
+      const refreshTokenSchema = {
+        token: refreshToken,
+        expires: addMinutes(currentDate, Number(AUTH_DURATION)),
+        userId: user.id,
+      };
+
+      refreshTokens.push(refreshTokenSchema);
+
+      await redis.set(session.id, JSON.stringify(refreshTokens));
+      await redis.expire(session.id, REDIS_SESSION_DEFAULT_EXPIRE);
+
       cookies().set({
         name: COOKIE_NAME,
         value: accessToken,
-        httpOnly: true,
-        sameSite: "lax",
         expires: addMinutes(currentDate, Number(AUTH_DURATION)),
-      });
-      cookies().set({
-        name: SESSION_COOKIE_NAME,
-        value: session.id,
-        httpOnly: true,
-        sameSite: "lax",
-        expires: addMinutes(currentDate, Number(AUTH_DURATION)),
+        ...COOKIE_CONFIG,
       });
 
       return {
@@ -476,15 +478,37 @@ export const userRouter = {
 
     const { id } = session.user;
 
-    const activeSessions = await db.session.findMany({
+    const sessions = await db.session.findMany({
       where: {
         user: { id },
         invalidatedAt: null,
-        refreshTokens: {
-          some: { expires: { gt: new Date() } },
-        },
       },
     });
+
+    async function checkExpiry(sessions: Session[]): Promise<Array<Session>> {
+      const activeSessions: Array<Session> = [];
+
+      for (const session of sessions) {
+        const id = (await redis.get(
+          session.id,
+        )) as Array<RefreshTokenRedisObj> | null;
+
+        if (id) {
+          const tokenObjArray = id;
+          if (
+            tokenObjArray.some(
+              (tokenObj) => new Date(tokenObj.expires) > new Date(),
+            )
+          ) {
+            activeSessions.push(session);
+          }
+        }
+      }
+
+      return activeSessions;
+    }
+
+    const activeSessions = await checkExpiry(sessions);
 
     return {
       data: activeSessions ?? [],

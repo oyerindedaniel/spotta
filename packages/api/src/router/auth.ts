@@ -7,15 +7,19 @@ import { v4 as uuid } from "uuid";
 import { z } from "zod";
 
 import { sendMail, SpottaEmailTemplate } from "@repo/email";
+import { type RefreshTokenRedisObj } from "@repo/types";
 import { loginSchema } from "@repo/validations";
 
 import {
   AUTH_DURATION,
+  COOKIE_CONFIG,
   COOKIE_NAME,
   MAIN_SITE_URL,
-  SESSION_COOKIE_NAME,
+  REDIS_SESSION_DEFAULT_EXPIRE,
 } from "../config";
+import { redis } from "../config/redis";
 import { generateAccessToken, generateRefreshToken } from "../lib";
+import { verifyRefreshToken } from "../middleware/auth";
 import { protectedProcedure, publicProcedure } from "../trpc";
 
 export const authRouter = {
@@ -72,39 +76,37 @@ export const authRouter = {
       });
     }
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-
     const session = await db.session.create({
       data: {
         user: { connect: { id: user.id } },
         os: os?.name ?? "",
         browser: browser?.name ?? "",
-        refreshTokens: {
-          create: {
-            token: refreshToken,
-            expires: addMinutes(new Date(), Number(AUTH_DURATION)),
-          },
-        },
       },
     });
 
     const currentDate = new Date();
 
+    const accessToken = generateAccessToken({ user, session });
+    const refreshToken = generateRefreshToken({ session });
+
+    const refreshTokens = [];
+
+    const refreshTokenSchema = {
+      token: refreshToken,
+      expires: addMinutes(currentDate, Number(AUTH_DURATION)),
+      userId: user.id,
+    };
+
+    refreshTokens.push(refreshTokenSchema);
+
+    await redis.set(session.id, JSON.stringify(refreshTokens));
+    await redis.expire(session.id, REDIS_SESSION_DEFAULT_EXPIRE);
+
     cookies().set({
       name: COOKIE_NAME,
       value: accessToken,
-      httpOnly: true,
-      sameSite: "lax",
       expires: addMinutes(currentDate, Number(AUTH_DURATION)),
-    });
-
-    cookies().set({
-      name: SESSION_COOKIE_NAME,
-      value: session.id,
-      httpOnly: true,
-      sameSite: "lax",
-      expires: addMinutes(currentDate, Number(AUTH_DURATION)),
+      ...COOKIE_CONFIG,
     });
 
     return {
@@ -115,7 +117,7 @@ export const authRouter = {
       },
     };
   }),
-  refresh: protectedProcedure
+  refreshToken: protectedProcedure
     .input(
       z.object({
         refreshToken: z.string(),
@@ -124,28 +126,35 @@ export const authRouter = {
     .query(async ({ ctx, input }) => {
       const { refreshToken: token } = input;
 
-      const { db, session: user } = ctx;
+      const { db, session: activeUserSession } = ctx;
+
+      const { sessionId } = activeUserSession.user;
 
       const error = new TRPCError({ code: "UNAUTHORIZED" });
 
-      const refreshToken = await db.refreshToken.findUnique({
-        where: {
-          token,
-        },
-        include: { session: true },
-      });
+      const session = await verifyRefreshToken(token);
 
-      if (!refreshToken) {
+      if (!session) throw error;
+
+      if (session.id !== sessionId) throw error;
+
+      const refreshTokens = (await redis.get(
+        sessionId,
+      )) as Array<RefreshTokenRedisObj>;
+
+      const foundToken = refreshTokens.find(
+        (refreshToken) => refreshToken.token === token,
+      );
+
+      if (!foundToken) {
         throw error;
       }
-
-      const session = refreshToken.session;
 
       if (session.invalidatedAt) {
         throw error;
       }
 
-      if (isPast(refreshToken.expires)) {
+      if (isPast(new Date(foundToken.expires))) {
         await db.session.update({
           where: {
             id: session.id,
@@ -156,33 +165,32 @@ export const authRouter = {
         throw error;
       }
 
-      const newRefreshToken = generateRefreshToken(user.user);
-      const newAccessToken = generateAccessToken(user.user);
-
-      await db.refreshToken.create({
-        data: {
-          session: { connect: { id: session.id } },
-          token: newRefreshToken,
-          expires: addMinutes(new Date(), Number(AUTH_DURATION)),
-        },
+      const newRefreshToken = generateRefreshToken({ session });
+      const newAccessToken = generateAccessToken({
+        user: activeUserSession.user,
+        session,
       });
 
       const currentDate = new Date();
+
+      const refreshTokenSchema = {
+        token: newRefreshToken,
+        expires: addMinutes(currentDate, Number(AUTH_DURATION)),
+        userId: activeUserSession.user.id,
+      };
+
+      refreshTokens.push(refreshTokenSchema);
+
+      foundToken.expires = new Date();
+
+      await redis.set(session.id, JSON.stringify(refreshTokens));
+      await redis.expire(session.id, REDIS_SESSION_DEFAULT_EXPIRE);
+
       cookies().set({
         name: COOKIE_NAME,
         value: newAccessToken,
-        httpOnly: true,
-        sameSite: "lax",
         expires: addMinutes(currentDate, Number(AUTH_DURATION)),
-      });
-
-      await db.refreshToken.update({
-        where: {
-          id: refreshToken.id,
-        },
-        data: {
-          expires: new Date(),
-        },
+        ...COOKIE_CONFIG,
       });
 
       return {
@@ -200,32 +208,36 @@ export const authRouter = {
     .mutation(async ({ ctx, input }) => {
       const { refreshToken: token } = input;
 
-      const { db } = ctx;
+      const {
+        db,
+        session: {
+          user: { sessionId },
+        },
+      } = ctx;
 
       const error = new TRPCError({ code: "UNAUTHORIZED" });
 
-      const refreshToken = await db.refreshToken.findUnique({
-        where: {
-          token,
-        },
-        include: { session: true },
-      });
+      const refreshTokens = (await redis.get(
+        sessionId,
+      )) as Array<RefreshTokenRedisObj>;
 
-      if (!refreshToken) {
+      const foundToken = refreshTokens.find(
+        (refreshToken) => refreshToken.token === token,
+      );
+
+      if (!foundToken) {
         throw error;
       }
 
-      const session = refreshToken.session;
-
       await db.session.update({
         where: {
-          id: session.id,
+          id: sessionId,
         },
         data: { invalidatedAt: new Date() },
       });
 
+      await redis.del(sessionId);
       cookies().delete(COOKIE_NAME);
-      cookies().delete(SESSION_COOKIE_NAME);
 
       return {
         data: true,
