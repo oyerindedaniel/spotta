@@ -180,8 +180,11 @@ export const userRouter = {
 
       refreshTokens.push(refreshTokenSchema);
 
-      await redis.set(session.id, JSON.stringify(refreshTokens));
-      await redis.expire(session.id, REDIS_SESSION_DEFAULT_EXPIRE);
+      await redis.setex(
+        session.id,
+        REDIS_SESSION_DEFAULT_EXPIRE,
+        JSON.stringify(refreshTokens),
+      );
 
       cookies().set({
         name: COOKIE_NAME,
@@ -271,8 +274,11 @@ export const userRouter = {
 
       refreshTokens.push(refreshTokenSchema);
 
-      await redis.set(session.id, JSON.stringify(refreshTokens));
-      await redis.expire(session.id, REDIS_SESSION_DEFAULT_EXPIRE);
+      await redis.setex(
+        session.id,
+        REDIS_SESSION_DEFAULT_EXPIRE,
+        JSON.stringify(refreshTokens),
+      );
 
       cookies().set({
         name: COOKIE_NAME,

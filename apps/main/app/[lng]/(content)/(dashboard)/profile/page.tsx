@@ -1,9 +1,11 @@
 import { LanguagesType } from "@repo/i18n";
 
+import Profile from "../_components/profile";
+
 export default async function ProfilePage({
   params: { lng },
 }: {
   params: { lng: LanguagesType };
 }) {
-  return <h1>DASHBOARD</h1>;
+  return <Profile lng={lng} />;
 }

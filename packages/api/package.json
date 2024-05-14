@@ -16,6 +16,7 @@
   "dependencies": {
     "@prisma/client": "^5.13.0",
     "@repo/db": "workspace:*",
+    "@repo/hooks": "workspace:*",
     "@repo/api": "workspace:*",
     "@repo/email": "workspace:*",
     "@repo/types": "workspace:*",
