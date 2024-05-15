@@ -16,6 +16,10 @@ import { Button } from "./button";
 import { Progress } from "./progress";
 import { ScrollArea } from "./scroll-area";
 
+function isFileWithPreview(file: File): file is File & { preview: string } {
+  return "preview" in file && typeof file.preview === "string";
+}
+
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Value of the uploader.
@@ -93,7 +97,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
 }
 
-export function FileUploader(props: FileUploaderProps) {
+function FileUploader(props: FileUploaderProps) {
   const {
     value: valueProp,
     onValueChange,
@@ -109,7 +113,7 @@ export function FileUploader(props: FileUploaderProps) {
   } = props;
 
   const [files, setFiles] = useControllableState({
-    prop: valueProp,
+    value: valueProp,
     onChange: onValueChange,
   });
 
@@ -311,6 +315,4 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
   );
 }
 
-function isFileWithPreview(file: File): file is File & { preview: string } {
-  return "preview" in file && typeof file.preview === "string";
-}
+export { FileCard, FileUploader };

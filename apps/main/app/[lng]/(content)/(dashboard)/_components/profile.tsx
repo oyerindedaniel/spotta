@@ -1,26 +1,45 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { User } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useUploadThing } from "@repo/hooks";
+import { useControllableState, useUploadThing } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
+import { api } from "@repo/trpc/src/react";
 import {
-  FileUploader,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
+  useToast,
 } from "@repo/ui";
 import { updateSchema } from "@repo/validations";
 
-export default function Profile({ lng }: { lng: LanguagesType }) {
+export default function Profile({
+  lng,
+  session,
+}: {
+  lng: LanguagesType;
+  session: User | null;
+}) {
+  const router = useRouter();
+  const { toast } = useToast();
+
   const { startUpload, isUploading, progress } = useUploadThing(
     "profileImageUploader",
   );
+
+  const [files, setFiles] = useControllableState({
+    value: "",
+    onChange: () => {},
+  });
+
+  const { firstName, lastName, phone, email, picture } = session ?? {};
 
   type UpdateProfileType = z.infer<typeof updateSchema>;
 
@@ -28,13 +47,38 @@ export default function Profile({ lng }: { lng: LanguagesType }) {
     resolver: zodResolver(updateSchema),
     defaultValues: {
       picture: undefined,
+      firstName,
+      lastName,
+      email,
+      phone: phone ?? "",
     },
   });
 
-  const onSubmit = (data: UpdateProfileType) => {};
+  const mutateUpdateUser = api.user.update.useMutation({
+    onSuccess: () => {
+      form.reset();
+      toast({
+        variant: "success",
+        description: "Update account successful",
+      });
+      router.refresh();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: error?.message,
+      });
+      console.error(error);
+      router.refresh();
+    },
+  });
+
+  const onSubmit = (data: UpdateProfileType) => {
+    mutateUpdateUser.mutate(data);
+  };
 
   return (
-    <div className="w-full">
+    <div className="">
       <div>
         <h5>User Profile</h5>
         <p>Update your personal details here</p>
@@ -54,13 +98,12 @@ export default function Profile({ lng }: { lng: LanguagesType }) {
                     <FormItem className="w-full">
                       <FormLabel>Images</FormLabel>
                       <FormControl>
-                        <FileUploader
+                        {/* <FileUploader
                           value={field.value}
                           onValueChange={field.onChange}
-                          maxFiles={1}
                           maxSize={4 * 1024 * 1024}
                           disabled={isUploading}
-                        />
+                        /> */}
                       </FormControl>
                       <FormMessage />
                     </FormItem>

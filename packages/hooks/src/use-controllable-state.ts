@@ -1,67 +1,66 @@
-import * as React from "react";
+"use client";
+
+import { useMemo, useState } from "react";
 
 import { useCallbackRef } from "./use-callback-ref";
 
 /**
- * @see https://github.com/radix-ui/primitives/blob/main/packages/react/use-controllable-state/src/useControllableState.tsx
+ * Given a prop value and state value, the useControllableProp hook is used to determine whether a component is controlled or uncontrolled, and also returns the computed value.
+ *
+ * @see Docs https://chakra-ui.com/docs/hooks/use-controllable#usecontrollableprop
  */
-
-type UseControllableStateParams<T> = {
-  prop?: T | undefined;
-  defaultProp?: T | undefined;
-  onChange?: (state: T) => void;
-};
-
-type SetStateFn<T> = (prevState?: T) => T;
-
-function useControllableState<T>({
-  prop,
-  defaultProp,
-  onChange = () => {},
-}: UseControllableStateParams<T>) {
-  const [uncontrolledProp, setUncontrolledProp] = useUncontrolledState({
-    defaultProp,
-    onChange,
-  });
-  const isControlled = prop !== undefined;
-  const value = isControlled ? prop : uncontrolledProp;
-  const handleChange = useCallbackRef(onChange);
-
-  const setValue: React.Dispatch<React.SetStateAction<T | undefined>> =
-    React.useCallback(
-      (nextValue) => {
-        if (isControlled) {
-          const setter = nextValue as SetStateFn<T>;
-          const value =
-            typeof nextValue === "function" ? setter(prop) : nextValue;
-          if (value !== prop) handleChange(value as T);
-        } else {
-          setUncontrolledProp(nextValue);
-        }
-      },
-      [isControlled, prop, setUncontrolledProp, handleChange],
-    );
-
-  return [value, setValue] as const;
+export function useControllableProp<T>(prop: T | undefined, state: T) {
+  const controlled = typeof prop !== "undefined";
+  const value = controlled ? prop : state;
+  return useMemo<[boolean, T]>(() => [controlled, value], [controlled, value]);
 }
 
-function useUncontrolledState<T>({
-  defaultProp,
-  onChange,
-}: Omit<UseControllableStateParams<T>, "prop">) {
-  const uncontrolledState = React.useState<T | undefined>(defaultProp);
-  const [value] = uncontrolledState;
-  const prevValueRef = React.useRef(value);
-  const handleChange = useCallbackRef(onChange);
+export interface UseControllableStateProps<T> {
+  value?: T;
+  defaultValue?: T | (() => T);
+  onChange?: (value: T) => void;
+  shouldUpdate?: (prev: T, next: T) => boolean;
+}
 
-  React.useEffect(() => {
-    if (prevValueRef.current !== value) {
-      handleChange(value as T);
-      prevValueRef.current = value;
-    }
-  }, [value, prevValueRef, handleChange]);
+/**
+ * The `useControllableState` hook returns the state and function that updates the state, just like React.useState does.
+ *
+ * @see Docs https://chakra-ui.com/docs/hooks/use-controllable#usecontrollablestate
+ */
+function useControllableState<T>(props: UseControllableStateProps<T>) {
+  const {
+    value: valueProp,
+    defaultValue,
+    onChange,
+    shouldUpdate = (prev, next) => prev !== next,
+  } = props;
 
-  return uncontrolledState;
+  const onChangeProp = useCallbackRef(onChange);
+  const shouldUpdateProp = useCallbackRef(shouldUpdate);
+
+  const [uncontrolledState, setUncontrolledState] = useState(defaultValue as T);
+  const controlled = valueProp !== undefined;
+  const value = controlled ? valueProp : uncontrolledState;
+
+  const setValue = useCallbackRef(
+    (next: React.SetStateAction<T>) => {
+      const setter = next as (prevState?: T) => T;
+      const nextValue = typeof next === "function" ? setter(value) : next;
+
+      if (!shouldUpdateProp(value, nextValue)) {
+        return;
+      }
+
+      if (!controlled) {
+        setUncontrolledState(nextValue);
+      }
+
+      onChangeProp(nextValue);
+    },
+    [controlled, onChangeProp, value, shouldUpdateProp],
+  );
+
+  return [value, setValue] as [T, React.Dispatch<React.SetStateAction<T>>];
 }
 
 export { useControllableState };

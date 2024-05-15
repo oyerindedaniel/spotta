@@ -332,6 +332,9 @@ importers:
       '@repo/hooks':
         specifier: workspace:*
         version: link:../hooks
+      '@repo/trpc':
+        specifier: workspace:*
+        version: link:../trpc
       '@repo/types':
         specifier: workspace:*
         version: link:../types

@@ -18,6 +18,7 @@
     "@repo/db": "workspace:*",
     "@repo/hooks": "workspace:*",
     "@repo/email": "workspace:*",
+    "@repo/trpc": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/validations": "workspace:*",
     "@trpc/server": "11.0.0-rc.334",
