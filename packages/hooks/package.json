@@ -15,7 +15,6 @@
   "dependencies": {
     "@prisma/client": "^5.13.0",
     "@repo/api": "workspace:*",
-    "@repo/db": "workspace:*",
     "@repo/trpc": "workspace:*",
     "@repo/utils": "workspace:*",
     "@uploadthing/react": "^6.5.3",

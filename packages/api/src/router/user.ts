@@ -19,6 +19,7 @@ import {
   oauthSchema,
   registerSchema,
   resetPasswordSchema,
+  updateSchema,
 } from "@repo/validations";
 
 import {
@@ -111,6 +112,33 @@ export const userRouter = {
 
       return {
         data: { ..._.omit(newUser, ["password"]) },
+      };
+    }),
+  update: protectedProcedure
+    .input(updateSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+
+      const { id, email: oldUserEmail } = session.user;
+
+      const { firstName, lastName, phone, email, picture } = input;
+
+      const updateUser = await db.user.update({
+        where: { id },
+        data: {
+          firstName,
+          lastName,
+          phone,
+          email,
+          ...(oldUserEmail.toLowerCase() !== email.toLowerCase() && {
+            isConfirmed: false,
+          }),
+          ...(typeof picture === "string" && { picture }),
+        },
+      });
+
+      return {
+        data: updateUser,
       };
     }),
   googleoauth: publicProcedure
