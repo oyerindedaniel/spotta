@@ -1,7 +1,7 @@
 "use client";
 
 import { Cross2Icon, UploadIcon } from "@radix-ui/react-icons";
-import { useControllableState } from "@repo/hooks";
+import { useControllableState } from "@repo/hooks/src/use-controllable-state";
 import Image from "next/image";
 import * as React from "react";
 import Dropzone, {
@@ -10,7 +10,7 @@ import Dropzone, {
 } from "react-dropzone";
 import { toast } from "sonner";
 
-import { formatBytes } from "@repo/utils";
+import { filterFilesForUpload, formatBytes } from "@repo/utils";
 import { cn } from "../../lib/utils";
 import { Button } from "./button";
 import { Progress } from "./progress";
@@ -27,7 +27,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default undefined
    * @example value={files}
    */
-  value?: File[];
+  value?: (File | string)[];
 
   /**
    * Function to be called when the value changes.
@@ -35,7 +35,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default undefined
    * @example onValueChange={(files) => setFiles(files)}
    */
-  onValueChange?: React.Dispatch<React.SetStateAction<File[]>>;
+  onValueChange?: React.Dispatch<React.SetStateAction<(File | string)[]>>;
 
   /**
    * Function to be called when files are uploaded.
@@ -43,7 +43,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
    * @default undefined
    * @example onUpload={(files) => uploadFiles(files)}
    */
-  onUpload?: (files: File[]) => Promise<void>;
+  onUpload?: (files: (File | string)[]) => Promise<void>;
 
   /**
    * Progress of the uploaded files.
@@ -136,7 +136,6 @@ function FileUploader(props: FileUploaderProps) {
       );
 
       const updatedFiles = files ? [...files, ...newFiles] : newFiles;
-
       setFiles(updatedFiles);
 
       if (rejectedFiles.length > 0) {
@@ -145,15 +144,19 @@ function FileUploader(props: FileUploaderProps) {
         });
       }
 
+      const filesForUpload = filterFilesForUpload(
+        files ? [...files, ...newFiles] : newFiles
+      );
+
       if (
         onUpload &&
-        updatedFiles.length > 0 &&
-        updatedFiles.length <= maxFiles
+        filesForUpload.length > 0 &&
+        filesForUpload.length <= maxFiles
       ) {
         const target =
-          updatedFiles.length > 0 ? `${updatedFiles.length} files` : `file`;
+          filesForUpload.length > 0 ? `${filesForUpload.length} files` : `file`;
 
-        toast.promise(onUpload(updatedFiles), {
+        toast.promise(onUpload(filesForUpload), {
           loading: `Uploading ${target}...`,
           success: () => {
             setFiles([]);
@@ -179,7 +182,7 @@ function FileUploader(props: FileUploaderProps) {
     return () => {
       if (!files) return;
       files.forEach((file) => {
-        if (isFileWithPreview(file)) {
+        if (file instanceof File && isFileWithPreview(file)) {
           URL.revokeObjectURL(file.preview);
         }
       });
@@ -190,7 +193,12 @@ function FileUploader(props: FileUploaderProps) {
   const isDisabled = disabled || (files?.length ?? 0) >= maxFiles;
 
   return (
-    <div className="relative flex flex-col gap-6 overflow-hidden">
+    <div
+      className={cn(
+        "relative flex flex-col overflow-hidden",
+        files?.length && "gap-6"
+      )}
+    >
       <Dropzone
         onDrop={onDrop}
         accept={accept}
@@ -203,7 +211,7 @@ function FileUploader(props: FileUploaderProps) {
           <div
             {...getRootProps()}
             className={cn(
-              "group relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed border-muted-foreground/25 px-5 py-2.5 text-center transition hover:bg-muted/25",
+              "group relative grid h-48 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed border-muted-foreground/25 px-5 py-2.5 text-center transition hover:bg-muted/25",
               "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               isDragActive && "border-muted-foreground/50",
               isDisabled && "pointer-events-none opacity-60",
@@ -252,14 +260,22 @@ function FileUploader(props: FileUploaderProps) {
       {files?.length ? (
         <ScrollArea className="h-fit w-full px-3">
           <div className="max-h-48 space-y-4">
-            {files?.map((file, index) => (
-              <FileCard
-                key={index}
-                file={file}
-                onRemove={() => onRemove(index)}
-                progress={progresses?.[file.name]}
-              />
-            ))}
+            {files?.map((file, index) =>
+              file instanceof File ? (
+                <FileCard
+                  key={index}
+                  file={file}
+                  onRemove={() => onRemove(index)}
+                  progress={progresses?.[file.name]}
+                />
+              ) : (
+                <FileCard
+                  key={index}
+                  file={file}
+                  onRemove={() => onRemove(index)}
+                />
+              )
+            )}
           </div>
         </ScrollArea>
       ) : null}
@@ -268,7 +284,7 @@ function FileUploader(props: FileUploaderProps) {
 }
 
 interface FileCardProps {
-  file: File;
+  file: File | string;
   onRemove: () => void;
   progress?: number;
 }
@@ -277,7 +293,7 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
   return (
     <div className="relative flex items-center space-x-4">
       <div className="flex flex-1 space-x-4">
-        {isFileWithPreview(file) ? (
+        {file instanceof File && isFileWithPreview(file) ? (
           <Image
             src={file.preview}
             alt={file.name}
@@ -286,18 +302,29 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
             loading="lazy"
             className="aspect-square shrink-0 rounded-md object-cover"
           />
-        ) : null}
-        <div className="flex w-full flex-col gap-2">
-          <div className="space-y-px">
-            <p className="line-clamp-1 text-sm font-medium text-foreground/80">
-              {file.name}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {formatBytes(file.size)}
-            </p>
+        ) : (
+          <Image
+            src={file as string}
+            alt=""
+            width={48}
+            height={48}
+            loading="lazy"
+            className="aspect-square shrink-0 rounded-md object-cover"
+          />
+        )}
+        {file instanceof File && (
+          <div className="flex w-full flex-col gap-2">
+            <div className="space-y-px">
+              <p className="line-clamp-1 text-sm font-medium text-foreground/80">
+                {file.name}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {formatBytes(file.size)}
+              </p>
+            </div>
+            {progress ? <Progress value={progress} /> : null}
           </div>
-          {progress ? <Progress value={progress} /> : null}
-        </div>
+        )}
       </div>
       <div className="flex items-center gap-2">
         <Button

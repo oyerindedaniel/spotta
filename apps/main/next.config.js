@@ -3,7 +3,12 @@ module.exports = {
   reactStrictMode: true,
 
   images: {
-    path: "/",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+      },
+    ],
   },
 
   /** Enables hot reloading for local packages without a build step */

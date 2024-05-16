@@ -18,6 +18,9 @@ export function useUploadThing(
     onUploadProgress: () => {
       setProgress(progress);
     },
+    onUploadError: (err) => {
+      throw err;
+    },
     ...props,
   });
 

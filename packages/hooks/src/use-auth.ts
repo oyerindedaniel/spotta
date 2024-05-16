@@ -3,7 +3,7 @@ import { User } from "@prisma/client";
 
 import { api } from "@repo/trpc/src/server";
 
-// For react server components
+// For RSC
 
 export const useAuth: () => Promise<User | null> = cache(async () => {
   const session = await api.auth.getSession();

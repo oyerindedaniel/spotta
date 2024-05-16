@@ -123,8 +123,10 @@ export const userRouter = {
 
       const { firstName, lastName, phone, email, picture } = input;
 
+      const pictureUrl = picture[0];
+
       const updateUser = await db.user.update({
-        where: { id },
+        where: { id, isConfirmed: { not: false } },
         data: {
           firstName,
           lastName,
@@ -133,7 +135,7 @@ export const userRouter = {
           ...(oldUserEmail.toLowerCase() !== email.toLowerCase() && {
             isConfirmed: false,
           }),
-          ...(typeof picture === "string" && { picture }),
+          ...(typeof pictureUrl === "string" && { picture: pictureUrl }),
         },
       });
 

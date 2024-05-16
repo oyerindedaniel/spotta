@@ -57,3 +57,7 @@ export function formatBytes(
     sizeType === "accurate" ? accurateSizes[i] ?? "Bytest" : sizes[i] ?? "Bytes"
   }`;
 }
+
+export function filterFilesForUpload(files: (File | string)[]): File[] {
+  return files.filter((file) => file instanceof File) as File[];
+}

@@ -24,7 +24,7 @@ const registerSchema = userSchema
   });
 
 const updateSchema = userSchema.extend({
-  picture: z.array(z.instanceof(File)),
+  picture: z.union([z.array(z.instanceof(File)), z.array(z.string().url())]),
 });
 
 export { registerSchema, updateSchema };
