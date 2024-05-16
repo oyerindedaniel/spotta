@@ -88,11 +88,10 @@ export default function Profile({
   });
 
   const onSubmit = async (data: UpdateProfileType) => {
-    const pictureFile = !!filterFilesForUpload(data.picture).length;
-
+    const isPictureFile = !!filterFilesForUpload(data.picture).length;
     try {
-      const profileImgUrl = pictureFile
-        ? (await startUpload(data.picture as Array<File>))?.map(
+      const profileImgUrl = isPictureFile
+        ? (await startUpload(filterFilesForUpload(data.picture)))?.map(
             (data) => data.url,
           )
         : pictures;
