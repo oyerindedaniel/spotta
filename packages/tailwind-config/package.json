@@ -22,6 +22,8 @@
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
-    "tailwindcss-animate": "^1.0.7"
+    "@uploadthing/react": "^6.5.3",
+    "tailwindcss-animate": "^1.0.7",
+    "uploadthing": "^6.10.3"
   }
 }

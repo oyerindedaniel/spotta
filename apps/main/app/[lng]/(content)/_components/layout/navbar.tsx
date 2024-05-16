@@ -117,6 +117,7 @@ export function Navbar({
                     <DropdownMenuTrigger asChild className="cursor-pointer">
                       <Avatar>
                         <AvatarImage
+                          className="object-cover"
                           src={picture ?? ""}
                           alt={`@${firstName}`}
                         />

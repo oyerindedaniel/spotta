@@ -101,6 +101,7 @@ export default function Login({
         description: "Login successful",
       });
       router.push(redirectUrlState ?? "/");
+      router.refresh();
       setData({ refreshToken, sessionId });
     },
     onError: (error) => {
@@ -121,6 +122,7 @@ export default function Login({
         description: "Login successful",
       });
       router.push(redirectUrlState ?? "/");
+      router.refresh();
       setData({ refreshToken, sessionId });
     },
     onError: (error) => {

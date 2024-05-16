@@ -3,12 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
-    }
-  },
+  "main": "./src/index.ts",
   "scripts": {
     "build": "tsc",
     "dev": "pnpm with-env tsc --watch",
@@ -19,7 +14,10 @@
     "with-env": "dotenv -e ./.env --"
   },
   "dependencies": {
-    "@repo/i18n": "workspace:*"
+    "@repo/i18n": "workspace:*",
+    "@repo/api": "workspace:*",
+    "@uploadthing/react": "^6.5.3",
+    "uploadthing": "^6.10.3"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

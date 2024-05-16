@@ -22,6 +22,10 @@ export const GITHUB_CLIENT_SECRET = process.env.NEXT_PUBLIC_GITHUB_SECRET ?? "";
 export const GITHUB_OAUTH_REDIRECT =
   process.env.NEXT_PUBLIC_GITHUB_REDIRECT_URL ?? "";
 export const MAIN_SITE_URL = process.env.NEXT_PUBLIC_MAIN_SITE_URL ?? "";
+export const UPLOADTHING_APP_ID =
+  process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID ?? "";
+export const UPLOADTHING_SECRET =
+  process.env.NEXT_PUBLIC_UPLOADTHING_SECRET ?? "";
 
 export const REDIS_SESSION_DEFAULT_EXPIRE = 86400;
 

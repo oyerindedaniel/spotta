@@ -37,7 +37,6 @@ export const createTRPCContext = async (opts: {
   userAgent?: ReturnType<typeof userAgent>;
 }) => {
   const { headers } = opts;
-  // console.log("terminal link --------------", headers);
   const cookies = cookie.parse(headers?.get?.("cookie") ?? "");
   const accessToken = cookies[COOKIE_NAME] ?? "";
 
