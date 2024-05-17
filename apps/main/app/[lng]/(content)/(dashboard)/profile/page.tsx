@@ -10,5 +10,9 @@ export default async function ProfilePage({
 }) {
   const session = await useAuth();
 
-  return <Profile lng={lng} session={session} />;
+  return (
+    <>
+      <Profile lng={lng} session={session} />
+    </>
+  );
 }

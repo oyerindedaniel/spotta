@@ -1,10 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-interface SessionData {
-  refreshToken: string;
-  sessionId: string;
-}
+import { SessionData } from "@repo/types";
 
 interface SessionStore {
   data: SessionData;
@@ -15,7 +12,11 @@ interface SessionStore {
 export const useSessionStore = create<SessionStore>()(
   persist(
     (set) => ({
-      data: { refreshToken: "", sessionId: "" },
+      data: {
+        refreshToken: "",
+        sessionId: "",
+        ttl: undefined,
+      },
       setData: (data) => set({ data }),
       updateData: (data) =>
         set((state) => ({ data: { ...state.data, ...data } })),

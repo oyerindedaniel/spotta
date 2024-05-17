@@ -563,6 +563,9 @@ importers:
       '@repo/trpc':
         specifier: workspace:*
         version: link:../trpc
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../types
       '@repo/utils':
         specifier: workspace:*
         version: link:../utils
@@ -575,6 +578,9 @@ importers:
       uploadthing:
         specifier: ^6.10.3
         version: 6.10.3(next@14.2.3)(tailwindcss@3.4.3)
+      zustand:
+        specifier: ^4.5.2
+        version: 4.5.2(@types/react@18.3.2)(react@18.3.1)
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -946,12 +952,27 @@ importers:
       '@repo/api':
         specifier: workspace:*
         version: link:../api
+      '@repo/hooks':
+        specifier: workspace:*
+        version: link:../hooks
       '@repo/i18n':
         specifier: workspace:*
         version: link:../i18
+      '@repo/trpc':
+        specifier: workspace:*
+        version: link:../trpc
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../types
+      '@tanstack/react-query':
+        specifier: ^5.32.0
+        version: 5.36.0(react@18.3.1)
       '@uploadthing/react':
         specifier: ^6.5.3
         version: 6.5.3(next@14.2.3)(react@18.3.1)(uploadthing@6.10.3)
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
       uploadthing:
         specifier: ^6.10.3
         version: 6.10.3(next@14.2.3)(tailwindcss@3.4.3)
@@ -968,6 +989,9 @@ importers:
       '@types/node':
         specifier: ^20.12.7
         version: 20.12.11
+      '@types/react':
+        specifier: ^18.2.61
+        version: 18.3.2
       dotenv-cli:
         specifier: ^7.4.1
         version: 7.4.2

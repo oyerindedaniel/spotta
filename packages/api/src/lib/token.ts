@@ -26,7 +26,7 @@ function generateAccessToken(props: AccessToken): string {
 
 function generateRefreshToken(props: RefreshToken): string {
   const { session } = props;
-  return jwt.sign({ sessionId: session.id }, REFRESH_TOKEN_SECRET, {
+  return jwt.sign({ id: session.id }, REFRESH_TOKEN_SECRET, {
     algorithm: "HS256",
   });
 }

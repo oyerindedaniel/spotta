@@ -16,6 +16,11 @@
   "dependencies": {
     "@repo/i18n": "workspace:*",
     "@repo/api": "workspace:*",
+    "@repo/types": "workspace:*",
+    "@repo/trpc": "workspace:*",
+    "@repo/hooks": "workspace:*",
+    "@tanstack/react-query": "^5.32.0",
+    "react": "^18.2.0",
     "@uploadthing/react": "^6.5.3",
     "uploadthing": "^6.10.3"
   },
@@ -24,6 +29,7 @@
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^20.12.7",
+    "@types/react": "^18.2.61",
     "dotenv-cli": "^7.4.1",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",

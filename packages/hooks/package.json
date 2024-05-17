@@ -16,10 +16,12 @@
     "@prisma/client": "^5.13.0",
     "@repo/api": "workspace:*",
     "@repo/trpc": "workspace:*",
+    "@repo/types": "workspace:*",
     "@repo/utils": "workspace:*",
     "@uploadthing/react": "^6.5.3",
     "react": "^18.2.0",
-    "uploadthing": "^6.10.3"
+    "uploadthing": "^6.10.3",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

@@ -8,7 +8,7 @@ export const ACCESS_TOKEN_SECRET =
   process.env.JWT_ACCESS_SECRET ?? "No_Secret-Access!";
 export const REFRESH_TOKEN_SECRET =
   process.env.JWT_REFRESH_SECRET ?? "No_Secret-Refresh!";
-export const AUTH_DURATION = process.env.AUTH_DURATION ?? 30;
+export const AUTH_DURATION = process.env.AUTH_DURATION ?? 2;
 export const COOKIE_NAME = process.env.COOKIE_NAME ?? "access_token";
 export const SESSION_COOKIE_NAME =
   process.env.SESSION_COOKIE_NAME ?? "session_token";
@@ -27,7 +27,7 @@ export const UPLOADTHING_APP_ID =
 export const UPLOADTHING_SECRET =
   process.env.NEXT_PUBLIC_UPLOADTHING_SECRET ?? "";
 
-export const REDIS_SESSION_DEFAULT_EXPIRE = 86400;
+export const REDIS_SESSION_DEFAULT_EXPIRE = 43200; // in seconds 12hrs
 
 export const COOKIE_CONFIG: any = {
   httpOnly: "true",

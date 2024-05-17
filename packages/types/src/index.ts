@@ -3,3 +3,9 @@ export type RefreshTokenRedisObj = {
   expires: Date;
   userId: string;
 };
+
+export interface SessionData {
+  refreshToken: string;
+  ttl: number | undefined;
+  sessionId: string;
+}
