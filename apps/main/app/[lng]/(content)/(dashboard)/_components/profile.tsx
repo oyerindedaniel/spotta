@@ -41,7 +41,7 @@ export default function Profile({
 
   const requiredMessage = "Input not instance of File";
 
-  const { startUpload, isUploading, progress } = useUploadThing(
+  const { startUpload, isUploading, progresses } = useUploadThing(
     "profileImageUploader",
   );
 

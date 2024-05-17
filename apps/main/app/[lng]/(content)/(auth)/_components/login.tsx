@@ -5,13 +5,13 @@ import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Icons } from "@/assets";
 import { useModal } from "@/hooks/use-modal-store";
-import { useSessionStore } from "@/hooks/use-session";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthService, User } from "@prisma/client";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { api } from "@repo/trpc/src/react";
 import {
@@ -66,7 +66,7 @@ export default function Login({
 
   const mutateLogin = api.auth.login.useMutation({
     onSuccess: ({ data }) => {
-      const { isConfirmed, email, refreshToken, sessionId } = data;
+      const { isConfirmed, email, refreshToken, sessionId, ttl } = data;
       form.reset();
       if (isConfirmed) {
         router.push(redirectUrl ?? "/");
@@ -77,7 +77,7 @@ export default function Login({
         });
       }
       router.refresh();
-      setData({ refreshToken, sessionId });
+      setData({ refreshToken, sessionId, ttl });
       toast({
         variant: "success",
         description: "Login successful",
@@ -95,14 +95,14 @@ export default function Login({
 
   const mutateGoogleOauthLogin = api.user.googleoauth.useMutation({
     onSuccess: ({ data }) => {
-      const { refreshToken, sessionId } = data;
+      const { refreshToken, sessionId, ttl } = data;
       form.reset();
       toast({
         description: "Login successful",
       });
       router.push(redirectUrlState ?? "/");
       router.refresh();
-      setData({ refreshToken, sessionId });
+      setData({ refreshToken, sessionId, ttl });
     },
     onError: (error) => {
       toast({
@@ -116,14 +116,14 @@ export default function Login({
 
   const mutateGithubOauthLogin = api.user.githuboauth.useMutation({
     onSuccess: ({ data }) => {
-      const { refreshToken, sessionId } = data;
+      const { refreshToken, sessionId, ttl } = data;
       form.reset();
       toast({
         description: "Login successful",
       });
       router.push(redirectUrlState ?? "/");
       router.refresh();
-      setData({ refreshToken, sessionId });
+      setData({ refreshToken, sessionId, ttl });
     },
     onError: (error) => {
       toast({

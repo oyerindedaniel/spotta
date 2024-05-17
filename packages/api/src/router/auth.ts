@@ -116,6 +116,7 @@ export const authRouter = {
       data: {
         ..._.omit(user, ["password"]),
         refreshToken,
+        ttl: Number(AUTH_DURATION) * 60 * 1000, // in millesconds
         sessionId: session.id,
       },
     };
@@ -126,7 +127,7 @@ export const authRouter = {
         refreshToken: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { refreshToken: token } = input;
 
       const { db, session: activeUserSession } = ctx;
@@ -168,13 +169,13 @@ export const authRouter = {
         throw error;
       }
 
+      const currentDate = new Date();
+
       const newRefreshToken = generateRefreshToken({ session });
       const newAccessToken = generateAccessToken({
         user: activeUserSession.user,
         session,
       });
-
-      const currentDate = new Date();
 
       const refreshTokenSchema = {
         token: newRefreshToken,
@@ -201,6 +202,7 @@ export const authRouter = {
 
       return {
         data: {
+          ttl: Number(AUTH_DURATION) * 60 * 1000, // in millesconds
           refreshToken: newRefreshToken,
         },
       };
@@ -232,7 +234,7 @@ export const authRouter = {
       );
 
       if (!foundToken) {
-        throw error;
+        console.log("refresh token not present");
       }
 
       await db.session.update({

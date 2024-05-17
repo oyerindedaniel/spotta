@@ -27,7 +27,7 @@ export const UPLOADTHING_APP_ID =
 export const UPLOADTHING_SECRET =
   process.env.NEXT_PUBLIC_UPLOADTHING_SECRET ?? "";
 
-export const REDIS_SESSION_DEFAULT_EXPIRE = 86400;
+export const REDIS_SESSION_DEFAULT_EXPIRE = 43200; // in seconds 12hrs
 
 export const COOKIE_CONFIG: any = {
   httpOnly: "true",

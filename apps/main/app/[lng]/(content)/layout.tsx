@@ -1,3 +1,5 @@
+import { RefreshToken } from "@/components/refresh-token";
+
 import { useAuth } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 
@@ -11,8 +13,10 @@ export default async function Layout({ children, params }: LayoutProps) {
   const session = await useAuth();
   return (
     <>
+      {/* <AutoCounter /> */}
+      <RefreshToken session={session} />
       <Navbar lng={params.lng} session={session} />
-      <div>{children}</div>
+      <main> {children}</main>
     </>
   );
 }

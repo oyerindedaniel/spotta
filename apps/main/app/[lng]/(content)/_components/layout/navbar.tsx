@@ -5,10 +5,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { NON_DASHBOARD_PAGES } from "@/app/[lng]/constants";
 import { Icons } from "@/assets";
-import { useSessionStore } from "@/hooks/use-session";
 import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";
 
+import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { api } from "@repo/trpc/src/react";
 import {
@@ -28,7 +28,11 @@ import {
   ModeToggle,
   useToast,
 } from "@repo/ui";
-import { assignRedirectUrl, getInitials } from "@repo/utils";
+import {
+  assignRedirectUrl,
+  getInitials,
+  stopTokenRefreshTimer,
+} from "@repo/utils";
 
 import SheetSidebar from "../../(dashboard)/_components/layout/sheet-sidebar";
 
@@ -46,7 +50,7 @@ export function Navbar({
   const { toast } = useToast();
 
   const {
-    data: { refreshToken },
+    data: { refreshToken, ttl },
     updateData,
   } = useSessionStore();
 
@@ -61,7 +65,8 @@ export function Navbar({
   const mutateLogout = api.auth.logout.useMutation({
     onSuccess: () => {
       router.push("/");
-      updateData({ refreshToken: "", sessionId: "" });
+      updateData({ refreshToken: "", sessionId: "", ttl: undefined });
+      stopTokenRefreshTimer();
       router.refresh();
       toast({
         variant: "success",

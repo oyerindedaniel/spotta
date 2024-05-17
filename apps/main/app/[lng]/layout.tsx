@@ -4,14 +4,12 @@ import "@repo/ui/css/styles.css";
 
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { RefreshToken } from "@/components/refresh-token";
 import { cn } from "@/lib/utils";
 import { ModalProvider } from "@/providers/modal-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { dir } from "i18next";
-import { extractRouterConfig } from "uploadthing/server";
 
-import { ourFileRouter } from "@repo/api";
 import { languages, LanguagesType } from "@repo/i18n";
 import { TRPCReactProvider } from "@repo/trpc/src/react";
 import { Toaster } from "@repo/ui";
@@ -44,7 +42,8 @@ export default function RootLayout({
             enableSystem
             // disableTransitionOnChange
           >
-            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+            {/* <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} /> */}
+
             {children}
 
             <Toaster />

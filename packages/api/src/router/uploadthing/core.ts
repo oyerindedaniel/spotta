@@ -18,7 +18,9 @@ const auth = async (req: Request) => {
 };
 
 export const ourFileRouter = {
-  profileImageUploader: f({ image: { maxFileSize: "4MB" } })
+  profileImageUploader: f({
+    image: { maxFileSize: "4MB", maxFileCount: 1, minFileCount: 1 },
+  })
     .middleware(async ({ req }) => {
       const user = await auth(req);
       if (!user) throw new UploadThingError("Unauthorized");
@@ -27,8 +29,6 @@ export const ourFileRouter = {
       return { userId: user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload complete for userId:", metadata.userId);
-
       return { uploadedBy: metadata.userId, file };
     }),
 } satisfies FileRouter;

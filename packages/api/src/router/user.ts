@@ -227,6 +227,7 @@ export const userRouter = {
         data: {
           ..._.omit(user, ["password"]),
           refreshToken,
+          ttl: Number(AUTH_DURATION) * 60 * 1000, // in millesconds
           sessionId: session.id,
         },
       };
@@ -321,6 +322,7 @@ export const userRouter = {
         data: {
           ..._.omit(user, ["password"]),
           refreshToken,
+          ttl: Number(AUTH_DURATION) * 60 * 1000, // in millesconds
           sessionId: session.id,
         },
       };

@@ -1,11 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useSessionStore } from "@/hooks/use-session";
 import { Session as SessionType } from "@prisma/client";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 
+import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { LanguagesType } from "@repo/i18n";
 import { api } from "@repo/trpc/src/react";
 import { Badge, Button, useToast } from "@repo/ui";
