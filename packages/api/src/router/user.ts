@@ -19,6 +19,7 @@ import {
   oauthSchema,
   registerSchema,
   resetPasswordSchema,
+  updateSchema,
 } from "@repo/validations";
 
 import {
@@ -113,6 +114,35 @@ export const userRouter = {
         data: { ..._.omit(newUser, ["password"]) },
       };
     }),
+  update: protectedProcedure
+    .input(updateSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+
+      const { id, email: oldUserEmail } = session.user;
+
+      const { firstName, lastName, phone, email, picture } = input;
+
+      const pictureUrl = picture[0];
+
+      const updateUser = await db.user.update({
+        where: { id, isConfirmed: { not: false } },
+        data: {
+          firstName,
+          lastName,
+          phone,
+          email,
+          ...(oldUserEmail.toLowerCase() !== email.toLowerCase() && {
+            isConfirmed: false,
+          }),
+          ...(typeof pictureUrl === "string" && { picture: pictureUrl }),
+        },
+      });
+
+      return {
+        data: updateUser,
+      };
+    }),
   googleoauth: publicProcedure
     .input(oauthSchema)
     .mutation(async ({ ctx, input }) => {
@@ -180,8 +210,11 @@ export const userRouter = {
 
       refreshTokens.push(refreshTokenSchema);
 
-      await redis.set(session.id, JSON.stringify(refreshTokens));
-      await redis.expire(session.id, REDIS_SESSION_DEFAULT_EXPIRE);
+      await redis.setex(
+        session.id,
+        REDIS_SESSION_DEFAULT_EXPIRE,
+        JSON.stringify(refreshTokens),
+      );
 
       cookies().set({
         name: COOKIE_NAME,
@@ -271,8 +304,11 @@ export const userRouter = {
 
       refreshTokens.push(refreshTokenSchema);
 
-      await redis.set(session.id, JSON.stringify(refreshTokens));
-      await redis.expire(session.id, REDIS_SESSION_DEFAULT_EXPIRE);
+      await redis.setex(
+        session.id,
+        REDIS_SESSION_DEFAULT_EXPIRE,
+        JSON.stringify(refreshTokens),
+      );
 
       cookies().set({
         name: COOKIE_NAME,
