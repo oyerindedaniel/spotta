@@ -15,6 +15,7 @@ import { cn } from "../../lib/utils";
 import { Button } from "./button";
 import { Progress } from "./progress";
 import { ScrollArea } from "./scroll-area";
+import { Separator } from "./separator";
 
 function isFileWithPreview(file: File): file is File & { preview: string } {
   return "preview" in file && typeof file.preview === "string";
@@ -292,7 +293,7 @@ interface FileCardProps {
 function FileCard({ file, progress, onRemove }: FileCardProps) {
   return (
     <div className="relative flex items-center space-x-4">
-      <div className="flex flex-1 space-x-4">
+      <div className="flex flex-1 space-x-4 items-center">
         {file instanceof File && isFileWithPreview(file) ? (
           <Image
             src={file.preview}
@@ -305,13 +306,14 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
         ) : (
           <Image
             src={file as string}
-            alt=""
+            alt="image"
             width={48}
             height={48}
             loading="lazy"
             className="aspect-square shrink-0 rounded-md object-cover"
           />
         )}
+        {typeof file === "string" && <Separator />}
         {file instanceof File && (
           <div className="flex w-full flex-col gap-2">
             <div className="space-y-px">
@@ -326,18 +328,16 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
           </div>
         )}
       </div>
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="size-7"
-          onClick={onRemove}
-        >
-          <Cross2Icon className="size-4 " aria-hidden="true" />
-          <span className="sr-only">Remove file</span>
-        </Button>
-      </div>
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        className="size-7"
+        onClick={onRemove}
+      >
+        <Cross2Icon className="size-4 " aria-hidden="true" />
+        <span className="sr-only">Remove file</span>
+      </Button>
     </div>
   );
 }

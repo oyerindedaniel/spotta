@@ -12,7 +12,7 @@ export default async function Layout({ children, params }: LayoutProps) {
   return (
     <>
       <Navbar lng={params.lng} session={session} />
-      <div>{children}</div>
+      <main>{children}</main>
     </>
   );
 }
