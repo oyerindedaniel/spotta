@@ -26,7 +26,6 @@ enum Role {
   ADMIN
 }
 
-
 model User {
     id        String      @id @default(uuid())
     firstName String
@@ -41,9 +40,14 @@ model User {
     emailVerified DateTime?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    medias Media[]
+    reviewReactions ReviewReaction[]
+    amenitiesOnReviews AmenitiesOnReview[]
     verificationTokens VerificationToken[]
     Otps Otp[]
     sessions  Session[]
+    areas Area[]
+    reviews  Review[]
 }
 
 model Session {
@@ -55,6 +59,76 @@ model Session {
   invalidatedAt DateTime?
   createdAt      DateTime      @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Area {
+    id        String      @id @default(uuid())
+    name      String
+    state     String
+    lga       String
+    address   String
+    longitude String
+    latitude  String
+    createdAt      DateTime      @default(now())
+    updatedAt DateTime @updatedAt
+      createdBy       User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById     String
+    medias   Media[]
+    reviews  Review[]
+}
+
+model Amenity {
+  id    String                 @id @default(uuid())
+  name  String
+  reviews AmenitiesOnReview[]
+}
+
+model Review {
+  id    String                 @id @default(uuid())
+description String
+rating      String
+asAnonymous  Boolean? @default(false)
+ area       Area     @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  areaId     String
+ user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  amenities AmenitiesOnReview[]
+  reviewReactions ReviewReaction[]
+createdAt      DateTime      @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AmenitiesOnReview {
+  review       Review     @relation(fields: [reviewId], references: [id])
+  reviewId     String
+  amenity Amenity @relation(fields: [amenityId], references: [id])
+  amenityId String
+  createdAt DateTime @default(now())
+  createdBy User     @relation(fields: [createdById], references: [id])
+  createdById     String
+
+  @@id([reviewId, amenityId])
+}
+
+model Media {
+  area   Area @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  areaId String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  createdAt  DateTime @default(now())
+
+  @@id([areaId, userId])
+}
+
+model ReviewReaction {
+  userId    String
+  reviewId  String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review    Review           @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+    createdAt DateTime         @default(now())
+    updatedAt DateTime @updatedAt
+
+  @@id([userId, reviewId])
 }
 
 model VerificationToken {
