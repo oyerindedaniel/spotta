@@ -111,13 +111,12 @@ model AmenitiesOnReview {
 }
 
 model Media {
+    id    String                 @id @default(uuid())
   area   Area @relation(fields: [areaId], references: [id], onDelete: Cascade)
   areaId String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
   createdAt  DateTime @default(now())
-
-  @@id([areaId, userId])
 }
 
 model ReviewReaction {
