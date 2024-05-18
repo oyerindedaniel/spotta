@@ -516,6 +516,7 @@ export const userRouter = {
 
     const { id } = session.user;
 
+    // TODO: optimise, sessions can be a lot querying with invalidated null
     const sessions = await db.session.findMany({
       where: {
         user: { id },

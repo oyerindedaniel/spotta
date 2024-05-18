@@ -121,17 +121,24 @@ export const authRouter = {
       },
     };
   }),
-  resumeSession: protectedProcedure.mutation(({ ctx }) => {
+  resumeSession: protectedProcedure.mutation(async ({ ctx }) => {
     const {
       session: {
-        user: { sessionExpires },
+        user: { sessionId, sessionExpires },
       },
     } = ctx;
 
     const currentTime = Math.floor(Date.now() / 1000); // in seconds
     const ttl = (sessionExpires - currentTime) * 1000; // in millseconds
+
+    const refreshTokens = (await redis.get(
+      sessionId,
+    )) as Array<RefreshTokenRedisObj>;
+
+    const refreshToken = refreshTokens?.pop()?.token ?? "";
+
     return {
-      data: { ttl },
+      data: { ttl, sessionId, refreshToken },
     };
   }),
   refreshToken: protectedProcedure
