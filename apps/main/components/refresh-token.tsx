@@ -45,7 +45,7 @@ export function RefreshToken({ session }: { session: User | null }) {
   // the useeffect below must be place after the first
 
   useEffect(() => {
-    const fetchData = async () => {
+    const getActiveSession = async () => {
       if (!isInitialized.current && session && initialRenderComplete) {
         isInitialized.current = true;
         try {
@@ -65,7 +65,7 @@ export function RefreshToken({ session }: { session: User | null }) {
       }
     };
 
-    fetchData();
+    getActiveSession();
   }, [isInitialized.current, session, initialRenderComplete]);
 
   return null;
