@@ -15,6 +15,8 @@ export const stopTokenRefreshTimer = () => {
   }
 };
 
+//TODO: implement queue to take refresh token errors
+
 export const startTokenRefreshTimer = ({
   expirationTime,
   refreshToken,

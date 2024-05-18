@@ -13,6 +13,7 @@ export function RefreshToken({ session }: { session: User | null }) {
 
   const {
     data: { refreshToken, ttl },
+    updateData,
   } = useSessionStore();
 
   const isInitialized = useRef(false);
@@ -22,7 +23,7 @@ export function RefreshToken({ session }: { session: User | null }) {
   const { mutateAsync: mutateAsyncResumeSession } =
     api.auth.resumeSession.useMutation();
 
-  //TODO: refactor
+  //TODO: refactor change to usequery
 
   useEffect(() => {
     if (!isAuthenticated.current && session) {
@@ -49,8 +50,9 @@ export function RefreshToken({ session }: { session: User | null }) {
         isInitialized.current = true;
         try {
           const {
-            data: { ttl },
+            data: { ttl, sessionId, refreshToken },
           } = await mutateAsyncResumeSession();
+          updateData({ ttl, sessionId, refreshToken });
           startTokenRefreshTimer({
             refreshToken,
             expirationTime: ttl,
