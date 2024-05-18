@@ -5,11 +5,15 @@ import { db } from "@repo/db";
 
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../config";
 
-type TokenPayload = Pick<User, "id"> & { sessionId: string };
+type TokenPayload = Pick<User, "id"> & {
+  sessionId: string;
+  iat: number;
+  exp: number;
+};
 
-async function verifyToken(
-  accessToken: string,
-): Promise<{ user: User & { sessionId: string } } | null> {
+async function verifyToken(accessToken: string): Promise<{
+  user: User & { sessionId: string; sessionExpires: number };
+} | null> {
   try {
     const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET, {
       algorithms: ["HS256"],
@@ -23,11 +27,17 @@ async function verifyToken(
     });
 
     if (user) {
-      return { user: { ...user, sessionId: decoded.sessionId } };
+      return {
+        user: {
+          ...user,
+          sessionId: decoded.sessionId,
+          sessionExpires: decoded.exp,
+        },
+      };
     }
     return null;
   } catch (error) {
-    console.log("Error verifying token");
+    // console.error(error,"Error verifying token");
     return null;
   }
 }
@@ -51,7 +61,7 @@ async function verifyRefreshToken(token: string): Promise<Session | null> {
     }
     return null;
   } catch (error) {
-    console.log("Error verifying token");
+    console.error(error, "Error verifying token");
     return null;
   }
 }
