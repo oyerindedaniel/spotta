@@ -121,6 +121,19 @@ export const authRouter = {
       },
     };
   }),
+  resumeSession: protectedProcedure.mutation(({ ctx }) => {
+    const {
+      session: {
+        user: { sessionExpires },
+      },
+    } = ctx;
+
+    const currentTime = Math.floor(Date.now() / 1000); // in seconds
+    const ttl = (sessionExpires - currentTime) * 1000; // in millseconds
+    return {
+      data: { ttl },
+    };
+  }),
   refreshToken: protectedProcedure
     .input(
       z.object({
@@ -165,7 +178,6 @@ export const authRouter = {
           },
           data: { invalidatedAt: new Date() },
         });
-
         throw error;
       }
 
