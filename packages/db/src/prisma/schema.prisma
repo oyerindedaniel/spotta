@@ -57,6 +57,7 @@ model Session {
   browser          String
   os                String
   invalidatedAt DateTime?
+  expires      DateTime
   createdAt      DateTime      @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -114,7 +115,7 @@ model AmenitiesOnReview {
 }
 
 model Media {
-    id    String                 @id @default(uuid())
+  id    String                 @id @default(uuid())
   area   Area @relation(fields: [areaId], references: [id], onDelete: Cascade)
   areaId String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -127,8 +128,8 @@ model ReviewReaction {
   reviewId  String
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   review    Review           @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-    createdAt DateTime         @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([userId, reviewId])
 }

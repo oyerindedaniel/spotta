@@ -76,15 +76,16 @@ export const authRouter = {
       });
     }
 
+    const currentDate = new Date();
+
     const session = await db.session.create({
       data: {
         user: { connect: { id: user.id } },
         os: os?.name ?? "",
         browser: browser?.name ?? "",
+        expires: addMinutes(currentDate, Number(AUTH_DURATION)),
       },
     });
-
-    const currentDate = new Date();
 
     const accessToken = generateAccessToken({ user, session });
     const refreshToken = generateRefreshToken({ session });
@@ -163,7 +164,7 @@ export const authRouter = {
       if (session.id !== sessionId) throw error;
 
       const refreshTokens = (await redis.get(
-        sessionId,
+        session.id,
       )) as Array<RefreshTokenRedisObj>;
 
       const foundToken = refreshTokens.find(
@@ -194,6 +195,13 @@ export const authRouter = {
       const newAccessToken = generateAccessToken({
         user: activeUserSession.user,
         session,
+      });
+
+      await db.session.update({
+        where: {
+          id: session.id,
+        },
+        data: { expires: addMinutes(currentDate, Number(AUTH_DURATION)) },
       });
 
       const refreshTokenSchema = {
