@@ -73,6 +73,7 @@ model Area {
     updatedAt DateTime @updatedAt
       createdBy       User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById     String
+   amenitiesOnReviews AmenitiesOnReview[]
     medias   Media[]
     reviews  Review[]
 }
@@ -104,6 +105,8 @@ model AmenitiesOnReview {
   amenity Amenity @relation(fields: [amenityId], references: [id])
   amenityId String
   createdAt DateTime @default(now())
+  createdFor Area     @relation(fields: [createdForId], references: [id])
+  createdForId     String
   createdBy User     @relation(fields: [createdById], references: [id])
   createdById     String
 
