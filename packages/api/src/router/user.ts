@@ -187,15 +187,16 @@ export const userRouter = {
         user = findUser;
       }
 
+      const currentDate = new Date();
+
       const session = await db.session.create({
         data: {
           user: { connect: { id: user.id } },
           os: os?.name ?? "",
           browser: browser?.name ?? "",
+          expires: addMinutes(currentDate, Number(AUTH_DURATION)),
         },
       });
-
-      const currentDate = new Date();
 
       const accessToken = generateAccessToken({ user, session });
       const refreshToken = generateRefreshToken({ session });
@@ -282,15 +283,16 @@ export const userRouter = {
         user = findUser;
       }
 
+      const currentDate = new Date();
+
       const session = await db.session.create({
         data: {
           user: { connect: { id: user.id } },
           os: os?.name ?? "",
           browser: browser?.name ?? "",
+          expires: addMinutes(currentDate, Number(AUTH_DURATION)),
         },
       });
-
-      const currentDate = new Date();
 
       const accessToken = generateAccessToken({ user, session });
       const refreshToken = generateRefreshToken({ session });
@@ -521,6 +523,7 @@ export const userRouter = {
       where: {
         user: { id },
         invalidatedAt: null,
+        expires: { gt: new Date() },
       },
     });
 

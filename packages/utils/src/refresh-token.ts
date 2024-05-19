@@ -23,7 +23,7 @@ export const startTokenRefreshTimer = ({
   mutateRefreshToken: mutateAsync,
 }: RefreshTokenProps) => {
   const updateData = useSessionStore.getState().updateData;
-  const jwtExpirationTime = Number(expirationTime) - 60000; // subtract 1 minute
+  const jwtExpirationTime = Number(expirationTime) - 120000; // subtract 2 minute
   refreshTimer = setTimeout(async () => {
     try {
       const {
