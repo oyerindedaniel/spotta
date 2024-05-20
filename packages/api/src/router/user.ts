@@ -543,8 +543,6 @@ export const userRouter = {
       },
     });
 
-    console.log(sessions);
-
     async function checkExpiry(sessions: Session[]): Promise<Array<Session>> {
       const activeSessions: Array<Session> = [];
 
@@ -569,8 +567,6 @@ export const userRouter = {
     }
 
     const activeSessions = await checkExpiry(sessions);
-
-    console.log({ activeSessions });
 
     return {
       data: activeSessions ?? [],
