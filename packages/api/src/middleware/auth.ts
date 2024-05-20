@@ -22,7 +22,13 @@ async function verifyToken(accessToken: string): Promise<{
     const user = await db.user.findUnique({
       where: {
         id: decoded.id,
-        sessions: { some: { id: decoded.sessionId, invalidatedAt: null } },
+        sessions: {
+          some: {
+            id: decoded.sessionId,
+            invalidatedAt: null,
+            expires: { gt: new Date() },
+          },
+        },
       },
     });
 

@@ -391,6 +391,10 @@ export const userRouter = {
         });
       }
 
+      // TODO: work on this
+
+      // TODO: invalidate all session on forgot and reset password
+
       if (user.authService !== "CREDENTIALS") {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -463,6 +467,12 @@ export const userRouter = {
         },
         data: {
           password: hashedPassword,
+          sessions: {
+            updateMany: {
+              where: { userId: user.id },
+              data: { invalidatedAt: new Date() },
+            },
+          },
         },
       });
 
@@ -506,6 +516,12 @@ export const userRouter = {
         },
         data: {
           password: hashedNewPassword,
+          sessions: {
+            updateMany: {
+              where: { userId: id },
+              data: { invalidatedAt: new Date() },
+            },
+          },
         },
       });
 

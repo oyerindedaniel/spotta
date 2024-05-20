@@ -98,6 +98,7 @@ export default function Login({
       const { refreshToken, sessionId, ttl } = data;
       form.reset();
       toast({
+        variant: "success",
         description: "Login successful",
       });
       router.push(redirectUrlState ?? "/");
@@ -119,6 +120,7 @@ export default function Login({
       const { refreshToken, sessionId, ttl } = data;
       form.reset();
       toast({
+        variant: "success",
         description: "Login successful",
       });
       router.push(redirectUrlState ?? "/");

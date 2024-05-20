@@ -24,7 +24,7 @@ export default async function Sessions({
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-4">
       {sessions.data.map((session) => (
-        <Session session={session} lng={lng} />
+        <Session key={session.id} session={session} lng={lng} />
       ))}
     </div>
   );
