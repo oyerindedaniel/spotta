@@ -1,4 +1,5 @@
 import email from "./email.svg";
+import emptyState from "./empty-state.svg";
 import githubDark from "./github-mark-white.svg";
 import github from "./github-mark.svg";
 import google from "./google.svg";
@@ -22,6 +23,7 @@ export const Icons = {
   profile,
   settings,
   reviews,
+  emptyState,
   googleTest: (props: IconProps) => (
     <svg
       width="24"

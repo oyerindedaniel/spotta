@@ -1,3 +1,9 @@
+import { type Prisma, type PrismaClient } from "@prisma/client";
+import { type DefaultArgs } from "@prisma/client/runtime/library";
+import slugify from "slugify";
+
+import { db } from "@repo/db";
+
 const generateRandomString = (length: number) => {
   const randomChars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -20,5 +26,21 @@ const generateRandomNumber = (length: number) => {
   }
   return result;
 };
+
+export async function generateUniqueSlug(
+  name: string,
+  isUnique: (slug: string) => Promise<boolean>,
+): Promise<string> {
+  const baseSlug = slugify(name, { lower: true });
+  let uniqueSlug = baseSlug;
+  let counter = 1;
+
+  while (!(await isUnique(uniqueSlug))) {
+    uniqueSlug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+
+  return uniqueSlug;
+}
 
 export { generateRandomNumber, generateRandomString };

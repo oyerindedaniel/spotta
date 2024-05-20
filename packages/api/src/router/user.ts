@@ -391,6 +391,10 @@ export const userRouter = {
         });
       }
 
+      // TODO: work on this
+
+      // TODO: invalidate all session on forgot and reset password
+
       if (user.authService !== "CREDENTIALS") {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -416,7 +420,6 @@ export const userRouter = {
           codePin,
         }),
       });
-
       return {
         data: true,
       };
@@ -527,6 +530,8 @@ export const userRouter = {
       },
     });
 
+    console.log(sessions);
+
     async function checkExpiry(sessions: Session[]): Promise<Array<Session>> {
       const activeSessions: Array<Session> = [];
 
@@ -551,6 +556,8 @@ export const userRouter = {
     }
 
     const activeSessions = await checkExpiry(sessions);
+
+    console.log({ activeSessions });
 
     return {
       data: activeSessions ?? [],
