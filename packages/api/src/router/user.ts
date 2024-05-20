@@ -420,6 +420,7 @@ export const userRouter = {
           codePin,
         }),
       });
+
       return {
         data: true,
       };
@@ -466,6 +467,12 @@ export const userRouter = {
         },
         data: {
           password: hashedPassword,
+          sessions: {
+            updateMany: {
+              where: { userId: user.id },
+              data: { invalidatedAt: new Date() },
+            },
+          },
         },
       });
 
@@ -509,6 +516,12 @@ export const userRouter = {
         },
         data: {
           password: hashedNewPassword,
+          sessions: {
+            updateMany: {
+              where: { userId: id },
+              data: { invalidatedAt: new Date() },
+            },
+          },
         },
       });
 
