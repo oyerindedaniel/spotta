@@ -18,7 +18,7 @@ export const amenityRouter = {
       const createdAmenity = await db.amenity.create({
         data: {
           name,
-          user: { connect: { id: userId, role: { in: ["ADMIN"] } } },
+          user: { connect: { id: userId } },
           category: {
             connectOrCreate: {
               where: { id },
