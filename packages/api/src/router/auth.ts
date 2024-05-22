@@ -27,8 +27,34 @@ export const authRouter = {
     const { session } = ctx;
     return session?.user ?? null;
   }),
+  resumeSession: protectedProcedure.mutation(async ({ ctx }) => {
+    const {
+      session: {
+        user: { sessionId, sessionExpires },
+      },
+    } = ctx;
+
+    const currentTime = Math.floor(Date.now() / 1000); // in seconds
+    const ttl = (sessionExpires - currentTime) * 1000; // in millseconds
+
+    const refreshTokens = (await redis.get(
+      sessionId,
+    )) as Array<RefreshTokenRedisObj>;
+
+    const refreshToken = refreshTokens?.pop()?.token ?? "";
+
+    if (!refreshToken) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+      });
+    }
+
+    return {
+      data: { ttl, sessionId, refreshToken },
+    };
+  }),
   login: publicProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {
-    const { email, password } = input;
+    const { email, password, asRole } = input;
     const { db, userAgent } = ctx;
 
     const { os, browser } = userAgent || {};
@@ -51,6 +77,10 @@ export const authRouter = {
     const passwordMatch = await bcrypt.compare(password, user?.password ?? "");
 
     if (!passwordMatch) {
+      throw error;
+    }
+
+    if (asRole === "ADMIN" && user.role !== "ADMIN") {
       throw error;
     }
 
@@ -120,26 +150,6 @@ export const authRouter = {
         ttl: Number(AUTH_DURATION) * 60 * 1000, // in millesconds
         sessionId: session.id,
       },
-    };
-  }),
-  resumeSession: protectedProcedure.mutation(async ({ ctx }) => {
-    const {
-      session: {
-        user: { sessionId, sessionExpires },
-      },
-    } = ctx;
-
-    const currentTime = Math.floor(Date.now() / 1000); // in seconds
-    const ttl = (sessionExpires - currentTime) * 1000; // in millseconds
-
-    const refreshTokens = (await redis.get(
-      sessionId,
-    )) as Array<RefreshTokenRedisObj>;
-
-    const refreshToken = refreshTokens?.pop()?.token ?? "";
-
-    return {
-      data: { ttl, sessionId, refreshToken },
     };
   }),
   refreshToken: protectedProcedure

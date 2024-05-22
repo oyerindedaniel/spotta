@@ -12,6 +12,7 @@ import { z } from "zod";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { api } from "@repo/trpc/src/react";
 import {
+  AuthSeparator,
   Button,
   Form,
   FormControl,
@@ -23,8 +24,6 @@ import {
   Input,
 } from "@repo/ui";
 import { registerSchema } from "@repo/validations";
-
-import AuthSeparator from "./ui/separator";
 
 type RegisterType = z.infer<typeof registerSchema>;
 

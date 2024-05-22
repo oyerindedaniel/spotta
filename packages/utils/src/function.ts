@@ -1,3 +1,5 @@
+import { StateCity, STATES } from "./states";
+
 export const getBaseUrl = () => {
   if (typeof window !== "undefined") return window.location.origin;
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
@@ -60,4 +62,17 @@ export function formatBytes(
 
 export function filterFilesForUpload(files: (File | string)[]): File[] {
   return files.filter((file) => file instanceof File) as File[];
+}
+
+export function getLgasByState({
+  state,
+  stateCities = STATES,
+}: {
+  state: string;
+  stateCities?: StateCity[];
+}): string[] | undefined {
+  const foundState = stateCities.find(
+    (city) => city.alias.toLowerCase() === state.toLowerCase(),
+  );
+  return foundState ? foundState.lgas : undefined;
 }

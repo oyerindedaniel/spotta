@@ -17,6 +17,7 @@
     "@repo/api": "workspace:*",
     "@repo/trpc": "workspace:*",
     "@repo/types": "workspace:*",
+    "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
     "@uploadthing/react": "^6.5.3",
     "react": "^18.2.0",

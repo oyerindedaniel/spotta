@@ -20,10 +20,13 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "prisma": "^5.13.0",
     "@types/node": "^20.12.7"
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
+    "@repo/db": "workspace:*",
+    "@prisma/client": "^5.13.0",
     "zod": "^3.23.0"
   }
 }
