@@ -31,7 +31,7 @@ const Sidebar: FC<SidebarProps> = ({ lng, sidebarItems }) => {
           {sidebarItems.map((link, Idx) => {
             const Icon = link.icon;
             return (
-              <Link href={link.url} key={link.name}>
+              <Link href={`/${link.url}`} key={link.name}>
                 <div
                   className={cn(
                     "duration-350 mb-0 flex cursor-pointer items-center justify-start gap-2 px-4 py-4 text-black transition-all ease-in-out hover:bg-[#0B153A] hover:text-white dark:text-white hover:dark:bg-brand-blue",
