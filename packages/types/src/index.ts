@@ -9,3 +9,8 @@ export interface SessionData {
   ttl: number | undefined;
   sessionId: string;
 }
+
+export interface LatLng {
+  lat: number;
+  lng: number;
+}

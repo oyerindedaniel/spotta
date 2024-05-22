@@ -14,6 +14,7 @@ import {
 } from "@repo/email";
 import { RefreshTokenRedisObj } from "@repo/types";
 import {
+  adminUpdateSchema,
   forgotPasswordConfirmationSchema,
   forgotPasswordSchema,
   oauthSchema,
@@ -39,7 +40,11 @@ import {
   getGoogleOauthToken,
   getGoogleUser,
 } from "../lib";
-import { protectedProcedure, publicProcedure } from "../trpc";
+import {
+  adminProtectedProcedure,
+  protectedProcedure,
+  publicProcedure,
+} from "../trpc";
 import { generateRandomNumber } from "../utils";
 
 export const userRouter = {
@@ -93,6 +98,7 @@ export const userRouter = {
           lastName,
           email: email.toLowerCase(),
           password: hashedPassword,
+          role: "USER",
           phone,
           verificationTokens: {
             create: [{ token, expires: addMinutes(new Date(), 30) }],
@@ -132,10 +138,51 @@ export const userRouter = {
           lastName,
           phone,
           email,
+          role: "USER",
           ...(oldUserEmail.toLowerCase() !== email.toLowerCase() && {
             isConfirmed: false,
           }),
           ...(typeof pictureUrl === "string" && { picture: pictureUrl }),
+        },
+      });
+
+      return {
+        data: updateUser,
+      };
+    }),
+  updateAdmin: adminProtectedProcedure
+    .input(adminUpdateSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+
+      const {
+        id,
+        role,
+        authService,
+        isConfirmed,
+        firstName,
+        lastName,
+        phone,
+        email,
+        picture,
+      } = input;
+
+      const pictureUrl = picture[0];
+
+      const isPictureString = typeof pictureUrl === "string";
+
+      const updateUser = await db.user.update({
+        where: { id },
+        data: {
+          firstName,
+          lastName,
+          phone,
+          email,
+          role,
+          authService,
+          isConfirmed,
+          ...(isConfirmed && { emailVerified: new Date() }),
+          ...(isPictureString && { picture: pictureUrl }),
         },
       });
 
@@ -150,7 +197,11 @@ export const userRouter = {
 
       const { os, browser } = userAgent ?? {};
 
-      const { code } = input;
+      const { code, asRole } = input;
+
+      const error = new TRPCError({
+        code: "UNAUTHORIZED",
+      });
 
       const { id_token, access_token: googleAccessToken } =
         await getGoogleOauthToken({ code });
@@ -181,10 +232,15 @@ export const userRouter = {
             firstName: given_name,
             authService: "GOOGLE",
             isConfirmed: true,
+            role: "USER",
           },
         });
       } else {
         user = findUser;
+      }
+
+      if (asRole === "ADMIN" && findUser?.role !== "ADMIN") {
+        throw error;
       }
 
       const currentDate = new Date();
@@ -240,7 +296,11 @@ export const userRouter = {
 
       const { os, browser } = userAgent ?? {};
 
-      const { code } = input;
+      const { code, asRole } = input;
+
+      const error = new TRPCError({
+        code: "UNAUTHORIZED",
+      });
 
       const { access_token: githubAccessToken } = await getGithubOauthToken({
         code,
@@ -277,10 +337,15 @@ export const userRouter = {
             firstName,
             authService: "GITHUB",
             isConfirmed: true,
+            role: "USER",
           },
         });
       } else {
         user = findUser;
+      }
+
+      if (asRole === "ADMIN" && findUser?.role !== "ADMIN") {
+        throw error;
       }
 
       const currentDate = new Date();

@@ -15,6 +15,7 @@ import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { api } from "@repo/trpc/src/react";
 import {
+  AuthSeparator,
   Button,
   Form,
   FormControl,
@@ -28,8 +29,6 @@ import {
 } from "@repo/ui";
 import { generateAndValidateState } from "@repo/utils";
 import { loginSchema } from "@repo/validations";
-
-import AuthSeparator from "./ui/separator";
 
 type LoginType = z.infer<typeof loginSchema>;
 

@@ -31,6 +31,8 @@ export const REDIS_SESSION_DEFAULT_EXPIRE = 43200; // in seconds 12hrs
 
 export const COOKIE_CONFIG: any = {
   httpOnly: "true",
-  secure: Boolean(Number(process.env.COOKIE_SECURE! || 0)),
-  sameSite: process.env.COOKIE_SAME_SITE! || "lax",
+  // secure: Boolean(Number(process.env.COOKIE_SECURE! ?? 0)),
+  secure: true,
+  sameSite: process.env.COOKIE_SAME_SITE! || "strict",
+  path: "/",
 };

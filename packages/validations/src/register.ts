@@ -1,3 +1,4 @@
+import { AuthService, Role } from "@prisma/client";
 import { z } from "zod";
 
 const userSchema = z.object({
@@ -27,4 +28,13 @@ const updateSchema = userSchema.extend({
   picture: z.union([z.array(z.instanceof(File)), z.array(z.string().url())]),
 });
 
-export { registerSchema, updateSchema };
+const adminUpdateSchema = updateSchema.extend({
+  id: z.string(),
+  role: z.enum([Role.USER, Role.ADMIN]),
+  isConfirmed: z.boolean().default(false),
+  authService: z
+    .enum([AuthService.CREDENTIALS, AuthService.GITHUB, AuthService.GOOGLE])
+    .default(AuthService.CREDENTIALS),
+});
+
+export { adminUpdateSchema, registerSchema, updateSchema };

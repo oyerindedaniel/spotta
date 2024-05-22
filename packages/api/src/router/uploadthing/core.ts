@@ -31,6 +31,19 @@ export const ourFileRouter = {
     .onUploadComplete(async ({ metadata, file }) => {
       return { uploadedBy: metadata.userId, file };
     }),
+  areaMediasUploader: f({
+    image: { maxFileSize: "4MB", maxFileCount: 6, minFileCount: 3 },
+  })
+    .middleware(async ({ req }) => {
+      const user = await auth(req);
+      if (!user) throw new UploadThingError("Unauthorized");
+
+      // Whatever is returned here is accessible in onUploadComplete as `metadata`
+      return { userId: user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      return { uploadedBy: metadata.userId, file };
+    }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

@@ -11,7 +11,11 @@ export const areaRouter = {
     .mutation(async ({ ctx, input }) => {
       const { db, session } = ctx;
       const { id: userId } = session.user;
-      const { name, state, lga, latitude, longitude, medias, address } = input;
+      const { name, state, lga, medias, coordinates } = input;
+
+      const { latitude, longitude, address } = coordinates;
+
+      const mediasToString = medias as Array<string>;
 
       const isSlugUnique = async (slug: string) => {
         const result = await ctx.db.area.findFirst({ where: { slug } });
@@ -27,12 +31,12 @@ export const areaRouter = {
           state,
           lga,
           address,
-          latitude,
-          longitude,
+          latitude: latitude.toString(),
+          longitude: longitude.toString(),
           createdBy: { connect: { id: userId } },
           medias: {
-            create: medias.map((medias, idx) => ({
-              src: medias[idx]!,
+            create: mediasToString.map((media) => ({
+              src: media,
               user: { connect: { id: userId } },
             })),
           },
