@@ -10,7 +10,8 @@
     }
   },
   "prisma": {
-    "schema": "src/prisma/schema.prisma"
+    "schema": "src/prisma/schema.prisma",
+    "seed": "tsx src/prisma/seed/index.ts"
   },
   "scripts": {
     "build": "tsc",
@@ -20,7 +21,6 @@
     "db:reset": "prisma migrate reset",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
-    "db:seed": "tsx src/prisma/seed.ts",
     "postinstall": "prisma generate",
     "lint": "eslint",
     "check-format": "prettier --check \"**/*.{ts,tsx,md}\"",
@@ -30,17 +30,21 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^20.12.7",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.12.11",
     "dotenv-cli": "^7.4.1",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
     "prisma": "^5.13.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.5"
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@prisma/client": "^5.13.0",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5"
   }
 }

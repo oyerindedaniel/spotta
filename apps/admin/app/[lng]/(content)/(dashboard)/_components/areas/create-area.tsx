@@ -226,6 +226,7 @@ export default function CreateArea({
                     <Map
                       inputProps={{
                         onChange: field.onChange,
+                        //@ts-ignore
                         value: field.value,
                       }}
                     />

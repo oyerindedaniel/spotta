@@ -27,7 +27,11 @@ import {
   ModeToggle,
   useToast,
 } from "@repo/ui";
-import { getInitials, stopTokenRefreshTimer } from "@repo/utils";
+import {
+  assignRedirectUrl,
+  getInitials,
+  stopTokenRefreshTimer,
+} from "@repo/utils";
 
 import { NON_DASHBOARD_PAGES } from "../constants";
 import SheetSidebar from "./(dashboard)/_components/layout/sheet-sidebar";
@@ -42,6 +46,9 @@ export function Navbar({
   const pathname = usePathname();
   const router = useRouter();
   const { toast } = useToast();
+
+  type AuthPage = "login";
+  const page = pathname.split("/").at(-1) as AuthPage;
 
   const {
     data: { refreshToken, ttl },
@@ -158,9 +165,20 @@ export function Navbar({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
-                  <span className="font-semibold uppercase text-brand-blue">
-                    ADMIN
-                  </span>
+                  <>
+                    {page === "login" ? (
+                      <span className="font-semibold uppercase text-brand-blue">
+                        ADMIN
+                      </span>
+                    ) : (
+                      <Link
+                        href={`${assignRedirectUrl({ redirectUrl: `${pathname}`, goToPageUrl: `${lng}/login` })}`}
+                        className="font-semibold uppercase text-brand-blue"
+                      >
+                        login
+                      </Link>
+                    )}
+                  </>
                 )}
               </li>
             </ul>

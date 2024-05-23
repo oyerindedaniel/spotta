@@ -12,18 +12,19 @@ export const amenityRouter = {
       const { id: userId } = session.user;
       const {
         name,
-        category: { id, name: catergoryName },
+        category: { id: categoryId, name: catergoryName },
       } = input;
 
       const createdAmenity = await db.amenity.create({
         data: {
           name,
-          user: { connect: { id: userId } },
+          createdBy: { connect: { id: userId } },
           category: {
             connectOrCreate: {
-              where: { id },
+              where: { id: categoryId },
               create: {
                 name: catergoryName,
+                createdBy: { connect: { id: userId } },
               },
             },
           },

@@ -8,4 +8,8 @@ const createAmenitySchema = z.object({
   }),
 });
 
-export { createAmenitySchema };
+const updateAmenitySchema = createAmenitySchema.extend({
+  id: z.string(),
+});
+
+export { createAmenitySchema, updateAmenitySchema };

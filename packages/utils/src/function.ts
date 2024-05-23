@@ -64,6 +64,31 @@ export function filterFilesForUpload(files: (File | string)[]): File[] {
   return files.filter((file) => file instanceof File) as File[];
 }
 
+export function separateFilesAndStrings(arr: (File | string)[]): {
+  files: File[];
+  strings: string[];
+  hasFile: boolean;
+} {
+  let files: File[] = [];
+  let strings: string[] = [];
+  let hasFile: boolean = false;
+
+  arr.forEach((item) => {
+    if (item instanceof File) {
+      files.push(item);
+      hasFile = true;
+    } else {
+      strings.push(item);
+    }
+  });
+
+  return {
+    files,
+    strings,
+    hasFile,
+  };
+}
+
 export function getLgasByState({
   state,
   stateCities = STATES,
