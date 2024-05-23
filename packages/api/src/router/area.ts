@@ -13,7 +13,7 @@ export const areaRouter = {
       const { id: userId } = session.user;
       const { name, state, lga, medias, coordinates } = input;
 
-      const { latitude, longitude, address } = coordinates;
+      const { latitude, longitude, address } = coordinates ?? {};
 
       const mediasToString = medias as Array<string>;
 
@@ -30,9 +30,9 @@ export const areaRouter = {
           slug,
           state,
           lga,
-          address,
-          latitude: latitude.toString(),
-          longitude: longitude.toString(),
+          address: "Plot 13b",
+          latitude: latitude?.toString() ?? "2.2",
+          longitude: longitude?.toString() ?? "1.1",
           createdBy: { connect: { id: userId } },
           medias: {
             create: mediasToString.map((media) => ({

@@ -16,13 +16,13 @@ export const reviewRouter = {
       const createdReview = await db.review.create({
         data: {
           area: { connect: { id: areaId } },
+          createdBy: { connect: { id: userId } },
           description,
           rating: Number(rating),
           asAnonymous,
           amenities: {
-            create: amenities.map((amenity) => ({
-              name: amenity.name,
-              user: { connect: { id: userId } },
+            connect: amenities.map((amenity) => ({
+              id: amenity.id,
             })),
           },
         },

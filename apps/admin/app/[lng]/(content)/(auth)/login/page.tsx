@@ -12,8 +12,6 @@ export default async function LoginPage({
 }) {
   const session = await useAuthAdmin();
 
-  console.log("check session here", session);
-
   if (session) {
     redirect("/");
   }

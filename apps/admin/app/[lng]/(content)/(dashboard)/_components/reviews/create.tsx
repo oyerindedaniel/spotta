@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User } from "@prisma/client";
-import { ReloadIcon } from "@radix-ui/react-icons";
+import { ChevronDownIcon, ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -11,6 +11,7 @@ import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { api } from "@repo/trpc/src/react";
 import {
   Button,
+  Checkbox,
   Form,
   FormControl,
   FormField,
@@ -18,11 +19,59 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  StarRating,
+  Textarea,
   useToast,
 } from "@repo/ui";
 import { createReviewSchema } from "@repo/validations";
 
 type CreateReviewType = z.infer<typeof createReviewSchema>;
+
+const amenities = [
+  {
+    id: "1",
+    name: "Swimming Pool",
+    category: {
+      id: "c1",
+      name: "Recreation",
+    },
+  },
+  {
+    id: "2",
+    name: "Gym",
+    category: {
+      id: "c1",
+      name: "Recreation",
+    },
+  },
+  {
+    id: "3",
+    name: "Free Wi-Fi",
+    category: {
+      id: "c2",
+      name: "Utilities",
+    },
+  },
+  {
+    id: "4",
+    name: "Parking",
+    category: {
+      id: "c3",
+      name: "Facilities",
+    },
+  },
+  {
+    id: "5",
+    name: "Spa",
+    category: {
+      id: "c4",
+      name: "Wellness",
+    },
+  },
+] as const;
 
 export default function CreateReview({
   lng,
@@ -61,7 +110,9 @@ export default function CreateReview({
     },
   });
 
-  const onSubmit = async (data: CreateReviewType) => {};
+  const onSubmit = async (data: CreateReviewType) => {
+    console.log(data);
+  };
 
   const isUpdating = mutateCreateReview.isPending;
 
@@ -76,14 +127,130 @@ export default function CreateReview({
           >
             <FormField
               control={form.control}
-              name="description"
+              name="areaId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name of Area</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Name of Area" {...field} />
+                    <Input type="text" placeholder="Name of Area" {...field} />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="amenities"
+              render={() => (
+                <>
+                  <Popover>
+                    <div className="relative">
+                      <PopoverTrigger asChild className="h-11 w-full">
+                        <Button
+                          variant="unstyled"
+                          className="flex items-center justify-between bg-brand-primary font-normal text-gray-500"
+                        >
+                          Select Amenities
+                          <div>
+                            <ChevronDownIcon />
+                          </div>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="grid max-h-[300px] max-w-[33rem] grid-cols-4 gap-x-2 overflow-y-auto rounded-lg">
+                        {amenities.map((amenity) => (
+                          <FormField
+                            key={amenity.id}
+                            control={form.control}
+                            name="amenities"
+                            render={({ field }) => (
+                              <FormItem
+                                key={amenity.id}
+                                className="flex items-center gap-2 text-sm"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    className="mt-2"
+                                    checked={field.value?.some(
+                                      (value) => value.id === amenity.id,
+                                    )}
+                                    onCheckedChange={(checked) => {
+                                      checked
+                                        ? field.onChange([
+                                            ...(field.value ?? []),
+                                            amenity,
+                                          ])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                              (value) =>
+                                                value.id !== amenity.id,
+                                            ),
+                                          );
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  {amenity.name}
+                                </FormLabel>
+                              </FormItem>
+                            )}
+                          />
+                        ))}
+                      </PopoverContent>
+                    </div>
+                  </Popover>
+                  <FormMessage />
+                </>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="rating"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Rate Location</FormLabel>
+                  <FormControl>
+                    <StarRating
+                      maxRating={5}
+                      defaultRating={Number(field.value)}
+                      size={20}
+                      onSetRating={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Write Review</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Review"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="asAnonymous"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Post as Anonymous</FormLabel>
+                  </div>
                 </FormItem>
               )}
             />

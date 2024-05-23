@@ -48,6 +48,8 @@ model User {
     updatedAt DateTime @updatedAt
     medias Media[]
     amenities Amenity[]
+    amenityCategories AmenityCategory[]
+    reviews Review[]
     reviewReactions ReviewReaction[]
     verificationTokens VerificationToken[]
     Otps Otp[]
@@ -81,31 +83,30 @@ model Area {
     updatedAt DateTime @updatedAt
     createdBy       User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
     createdById     String
-    amenities Amenity[]
     reviews Review[]
     medias   Media[]
 }
 
 model Amenity {
-  id    String                 @id @default(uuid())
-  name  String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-  area Area? @relation(fields: [areaId], references: [id], onDelete: Cascade)
-  areaId String
-  category AmenityCategory?
-  reviews Review[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String           @id @default(uuid())
+  name        String
+  createdBy        User             @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById      String
+  category    AmenityCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId  String
+  reviews     Review[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
 
 model AmenityCategory {
-  id    String                 @id @default(uuid())
-  name  String
-  amenity Amenity @relation(fields: [amenityId], references: [id], onDelete: Cascade)
-  amenityId String @unique
-  createdAt      DateTime      @default(now())
-  updatedAt DateTime @updatedAt
+  id          String     @id @default(uuid())
+  name        String
+  amenities   Amenity[]  @relation
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+   createdBy        User             @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById      String
 }
 
 model Review {
@@ -117,6 +118,8 @@ views   Int?  @default(0)
 asAnonymous  Boolean? @default(false)
   area Area @relation(fields: [areaId], references: [id], onDelete: Cascade)
   areaId String
+     createdBy       User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
+    createdById     String
 amenities Amenity[]
 reviewReactions ReviewReaction[]
 createdAt DateTime @default(now())

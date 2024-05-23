@@ -27,7 +27,7 @@ export default function Reviews({
         <div className="flex items-center gap-4">
           <Link
             href="reviews/create-review"
-            className={cn("", buttonVariants({ size: "sm" }))}
+            className={cn("", buttonVariants({ size: "xs" }))}
           >
             CREATE REVIEW
           </Link>

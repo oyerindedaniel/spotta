@@ -6,6 +6,8 @@ export type SideBarLink = {
   url: string;
 };
 
+// or (props: SVGProps<SVGSVGElement>) => JSX.Element;
+
 export type IconProps = React.HTMLAttributes<SVGElement>;
 
 export type SideBarLinks = Array<SideBarLink>;

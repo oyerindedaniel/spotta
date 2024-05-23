@@ -4,11 +4,13 @@ const createAreaSchema = z.object({
   name: z.string(),
   state: z.string(),
   lga: z.string(),
-  coordinates: z.object({
-    longitude: z.number(),
-    latitude: z.number(),
-    address: z.string(),
-  }),
+  coordinates: z
+    .object({
+      longitude: z.number(),
+      latitude: z.number(),
+      address: z.string(),
+    })
+    .optional(),
   medias: z.union([
     z
       .array(z.instanceof(File))
