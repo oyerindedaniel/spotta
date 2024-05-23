@@ -89,7 +89,7 @@ model Area {
 
 model Amenity {
   id          String           @id @default(uuid())
-  name        String
+  name        String  @unique
   createdBy        User             @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById      String
   category    AmenityCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -101,7 +101,7 @@ model Amenity {
 
 model AmenityCategory {
   id          String     @id @default(uuid())
-  name        String
+  name        String     @unique
   amenities   Amenity[]  @relation
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
