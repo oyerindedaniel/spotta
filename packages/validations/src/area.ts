@@ -6,9 +6,9 @@ const createAreaSchema = z.object({
   lga: z.string().trim().min(1, { message: "Can’t be empty" }),
   coordinates: z
     .object({
-      longitude: z.number(),
-      latitude: z.number(),
-      address: z.string(),
+      longitude: z.number().optional(),
+      latitude: z.number().optional(),
+      address: z.string().optional(),
     })
     .optional(),
   medias: z.union([

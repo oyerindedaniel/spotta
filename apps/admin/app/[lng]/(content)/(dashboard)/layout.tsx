@@ -1,3 +1,6 @@
+import { redirect } from "next/navigation";
+
+import { useAuthAdmin } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 
 import { SIDEBAR_LINKS } from "./_components/layout/constants";
@@ -11,6 +14,12 @@ export default async function Layout({
   children,
   params: { lng },
 }: LayoutProps) {
+  const session = await useAuthAdmin();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <>
       <div className="fixed bottom-0 left-0 top-0 z-10 w-[200px] -translate-x-full bg-background pt-[100px] md:translate-x-0">

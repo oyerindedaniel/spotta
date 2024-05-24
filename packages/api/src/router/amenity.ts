@@ -1,11 +1,12 @@
 import { TRPCRouterRecord } from "@trpc/server";
+import { z } from "zod";
 
 import { createAmenitySchema } from "@repo/validations";
 
-import { protectedProcedure } from "../trpc";
+import { adminProtectedProcedure } from "../trpc";
 
 export const amenityRouter = {
-  create: protectedProcedure
+  create: adminProtectedProcedure
     .input(createAmenitySchema)
     .mutation(async ({ ctx, input }) => {
       const { db, session } = ctx;
@@ -35,7 +36,7 @@ export const amenityRouter = {
         data: createdAmenity,
       };
     }),
-  find: protectedProcedure.query(async ({ ctx }) => {
+  find: adminProtectedProcedure.query(async ({ ctx }) => {
     const { db, session } = ctx;
 
     const { id } = session.user;

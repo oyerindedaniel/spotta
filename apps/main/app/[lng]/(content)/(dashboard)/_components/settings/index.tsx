@@ -5,7 +5,7 @@ import { LanguagesType } from "@repo/i18n";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui";
 
 import ResetPassword from "./reset-password";
-import Sessions from "./session/sessions";
+import Sessions from "./sessions";
 
 export default async function Settings({ lng }: { lng: LanguagesType }) {
   const user = await useAuth();

@@ -186,6 +186,7 @@ export default function CreateEditArea({
                   <FormLabel required>Select lga</FormLabel>
                   <Select
                     onValueChange={field.onChange}
+                    value={form.getValues("lga")}
                     defaultValue={field?.value}
                   >
                     <FormControl>

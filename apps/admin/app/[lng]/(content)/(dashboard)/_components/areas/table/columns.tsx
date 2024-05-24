@@ -5,10 +5,13 @@ import { format } from "date-fns";
 
 import { RouterOutputs } from "@repo/api";
 import { Checkbox, DataTableColumnHeader, DataTableRowActions } from "@repo/ui";
+import { DATE_CREATED_AT_FORMAT } from "@repo/utils";
 
-export const areasColumns: ColumnDef<
-  RouterOutputs["area"]["findAll"]["data"][0]
->[] = [
+import { AreasRowActions } from "./row-actions";
+
+export type AreasType = RouterOutputs["area"]["findAll"]["data"];
+
+export const areasColumns: ColumnDef<AreasType[number]>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -40,11 +43,11 @@ export const areasColumns: ColumnDef<
     ),
     cell: ({ row }) => (
       <div className="w-[80px]">
-        {format(row.getValue("createdAt"), "MMMM do, yyyy")}
+        {format(row.getValue("createdAt"), DATE_CREATED_AT_FORMAT)}
       </div>
     ),
     enableSorting: false,
-    enableHiding: false,
+    enableHiding: true,
   },
   {
     accessorKey: "name",
@@ -53,7 +56,7 @@ export const areasColumns: ColumnDef<
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("name")}</div>,
     enableSorting: false,
-    enableHiding: false,
+    enableHiding: true,
   },
   {
     accessorKey: "views",
@@ -62,10 +65,11 @@ export const areasColumns: ColumnDef<
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("views")}</div>,
     enableSorting: false,
-    enableHiding: false,
+    enableHiding: true,
   },
   {
     accessorKey: "createdBy.firstName",
+    id: "createdBy.firstName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Created By" />
     ),
@@ -77,6 +81,7 @@ export const areasColumns: ColumnDef<
   },
   {
     accessorKey: "_count.reviews",
+    id: "_count.reviews",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Reviews" />
     ),
@@ -88,6 +93,7 @@ export const areasColumns: ColumnDef<
   },
   {
     accessorKey: "_count.medias",
+    id: "_count.medias",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Medias" />
     ),
@@ -99,6 +105,10 @@ export const areasColumns: ColumnDef<
   },
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ({ row }) => (
+      <DataTableRowActions row={row}>
+        {<AreasRowActions row={row} />}
+      </DataTableRowActions>
+    ),
   },
 ];

@@ -1,6 +1,8 @@
-import * as React from "react";
+"use client";
+
 import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 import { Column } from "@tanstack/react-table";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "../badge";

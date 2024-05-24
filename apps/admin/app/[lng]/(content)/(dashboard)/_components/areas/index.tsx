@@ -1,12 +1,10 @@
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { Suspense } from "react";
 import { User } from "@prisma/client";
 
-import { LanguagesType, useClientTranslation } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
-import { buttonVariants, DataTable } from "@repo/ui";
+import { LanguagesType } from "@repo/i18n";
 
-import { areasColumns } from "./columns";
+import AreasHeader from "./header";
+import AreasTable from "./table";
 
 export default async function Areas({
   lng,
@@ -15,28 +13,12 @@ export default async function Areas({
   lng: LanguagesType;
   session: User | null;
 }) {
-  const { t, i18n } = useClientTranslation({ lng });
-
-  const areas = await api.area.findAll();
-
-  // console.log({ resolvedLanguage: i18n.resolvedLanguage });
-
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-2xl font-medium">All Areas Created</h3>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link
-            href="areas/create-area"
-            className={cn("", buttonVariants({ size: "xs" }))}
-          >
-            CREATE AREA
-          </Link>
-        </div>
-      </div>
-      <DataTable data={areas.data} columns={areasColumns} />
+    <div className="flex flex-col gap-8">
+      <AreasHeader session={session} lng={lng} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <AreasTable session={session} lng={lng} />
+      </Suspense>
     </div>
   );
 }
