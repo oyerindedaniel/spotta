@@ -64,27 +64,27 @@ export function filterFilesForUpload(files: (File | string)[]): File[] {
   return files.filter((file) => file instanceof File) as File[];
 }
 
-export function separateFilesAndStrings(arr: (File | string)[]): {
-  files: File[];
-  strings: string[];
+export function separateMediaFilesAndUrls(arr: (File | string)[]): {
+  mediaFiles: File[];
+  mediaUrls: string[];
   hasFile: boolean;
 } {
-  let files: File[] = [];
-  let strings: string[] = [];
+  let mediaFiles: File[] = [];
+  let mediaUrls: string[] = [];
   let hasFile: boolean = false;
 
   arr.forEach((item) => {
     if (item instanceof File) {
-      files.push(item);
+      mediaFiles.push(item);
       hasFile = true;
     } else {
-      strings.push(item);
+      mediaUrls.push(item);
     }
   });
 
   return {
-    files,
-    strings,
+    mediaFiles,
+    mediaUrls,
     hasFile,
   };
 }
@@ -97,7 +97,7 @@ export function getLgasByState({
   stateCities?: StateCity[];
 }): string[] | undefined {
   const foundState = stateCities.find(
-    (city) => city.alias.toLowerCase() === state.toLowerCase(),
+    (city) => city.name.toLowerCase() === state.toLowerCase(),
   );
   return foundState ? foundState.lgas : undefined;
 }

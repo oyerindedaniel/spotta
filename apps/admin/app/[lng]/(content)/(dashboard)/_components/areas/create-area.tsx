@@ -30,7 +30,7 @@ import {
   UncontrolledFormMessage,
   useToast,
 } from "@repo/ui";
-import { filterFilesForUpload, getLgasByState, STATES } from "@repo/utils";
+import { getLgasByState, separateMediaFilesAndUrls, STATES } from "@repo/utils";
 import { createAreaSchema } from "@repo/validations";
 
 type CreateAreaType = z.infer<typeof createAreaSchema>;
@@ -92,31 +92,28 @@ export default function CreateArea({
     },
   });
 
-  const state = form.getValues("state");
+  const state = form.watch("state");
 
-  console.log(state);
-
-  const lgasByState = useMemo(() => getLgasByState({ state }), [state]);
-
-  console.log(lgasByState);
-
-  console.log(form.getValues("state"));
+  const lgasByState = useMemo(
+    () => getLgasByState({ state }),
+    [state],
+  ) as string[];
 
   useEffect(() => {
     if (state && lgasByState) form.setValue("lga", lgasByState[0]!);
   }, [state, lgasByState]);
 
   const onSubmit = async (data: CreateAreaType) => {
-    const isFile = !!filterFilesForUpload(data.medias).length;
+    const { hasFile, mediaFiles, mediaUrls } = separateMediaFilesAndUrls(
+      data.medias,
+    );
     try {
-      const mediasUrls = isFile
-        ? (await startUpload(filterFilesForUpload(data.medias)))?.map(
-            (data) => data.url,
-          )
+      const createdMediaUrls = hasFile
+        ? (await startUpload(mediaFiles))?.map((data) => data.url)
         : medias;
       mutateCreateArea.mutate({
         ...data,
-        medias: mediasUrls as Array<string>,
+        medias: createdMediaUrls as Array<string>,
       });
     } catch (err: any) {
       toast({
@@ -146,7 +143,7 @@ export default function CreateArea({
                 <FormItem>
                   <FormLabel>Name of Area</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Name of Area" {...field} />
+                    <Input type="text" placeholder="Name of Area" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -158,7 +155,6 @@ export default function CreateArea({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel required>Select state</FormLabel>
-
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field?.value}
@@ -169,14 +165,13 @@ export default function CreateArea({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {STATES.map((state) => (
-                        <SelectItem key={state.name} value={state.name}>
+                      {STATES.map((state, idx) => (
+                        <SelectItem key={idx} value={state.name}>
                           {state.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -186,30 +181,28 @@ export default function CreateArea({
               name="lga"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel required>Select city</FormLabel>
+                  <FormLabel required>Select lga</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    value={form.getValues("lga")}
                     defaultValue={field?.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select city" />
+                        <SelectValue placeholder="Select lga" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {lgasByState ? (
-                        lgasByState.map((city) => (
-                          <SelectItem key={city} value={city}>
-                            {city}
+                      {state && lgasByState ? (
+                        lgasByState.map((lga) => (
+                          <SelectItem key={lga} value={lga}>
+                            {lga}
                           </SelectItem>
                         ))
                       ) : (
-                        <>
-                          <SelectItem value="sss">
-                            Select state first
-                          </SelectItem>
-                        </>
+                        //@ts-ignore
+                        <SelectItem value={undefined}>
+                          Select state first
+                        </SelectItem>
                       )}
                     </SelectContent>
                   </Select>

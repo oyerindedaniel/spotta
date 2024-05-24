@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { RefreshToken } from "@/components/refresh-token";
 
 import { useAuthAdmin } from "@repo/hooks";
@@ -12,9 +13,9 @@ interface LayoutProps extends React.PropsWithChildren<{}> {
 export default async function Layout({ children, params }: LayoutProps) {
   const session = await useAuthAdmin();
 
-  // if (session) {
-  //   redirect("/");
-  // }
+  if (!session) {
+    redirect("/login");
+  }
 
   return (
     <>
