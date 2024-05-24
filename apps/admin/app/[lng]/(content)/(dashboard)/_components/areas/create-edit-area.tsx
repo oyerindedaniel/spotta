@@ -35,12 +35,14 @@ import { createAreaSchema } from "@repo/validations";
 
 type CreateAreaType = z.infer<typeof createAreaSchema>;
 
-export default function CreateArea({
+export default function CreateEditArea({
   lng,
   session,
+  asEdit,
 }: {
   lng: LanguagesType;
   session: User | null;
+  asEdit?: boolean;
 }): JSX.Element {
   const { t, i18n } = useClientTranslation({ lng });
 

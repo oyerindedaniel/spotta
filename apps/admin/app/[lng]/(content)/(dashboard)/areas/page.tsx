@@ -1,5 +1,6 @@
 import { useAuthAdmin } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
+import { api } from "@repo/trpc/src/server";
 
 import Areas from "../_components/areas";
 

@@ -1,12 +1,13 @@
 import { TRPCRouterRecord } from "@trpc/server";
+import { z } from "zod";
 
 import { createAreaSchema } from "@repo/validations";
 
-import { protectedProcedure } from "../trpc";
+import { adminProtectedProcedure } from "../trpc";
 import { generateUniqueSlug } from "../utils";
 
 export const areaRouter = {
-  create: protectedProcedure
+  create: adminProtectedProcedure
     .input(createAreaSchema)
     .mutation(async ({ ctx, input }) => {
       const { db, session } = ctx;
@@ -45,6 +46,44 @@ export const areaRouter = {
 
       return {
         data: createdArea,
+      };
+    }),
+  findAll: adminProtectedProcedure.query(async ({ ctx, input }) => {
+    const { session, db } = ctx;
+
+    const areas = await db.area.findMany({
+      include: {
+        createdBy: true,
+        _count: {
+          select: {
+            reviews: true,
+            medias: true,
+          },
+        },
+      },
+    });
+
+    return {
+      data: areas,
+    };
+  }),
+  findById: adminProtectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+
+      const { id: areaId } = input;
+
+      const area = await db.area.findFirst({
+        where: { id: areaId },
+      });
+
+      return {
+        data: area,
       };
     }),
 } satisfies TRPCRouterRecord;

@@ -42,3 +42,5 @@ export {
   type OurFileRouter,
 };
 export type { AppRouter, RouterInputs, RouterOutputs };
+
+export * from "./config";

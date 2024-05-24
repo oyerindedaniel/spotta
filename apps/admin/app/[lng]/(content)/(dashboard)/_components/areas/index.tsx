@@ -1,20 +1,23 @@
-"use client";
-
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";
 
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
-import { buttonVariants } from "@repo/ui";
+import { api } from "@repo/trpc/src/server";
+import { buttonVariants, DataTable } from "@repo/ui";
 
-export default function Areas({
+import { areasColumns } from "./columns";
+
+export default async function Areas({
   lng,
   session,
 }: {
   lng: LanguagesType;
   session: User | null;
-}): JSX.Element {
+}) {
   const { t, i18n } = useClientTranslation({ lng });
+
+  const areas = await api.area.findAll();
 
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
 
@@ -33,6 +36,7 @@ export default function Areas({
           </Link>
         </div>
       </div>
+      <DataTable data={areas.data} columns={areasColumns} />
     </div>
   );
 }

@@ -4,15 +4,15 @@ import { LanguagesType } from "@repo/i18n";
 import CreateEditArea from "../../_components/areas/create-edit-area";
 
 export default async function CreateAreaPage({
-  params: { lng },
+  params: { lng, id },
 }: {
-  params: { lng: LanguagesType };
+  params: { lng: LanguagesType; id: number };
 }) {
   const session = await useAuthAdmin();
 
   return (
     <>
-      <CreateEditArea lng={lng} session={session} />
+      <CreateEditArea asEdit lng={lng} session={session} />
     </>
   );
 }

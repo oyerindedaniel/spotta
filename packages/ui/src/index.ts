@@ -16,11 +16,14 @@ export * from "./components/ui/select";
 export * from "./components/ui/separator";
 export * from "./components/ui/sheet";
 export * from "./components/ui/sonner";
+export * from "./components/ui/table";
 export * from "./components/ui/tabs";
 export * from "./components/ui/textarea";
 export * from "./components/ui/toaster";
 export * from "./components/ui/tooltip";
 export * from "./components/ui/use-toast";
+export * from "./components/ui/command";
+export * from "./components/ui/data-table";
 
 // SHARED
 export * from "./shared/action-tooltip";
