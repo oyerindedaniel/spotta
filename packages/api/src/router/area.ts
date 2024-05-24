@@ -1,12 +1,13 @@
-import { TRPCRouterRecord } from "@trpc/server";
+import { TRPCError, TRPCRouterRecord } from "@trpc/server";
+import { z } from "zod";
 
 import { createAreaSchema } from "@repo/validations";
 
-import { protectedProcedure } from "../trpc";
+import { adminProtectedProcedure } from "../trpc";
 import { generateUniqueSlug } from "../utils";
 
 export const areaRouter = {
-  create: protectedProcedure
+  create: adminProtectedProcedure
     .input(createAreaSchema)
     .mutation(async ({ ctx, input }) => {
       const { db, session } = ctx;
@@ -45,6 +46,96 @@ export const areaRouter = {
 
       return {
         data: createdArea,
+      };
+    }),
+  findAll: adminProtectedProcedure.query(async ({ ctx, input }) => {
+    const { db } = ctx;
+
+    const areas = await db.area.findMany({
+      include: {
+        createdBy: true,
+        medias: true,
+        reviews: {
+          include: { _count: { select: { amenities: true } }, amenities: true },
+        },
+        _count: {
+          select: {
+            reviews: true,
+            medias: true,
+          },
+        },
+      },
+    });
+
+    return {
+      data: areas,
+    };
+  }),
+  groupAmenityByAreaId: adminProtectedProcedure
+    .input(
+      z.object({
+        areaId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { db } = ctx;
+
+      const { areaId } = input;
+
+      /**
+       * There's no direct existing relationship between area and amenity.
+       * In this scenario, the groupBy method would have been used to group amenities.
+       */
+
+      const foundArea = await db.area.findFirst({
+        where: { id: areaId },
+        include: {
+          reviews: {
+            include: {
+              amenities: true,
+            },
+          },
+        },
+      });
+
+      if (!foundArea) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Area not available",
+        });
+      }
+
+      const groupedAmenities = {} as Record<string, number>;
+
+      foundArea.reviews.forEach((review) => {
+        review.amenities.forEach((amenity) => {
+          const { name } = amenity;
+          //@ts-ignore
+          groupedAmenities[name] = (groupedAmenities[name] || 0) + 1;
+        });
+      });
+
+      return {
+        data: groupedAmenities,
+      };
+    }),
+  findById: adminProtectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+
+      const { id: areaId } = input;
+
+      const area = await db.area.findFirst({
+        where: { id: areaId },
+      });
+
+      return {
+        data: area,
       };
     }),
 } satisfies TRPCRouterRecord;

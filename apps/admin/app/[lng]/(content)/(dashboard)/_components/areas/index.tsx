@@ -1,38 +1,24 @@
-"use client";
-
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { Suspense } from "react";
 import { User } from "@prisma/client";
 
-import { LanguagesType, useClientTranslation } from "@repo/i18n";
-import { buttonVariants } from "@repo/ui";
+import { LanguagesType } from "@repo/i18n";
 
-export default function Areas({
+import AreasHeader from "./header";
+import AreasTable from "./table";
+
+export default async function Areas({
   lng,
   session,
 }: {
   lng: LanguagesType;
   session: User | null;
-}): JSX.Element {
-  const { t, i18n } = useClientTranslation({ lng });
-
-  // console.log({ resolvedLanguage: i18n.resolvedLanguage });
-
+}) {
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-2xl font-medium">All Areas Created</h3>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link
-            href="areas/create-area"
-            className={cn("", buttonVariants({ size: "xs" }))}
-          >
-            CREATE AREA
-          </Link>
-        </div>
-      </div>
+    <div className="flex flex-col gap-8">
+      <AreasHeader session={session} lng={lng} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <AreasTable session={session} lng={lng} />
+      </Suspense>
     </div>
   );
 }

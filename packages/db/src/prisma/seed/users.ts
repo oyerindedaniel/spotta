@@ -9,6 +9,7 @@ const adminDetails = {
   lastName: "oyerinde",
   email: "oyerindedaniel2002@gmail.com",
   password: "Daniel12345",
+  phone: "07066559476",
 } as const;
 
 async function users() {
@@ -29,7 +30,7 @@ async function users() {
       authService: "CREDENTIALS",
       isConfirmed: true,
       picture: faker.image.avatar(),
-      phone: faker.phone.number(),
+      phone: adminDetails.phone,
       emailVerified: new Date(),
     },
   });

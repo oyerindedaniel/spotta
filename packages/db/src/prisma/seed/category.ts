@@ -2,14 +2,19 @@ import { prisma } from "./";
 
 async function categories({ userId }: { userId: string }) {
   // amenity categories
-  const categories = [
-    { name: "Health & Fitness", createdById: userId },
-    { name: "Recreation", createdById: userId },
-    { name: "Workspace", createdById: userId },
-    { name: "Relaxation", createdById: userId },
-    { name: "Entertainment", createdById: userId },
-    { name: "Food & Drink", createdById: userId },
+  const categoryNames = [
+    "Health & Fitness",
+    "Recreation",
+    "Workspace",
+    "Relaxation",
+    "Entertainment",
+    "Food & Drink",
   ];
+
+  const categories = categoryNames.map((name) => ({
+    name,
+    createdById: userId,
+  }));
 
   const upsertPromises = categories.map((category) =>
     prisma.amenityCategory.upsert({

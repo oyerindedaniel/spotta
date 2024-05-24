@@ -12,15 +12,15 @@ interface LayoutProps extends React.PropsWithChildren<{}> {
 export default async function Layout({ children, params }: LayoutProps) {
   const session = await useAuthAdmin();
 
-  // if (session) {
-  //   redirect("/");
+  // if (!session) {
+  //   redirect("/login");
   // }
 
   return (
     <>
       <RefreshToken session={session} />
       <Navbar lng={params.lng} session={session} />
-      <main> {children}</main>
+      <main>{children}</main>
     </>
   );
 }

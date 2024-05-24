@@ -2,13 +2,13 @@ import { z } from "zod";
 
 const createAreaSchema = z.object({
   name: z.string(),
-  state: z.string(),
-  lga: z.string(),
+  state: z.string().trim().min(1, { message: "Can’t be empty" }),
+  lga: z.string().trim().min(1, { message: "Can’t be empty" }),
   coordinates: z
     .object({
-      longitude: z.number(),
-      latitude: z.number(),
-      address: z.string(),
+      longitude: z.number().optional(),
+      latitude: z.number().optional(),
+      address: z.string().optional(),
     })
     .optional(),
   medias: z.union([

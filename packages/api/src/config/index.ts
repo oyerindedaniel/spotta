@@ -4,6 +4,8 @@ type CookieOptions = Omit<CookieSerializeOptions, "sameSite"> & {
   sameSite: boolean | string | "lax" | "strict" | "none" | undefined;
 };
 
+export const DATE_CREATED_AT_FORMAT = "MMMM do, yyyy";
+
 export const ACCESS_TOKEN_SECRET =
   process.env.JWT_ACCESS_SECRET ?? "No_Secret-Access!";
 export const REFRESH_TOKEN_SECRET =

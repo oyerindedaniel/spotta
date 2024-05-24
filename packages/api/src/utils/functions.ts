@@ -35,7 +35,7 @@ export async function generateUniqueSlug(
   let uniqueSlug = baseSlug;
   let counter = 1;
 
-  while (!(await isUnique(uniqueSlug))) {
+  while (await isUnique(uniqueSlug)) {
     uniqueSlug = `${baseSlug}-${counter}`;
     counter++;
   }

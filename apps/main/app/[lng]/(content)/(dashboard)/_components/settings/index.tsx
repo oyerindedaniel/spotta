@@ -5,7 +5,7 @@ import { LanguagesType } from "@repo/i18n";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui";
 
 import ResetPassword from "./reset-password";
-import Session from "./session/sessions";
+import Sessions from "./sessions";
 
 export default async function Settings({ lng }: { lng: LanguagesType }) {
   const user = await useAuth();
@@ -18,7 +18,7 @@ export default async function Settings({ lng }: { lng: LanguagesType }) {
         </TabsList>
         <TabsContent value="session">
           <Suspense fallback={"loading Sessions..."}>
-            <Session lng={lng} user={user} />
+            <Sessions lng={lng} user={user} />
           </Suspense>
         </TabsContent>
         <TabsContent value="reset-password">
