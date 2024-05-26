@@ -12,7 +12,7 @@ export default async function CreateAreaPage({
 
   return (
     <>
-      <CreateEditArea lng={lng} session={session} />
+      <CreateEditArea type="create" lng={lng} session={session} />
     </>
   );
 }

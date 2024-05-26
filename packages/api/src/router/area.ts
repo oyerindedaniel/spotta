@@ -1,7 +1,7 @@
 import { TRPCError, TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { createAreaSchema } from "@repo/validations";
+import { createAreaSchema, updateAreaSchema } from "@repo/validations";
 
 import { adminProtectedProcedure } from "../trpc";
 import { generateUniqueSlug } from "../utils";
@@ -31,9 +31,9 @@ export const areaRouter = {
           slug,
           state,
           lga,
-          address: "Plot 13b",
-          latitude: latitude?.toString() ?? "2.2",
-          longitude: longitude?.toString() ?? "1.1",
+          address: address ?? "Plot 13b",
+          latitude: latitude ?? 2.2,
+          longitude: longitude ?? 1.1,
           createdBy: { connect: { id: userId } },
           medias: {
             create: mediasToString.map((media) => ({
@@ -46,6 +46,58 @@ export const areaRouter = {
 
       return {
         data: createdArea,
+      };
+    }),
+  update: adminProtectedProcedure
+    .input(updateAreaSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+
+      const { id: userId } = session.user;
+
+      const {
+        id: areaId,
+        name,
+        state,
+        lga,
+        medias,
+        coordinates,
+        deletedMedias,
+      } = input;
+
+      const { latitude, longitude, address } = coordinates ?? {};
+
+      const mediasToString = medias.filter(Boolean) as Array<string>;
+
+      const updatedArea = await db.area.update({
+        where: { id: areaId },
+        data: {
+          name,
+          state,
+          lga,
+          address: address ?? "Plot 13b",
+          latitude: latitude ?? 2.2,
+          longitude: longitude ?? 1.1,
+          medias: {
+            ...(mediasToString.length > 0 && {
+              create: mediasToString.map((media) => ({
+                src: media,
+                user: { connect: { id: userId } },
+              })),
+            }),
+            ...(deletedMedias.length > 0 && {
+              deleteMany: {
+                id: {
+                  in: deletedMedias.map((media) => media.id),
+                },
+              },
+            }),
+          },
+        },
+      });
+
+      return {
+        data: updatedArea,
       };
     }),
   findAll: adminProtectedProcedure.query(async ({ ctx, input }) => {
@@ -84,7 +136,7 @@ export const areaRouter = {
 
       /**
        * There's no direct existing relationship between area and amenity.
-       * In this scenario, the groupBy method would have been used to group amenities.
+       * In this scenario, the groupBy and count method would have been used to group and get count amenities.
        */
 
       const foundArea = await db.area.findFirst({
@@ -126,12 +178,21 @@ export const areaRouter = {
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { session, db } = ctx;
+      const { db } = ctx;
 
       const { id: areaId } = input;
 
       const area = await db.area.findFirst({
         where: { id: areaId },
+        include: {
+          createdBy: true,
+          medias: true,
+          reviews: {
+            include: {
+              amenities: true,
+            },
+          },
+        },
       });
 
       return {

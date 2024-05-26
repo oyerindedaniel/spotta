@@ -1,5 +1,4 @@
 import { RefreshToken } from "@/components/refresh-token";
-import AutoCounter from "@/components/test";
 
 import { useAuth } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";

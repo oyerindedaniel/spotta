@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Row } from "@tanstack/react-table";
 
 import { useDisclosure } from "@repo/hooks/src/use-disclosure";
@@ -19,6 +20,9 @@ export function AreasRowActions<TData>({
   row: Row<AreasType[number]>;
 }) {
   const { onOpen, onClose, isOpen } = useDisclosure();
+  const router = useRouter();
+
+  const { id } = row.original;
 
   return (
     <>
@@ -36,7 +40,9 @@ export function AreasRowActions<TData>({
         >
           View
         </DropdownMenuItem>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push(`/areas/${id}`)}>
+          Edit
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           Delete

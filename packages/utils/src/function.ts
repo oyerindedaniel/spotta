@@ -1,3 +1,5 @@
+import { Media } from "@prisma/client";
+
 import { StateCity, STATES } from "./states";
 
 export const getBaseUrl = () => {
@@ -101,3 +103,25 @@ export function getLgasByState({
   );
   return foundState ? foundState.lgas : undefined;
 }
+
+type FilteredMedia = Pick<Media, "id" | "src">;
+
+export function deletedMediaUrls(
+  arrayOfDefaultMedias: Media[],
+  arrayOfUrls: string[],
+): FilteredMedia[] {
+  const result: FilteredMedia[] = [];
+
+  arrayOfDefaultMedias.forEach((media) => {
+    if (!arrayOfUrls.includes(media.src)) {
+      result.push({ id: media.id, src: media.src });
+    }
+  });
+
+  return result;
+}
+
+export const ensureArrayLength = (
+  arr: string[],
+  targetLength: number,
+): string[] => arr.concat(Array(targetLength).fill("")).slice(0, targetLength);

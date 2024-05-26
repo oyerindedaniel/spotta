@@ -8,6 +8,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { RouterOutputs } from "@repo/api";
 import { useUploadThing } from "@repo/hooks/src/use-upload-file";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { api } from "@repo/trpc/src/react";
@@ -30,20 +31,38 @@ import {
   UncontrolledFormMessage,
   useToast,
 } from "@repo/ui";
-import { getLgasByState, separateMediaFilesAndUrls, STATES } from "@repo/utils";
+import {
+  deletedMediaUrls,
+  ensureArrayLength,
+  getLgasByState,
+  separateMediaFilesAndUrls,
+  STATES,
+} from "@repo/utils";
 import { createAreaSchema } from "@repo/validations";
 
 type CreateAreaType = z.infer<typeof createAreaSchema>;
 
-export default function CreateEditArea({
-  lng,
-  session,
-  asEdit,
-}: {
+type AreaOutputType = RouterOutputs["area"]["findById"]["data"];
+
+type Props = {
   lng: LanguagesType;
   session: User | null;
-  asEdit?: boolean;
-}): JSX.Element {
+} & (
+  | {
+      type: "create";
+    }
+  | {
+      type: "edit";
+      area: AreaOutputType;
+    }
+);
+
+export default function CreateEditArea({
+  lng,
+  type,
+  session,
+  ...props
+}: Props): JSX.Element {
   const { t, i18n } = useClientTranslation({ lng });
 
   const router = useRouter();
@@ -51,10 +70,13 @@ export default function CreateEditArea({
 
   const requiredMessage = "Input not instance of File";
 
+  const area = (props as { area: AreaOutputType }).area;
+  const asEdit = !!(type === "edit" && area);
+
   const { startUpload, isUploading, progresses } =
     useUploadThing("areaMediasUploader");
 
-  const defaultMedias = new Array("").filter(Boolean);
+  const defaultMedias = asEdit ? area.medias.map((media) => media.src) : [];
 
   const medias =
     defaultMedias.length > 0 ? (defaultMedias as Array<string>) : undefined;
@@ -62,13 +84,13 @@ export default function CreateEditArea({
   const form = useForm<CreateAreaType>({
     resolver: zodResolver(createAreaSchema),
     defaultValues: {
-      name: "",
-      state: "",
-      lga: "",
+      name: asEdit ? area.name : "",
+      state: asEdit ? area.state : "",
+      lga: asEdit ? area.lga : "",
       coordinates: {
-        address: "",
-        longitude: undefined,
-        latitude: undefined,
+        address: asEdit ? area.address : "",
+        longitude: asEdit ? area.longitude : undefined,
+        latitude: asEdit ? area.latitude : undefined,
       },
       medias,
     },
@@ -79,7 +101,27 @@ export default function CreateEditArea({
       const { name } = data;
       toast({
         variant: "success",
-        description: `Successfully created ${name} area`,
+        description: `Successfully created area: ${name}`,
+      });
+      router.push("/areas");
+      router.refresh();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: error?.message,
+      });
+      console.error(error);
+      router.refresh();
+    },
+  });
+
+  const mutateUpdateArea = api.area.update.useMutation({
+    onSuccess: ({ data }) => {
+      const { name } = data;
+      toast({
+        variant: "success",
+        description: `Successfully updated area: ${name} `,
       });
       router.push("/areas");
       router.refresh();
@@ -109,6 +151,37 @@ export default function CreateEditArea({
     const { hasFile, mediaFiles, mediaUrls } = separateMediaFilesAndUrls(
       data.medias,
     );
+
+    if (asEdit) {
+      const deletedMedias = deletedMediaUrls(
+        area.medias ?? [],
+        mediaUrls ?? [],
+      );
+
+      const targetLength = 3;
+
+      try {
+        const createdMediaUrls = hasFile
+          ? (await startUpload(mediaFiles))?.map((data) => data.url)
+          : [];
+
+        mutateUpdateArea.mutate({
+          ...data,
+          id: area.id,
+          medias: (createdMediaUrls.length < targetLength
+            ? ensureArrayLength(createdMediaUrls, targetLength)
+            : createdMediaUrls ?? []) as Array<string>,
+          deletedMedias,
+        });
+      } catch (err: any) {
+        toast({
+          variant: "destructive",
+          title: err?.message ?? "Error updating area. Try Again",
+        });
+      }
+      return;
+    }
+
     try {
       const createdMediaUrls = hasFile
         ? (await startUpload(mediaFiles))?.map((data) => data.url)
@@ -120,18 +193,21 @@ export default function CreateEditArea({
     } catch (err: any) {
       toast({
         variant: "destructive",
-        title: err?.message ?? "Error updating profile",
+        title: err?.message ?? "Error creating area",
       });
     }
   };
 
   const formPictureError = form.formState.errors.medias;
 
-  const isUpdating = mutateCreateArea.isPending || isUploading;
+  const isUpdating =
+    mutateCreateArea.isPending || mutateUpdateArea.isPending || isUploading;
 
   return (
     <div className="mx-auto max-w-[35rem]">
-      <div className="text-2xl font-medium">Create a new Area</div>
+      <div className="text-2xl font-medium">
+        {asEdit ? "Update" : "Create a New"} Area
+      </div>
       <div className="my-6 w-full rounded-lg bg-brand-plain p-4 px-5 shadow-md">
         <Form {...form}>
           <form
@@ -222,7 +298,6 @@ export default function CreateEditArea({
                     <Map
                       inputProps={{
                         onChange: field.onChange,
-                        //@ts-ignore
                         value: field.value,
                       }}
                     />
@@ -270,7 +345,7 @@ export default function CreateEditArea({
               {isUpdating && (
                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Save
+              {asEdit ? "Update" : "Save"}
             </Button>
           </form>
         </Form>
