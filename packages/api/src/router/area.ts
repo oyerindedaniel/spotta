@@ -16,8 +16,6 @@ export const areaRouter = {
 
       const { latitude, longitude, address } = coordinates ?? {};
 
-      console.log(coordinates);
-
       const mediasToString = medias as Array<string>;
 
       const isSlugUnique = async (slug: string) => {
