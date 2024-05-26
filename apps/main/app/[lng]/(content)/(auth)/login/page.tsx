@@ -11,6 +11,7 @@ export default async function LoginPage({
   params: { lng: LanguagesType };
 }) {
   const session = await useAuth();
+
   if (session) {
     redirect("/");
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import GroupedAmenities from "@/components/group-amenities";
 import { format } from "date-fns";
 
@@ -26,11 +27,12 @@ interface Props {
 }
 
 export function ViewArea({ isOpen, onOpen, onClose, data }: Props) {
+  const router = useRouter();
+  const { toast } = useToast();
+
   const { id, name, state, lga, createdAt, views, _count, medias } = data ?? {};
 
   const { medias: mediaCount, reviews: reviewCount } = _count ?? {};
-
-  const { toast } = useToast();
 
   const {
     isPending,
@@ -93,9 +95,8 @@ export function ViewArea({ isOpen, onOpen, onClose, data }: Props) {
             </span>
             <div className="flex flex-wrap gap-4">
               {medias.map((media) => (
-                <div className="relative h-20 w-20">
+                <div key={media.id} className="relative h-20 w-20">
                   <Image
-                    key={media.id}
                     src={media.src}
                     alt="image"
                     className="rounded-lg object-cover"
@@ -110,7 +111,12 @@ export function ViewArea({ isOpen, onOpen, onClose, data }: Props) {
           <Button className="w-2/4" type="button">
             View Reviews
           </Button>
-          <Button className="w-2/4" type="button" variant="outline">
+          <Button
+            onClick={() => router.push(`/areas/${id}`)}
+            className="w-2/4"
+            type="button"
+            variant="outline"
+          >
             Edit
           </Button>
         </DialogFooter>

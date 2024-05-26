@@ -32,7 +32,7 @@ export const ourFileRouter = {
       return { uploadedBy: metadata.userId, file };
     }),
   areaMediasUploader: f({
-    image: { maxFileSize: "4MB", maxFileCount: 6, minFileCount: 3 },
+    image: { maxFileSize: "4MB", maxFileCount: 6, minFileCount: 1 },
   })
     .middleware(async ({ req }) => {
       const user = await auth(req);

@@ -1,22 +1,24 @@
 import { z } from "zod";
 
-const createAreaSchema = z.object({
+const areaSchema = z.object({
   name: z.string(),
   state: z.string().trim().min(1, { message: "Can’t be empty" }),
   lga: z.string().trim().min(1, { message: "Can’t be empty" }),
-  coordinates: z
-    .object({
-      longitude: z.number().optional(),
-      latitude: z.number().optional(),
-      address: z.string().optional(),
-    })
-    .optional(),
-  medias: z.union([
-    z
-      .array(z.instanceof(File))
-      .min(3, { message: "Please upload at least three image" }),
-    z.array(z.string().url()),
-  ]),
+  coordinates: z.object({
+    longitude: z.number().optional(),
+    latitude: z.number().optional(),
+    address: z.string().optional(),
+  }),
+  medias: z
+    .array(z.union([z.instanceof(File), z.string()]))
+    .min(3, { message: "Please upload at least three image" }),
 });
 
-export { createAreaSchema };
+const createAreaSchema = areaSchema.extend({});
+
+const updateAreaSchema = areaSchema.extend({
+  id: z.string(),
+  deletedMedias: z.array(z.object({ id: z.string(), src: z.string() })),
+});
+
+export { createAreaSchema, updateAreaSchema };

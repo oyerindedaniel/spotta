@@ -1057,6 +1057,9 @@ importers:
 
   packages/utils:
     dependencies:
+      '@prisma/client':
+        specifier: ^5.13.0
+        version: 5.13.0(prisma@5.13.0)
       '@repo/api':
         specifier: workspace:*
         version: link:../api
@@ -1109,6 +1112,9 @@ importers:
       prettier:
         specifier: ^3.2.5
         version: 3.2.5
+      prisma:
+        specifier: ^5.13.0
+        version: 5.13.0
       typescript:
         specifier: ^5.3.3
         version: 5.4.5
