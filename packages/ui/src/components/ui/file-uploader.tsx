@@ -100,7 +100,7 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
 
 function FileUploader(props: FileUploaderProps) {
   const {
-    value: valueProp,
+    value: valueProp = [],
     onValueChange,
     onUpload,
     progresses,

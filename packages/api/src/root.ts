@@ -1,6 +1,7 @@
 import { amenityRouter } from "./router/amenity";
 import { areaRouter } from "./router/area";
 import { authRouter } from "./router/auth";
+import { reviewRouter } from "./router/review";
 import { userRouter } from "./router/user";
 import { createTRPCRouter } from "./trpc";
 
@@ -9,6 +10,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   area: areaRouter,
   amenity: amenityRouter,
+  review: reviewRouter,
 });
 
 // export type definition of API

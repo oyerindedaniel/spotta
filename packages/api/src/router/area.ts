@@ -31,9 +31,9 @@ export const areaRouter = {
           slug,
           state,
           lga,
-          address: address ?? "Plot 13b",
-          latitude: latitude ?? 2.2,
-          longitude: longitude ?? 1.1,
+          address: address || "Plot 13b",
+          latitude: latitude || 2.2,
+          longitude: longitude || 1.1,
           createdBy: { connect: { id: userId } },
           medias: {
             create: mediasToString.map((media) => ({
@@ -75,9 +75,9 @@ export const areaRouter = {
           name,
           state,
           lga,
-          address: address ?? "Plot 13b",
-          latitude: latitude ?? 2.2,
-          longitude: longitude ?? 1.1,
+          address: address || "Plot 13b",
+          latitude: latitude || 2.2,
+          longitude: longitude || 1.1,
           medias: {
             ...(mediasToString.length > 0 && {
               create: mediasToString.map((media) => ({
@@ -100,6 +100,24 @@ export const areaRouter = {
         data: updatedArea,
       };
     }),
+  delete: adminProtectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { db } = ctx;
+      const { id: areaId } = input;
+
+      await db.area.delete({
+        where: { id: areaId },
+      });
+
+      return {
+        data: true,
+      };
+    }),
   findAll: adminProtectedProcedure.query(async ({ ctx, input }) => {
     const { db } = ctx;
 
@@ -117,7 +135,19 @@ export const areaRouter = {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
+
+    return {
+      data: areas,
+    };
+  }),
+  findAllNoInclude: adminProtectedProcedure.query(async ({ ctx, input }) => {
+    const { db } = ctx;
+
+    const areas = await db.area.findMany({});
 
     return {
       data: areas,

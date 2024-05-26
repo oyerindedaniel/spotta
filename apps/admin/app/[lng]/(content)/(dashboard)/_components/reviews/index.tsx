@@ -1,11 +1,10 @@
-"use client";
-
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { Suspense } from "react";
 import { User } from "@prisma/client";
 
-import { LanguagesType, useClientTranslation } from "@repo/i18n";
-import { buttonVariants } from "@repo/ui";
+import { LanguagesType } from "@repo/i18n";
+
+import ReviewsHeader from "./header";
+import ReviewsTable from "./table";
 
 export default function Reviews({
   lng,
@@ -14,25 +13,12 @@ export default function Reviews({
   lng: LanguagesType;
   session: User | null;
 }): JSX.Element {
-  const { t, i18n } = useClientTranslation({ lng });
-
-  // console.log({ resolvedLanguage: i18n.resolvedLanguage });
-
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-2xl font-medium">All Reviews Created</h3>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link
-            href="reviews/create-review"
-            className={cn("", buttonVariants({ size: "xs" }))}
-          >
-            CREATE REVIEW
-          </Link>
-        </div>
-      </div>
+    <div className="flex flex-col gap-8">
+      <ReviewsHeader session={session} lng={lng} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ReviewsTable session={session} lng={lng} />
+      </Suspense>
     </div>
   );
 }

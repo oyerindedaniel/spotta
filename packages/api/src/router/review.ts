@@ -1,12 +1,15 @@
 import { TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
-import { createReviewSchema } from "@repo/validations";
+import {
+  createReviewSchema,
+  updateReviewStatusSchema,
+} from "@repo/validations";
 
-import { protectedProcedure } from "../trpc";
+import { adminProtectedProcedure } from "../trpc";
 
 export const reviewRouter = {
-  create: protectedProcedure
+  create: adminProtectedProcedure
     .input(createReviewSchema)
     .mutation(async ({ ctx, input }) => {
       const { db, session } = ctx;
@@ -32,7 +35,51 @@ export const reviewRouter = {
         data: createdReview,
       };
     }),
-  findBy: protectedProcedure
+  updateStatus: adminProtectedProcedure
+    .input(updateReviewStatusSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { db } = ctx;
+
+      const { id: reviewId, status } = input;
+
+      await db.review.update({
+        where: { id: reviewId },
+        data: {
+          status,
+        },
+      });
+
+      return {
+        data: true,
+      };
+    }),
+  findAll: adminProtectedProcedure.query(async ({ ctx, input }) => {
+    const { db } = ctx;
+
+    const reviews = await db.review.findMany({
+      include: {
+        area: true,
+        createdBy: true,
+        amenities: {
+          include: { category: true },
+        },
+        _count: {
+          select: {
+            likeReactions: true,
+            dislikeReactions: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return {
+      data: reviews,
+    };
+  }),
+  findBy: adminProtectedProcedure
     .input(
       z.object({
         id: z.string(),

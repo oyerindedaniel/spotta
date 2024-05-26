@@ -1,3 +1,4 @@
+import { ReviewStatus } from "@prisma/client";
 import { z } from "zod";
 
 import { updateAmenitySchema } from "./amenity";
@@ -10,4 +11,13 @@ const createReviewSchema = z.object({
   areaId: z.string(),
 });
 
-export { createReviewSchema };
+const updateReviewStatusSchema = z.object({
+  id: z.string(),
+  status: z.union([
+    z.literal(ReviewStatus.APPROVED),
+    z.literal(ReviewStatus.DECLINED),
+    z.literal(ReviewStatus.PENDING),
+  ]),
+});
+
+export { createReviewSchema, updateReviewStatusSchema };

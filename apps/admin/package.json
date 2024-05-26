@@ -27,6 +27,7 @@
     "@trpc/server": "11.0.0-rc.334",
     "@uploadthing/react": "^6.5.3",
     "axios": "^1.6.8",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
     "google-auth-library": "^9.9.0",

@@ -3,7 +3,6 @@
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@prisma/client";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -46,7 +45,6 @@ type AreaOutputType = RouterOutputs["area"]["findById"]["data"];
 
 type Props = {
   lng: LanguagesType;
-  session: User | null;
 } & (
   | {
       type: "create";
@@ -60,7 +58,6 @@ type Props = {
 export default function CreateEditArea({
   lng,
   type,
-  session,
   ...props
 }: Props): JSX.Element {
   const { t, i18n } = useClientTranslation({ lng });

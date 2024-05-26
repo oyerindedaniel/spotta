@@ -72,6 +72,10 @@ export function Navbar({
     },
     onError: (error) => {
       console.error(error);
+      toast({
+        variant: "destructive",
+        description: error?.message || "Error logging out. Please refresh page",
+      });
       router.refresh();
     },
   });

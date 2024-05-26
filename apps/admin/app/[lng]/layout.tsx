@@ -11,7 +11,7 @@ import { dir } from "i18next";
 
 import { languages, LanguagesType } from "@repo/i18n";
 import { TRPCReactProvider } from "@repo/trpc/src/react";
-import { Toaster } from "@repo/ui";
+import { SonnerToaster, Toaster } from "@repo/ui";
 
 export async function generateStaticParams() {
   return languages.map((lng) => ({ lang: lng }));
@@ -44,7 +44,7 @@ export default function RootLayout({
             {/* <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} /> */}
 
             {children}
-
+            <SonnerToaster />
             <Toaster />
             <ModalProvider />
           </ThemeProvider>

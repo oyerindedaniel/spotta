@@ -32,6 +32,11 @@ enum ReviewStatus {
   DECLINED
 }
 
+enum ReactionType {
+  LIKE
+  DISLIKE
+}
+
 model User {
     id        String      @id @default(uuid())
     firstName String
@@ -121,10 +126,26 @@ asAnonymous  Boolean? @default(false)
      createdBy       User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
     createdById     String
 amenities Amenity[]
-reviewReactions ReviewReaction[]
+  likeReactions    ReviewReaction[] @relation("LikeReaction")
+  dislikeReactions ReviewReaction[] @relation("DislikeReaction")
 createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model ReviewReaction {
+  id                String        @id @default(uuid())
+  type              ReactionType
+  userId            String
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likeReview        Review?       @relation("LikeReaction", fields: [likeReviewId], references: [id], onDelete: Cascade)
+  likeReviewId      String?
+  dislikeReview     Review?       @relation("DislikeReaction", fields: [dislikeReviewId], references: [id], onDelete: Cascade)
+  dislikeReviewId   String?
+
+  @@unique([userId, likeReviewId])
+  @@unique([userId, dislikeReviewId])
+}
+
 
 model Media {
   id    String                 @id @default(uuid())
@@ -136,21 +157,11 @@ model Media {
   createdAt  DateTime @default(now())
 }
 
-model ReviewReaction {
-  userId    String
-  reviewId  String
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  review    Review           @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  createdAt DateTime         @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@id([userId, reviewId])
-}
-
 model VerificationToken {
     id           String      @id @default(uuid())
     token      String   @unique
     expires    DateTime
+    createdAt DateTime @default(now())
   user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
 }

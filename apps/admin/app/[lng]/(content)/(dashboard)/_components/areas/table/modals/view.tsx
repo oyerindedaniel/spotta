@@ -85,7 +85,9 @@ export function ViewArea({ isOpen, onOpen, onClose, data }: Props) {
               <span>Error occurred</span>
             ) : (
               groupAmenitiesData && (
+                // <ScrollArea className="h-24 w-full rounded-md border">
                 <GroupedAmenities groupedAmenities={groupAmenitiesData.data} />
+                // </ScrollArea>
               )
             )}
           </div>
