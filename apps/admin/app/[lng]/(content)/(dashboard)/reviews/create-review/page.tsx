@@ -8,11 +8,9 @@ export default async function CreateReviewPage({
 }: {
   params: { lng: LanguagesType };
 }) {
-  const session = await useAuthAdmin();
-
   return (
     <>
-      <CreateReview lng={lng} session={session} />
+      <CreateReview lng={lng} type="create" />
     </>
   );
 }

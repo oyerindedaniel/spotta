@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import {
   createReviewSchema,
+  updateReviewSchema,
   updateReviewStatusSchema,
 } from "@repo/validations";
 
@@ -35,15 +36,52 @@ export const reviewRouter = {
         data: createdReview,
       };
     }),
+  updateAdmin: adminProtectedProcedure
+    .input(updateReviewSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+
+      const { id: userId } = session.user;
+
+      const {
+        id: reviewId,
+        description,
+        asAnonymous,
+        amenities,
+        rating,
+        areaId,
+      } = input;
+
+      await db.review.update({
+        where: { id: reviewId, createdBy: { id: userId } },
+        data: {
+          area: { connect: { id: areaId } },
+          description,
+          rating: Number(rating),
+          asAnonymous,
+          amenities: {
+            connect: amenities.map((amenity) => ({
+              id: amenity.id,
+            })),
+          },
+        },
+      });
+
+      return {
+        data: true,
+      };
+    }),
   updateStatus: adminProtectedProcedure
     .input(updateReviewStatusSchema)
     .mutation(async ({ ctx, input }) => {
-      const { db } = ctx;
+      const { db, session } = ctx;
+
+      const { id: userId } = session.user;
 
       const { id: reviewId, status } = input;
 
       await db.review.update({
-        where: { id: reviewId },
+        where: { id: reviewId, createdBy: { id: userId } },
         data: {
           status,
         },
@@ -86,15 +124,49 @@ export const reviewRouter = {
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { db } = ctx;
+      const { db, session } = ctx;
       const { id: reviewId } = input;
 
+      const { id: userId } = session.user;
+
       await db.review.delete({
-        where: { id: reviewId },
+        where: { id: reviewId, createdBy: { id: userId } },
       });
 
       return {
         data: true,
+      };
+    }),
+  findById: adminProtectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { db } = ctx;
+
+      const { id: reviewId } = input;
+
+      const review = await db.review.findFirst({
+        where: { id: reviewId },
+        include: {
+          area: true,
+          createdBy: true,
+          amenities: {
+            include: { category: true },
+          },
+          _count: {
+            select: {
+              likeReactions: true,
+              dislikeReactions: true,
+            },
+          },
+        },
+      });
+
+      return {
+        data: review,
       };
     }),
   findBy: adminProtectedProcedure

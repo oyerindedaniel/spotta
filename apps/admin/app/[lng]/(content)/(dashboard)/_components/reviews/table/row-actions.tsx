@@ -78,9 +78,11 @@ export function ReviewsRowActions<TData>({
       />
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem onClick={() => onOpenView()}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push(`/areas/${id}`)}>
-          Edit
-        </DropdownMenuItem>
+        {isReviewOwner && (
+          <DropdownMenuItem onClick={() => router.push(`/reviews/${id}`)}>
+            Edit
+          </DropdownMenuItem>
+        )}
         {isReviewOwner && (
           <DropdownMenuItem onClick={() => onOpenDelete()}>
             Delete

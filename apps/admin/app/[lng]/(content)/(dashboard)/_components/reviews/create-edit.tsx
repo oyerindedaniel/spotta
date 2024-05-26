@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@prisma/client";
 import {
   CaretSortIcon,
   CheckIcon,
@@ -13,6 +12,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { RouterOutputs } from "@repo/api";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { api } from "@repo/trpc/src/react";
 import {
@@ -41,17 +41,32 @@ import { createReviewSchema } from "@repo/validations";
 
 type CreateReviewType = z.infer<typeof createReviewSchema>;
 
+type ReviewsOutputType = RouterOutputs["review"]["findById"]["data"];
+
+type Props = {
+  lng: LanguagesType;
+} & (
+  | {
+      type: "create";
+    }
+  | {
+      type: "edit";
+      review: ReviewsOutputType;
+    }
+);
+
 export default function CreateReview({
   lng,
-  session,
-}: {
-  lng: LanguagesType;
-  session: User | null;
-}): JSX.Element {
+  type,
+  ...props
+}: Props): JSX.Element {
   const { t, i18n } = useClientTranslation({ lng });
 
   const router = useRouter();
   const { toast } = useToast();
+
+  const review = (props as { review: ReviewsOutputType }).review;
+  const asEdit = !!(type === "edit" && review);
 
   const { isPending, isError, data } = api.amenity.findAll.useQuery();
 
@@ -64,13 +79,30 @@ export default function CreateReview({
   const amenities = data?.data;
   const areas = dataAreas?.data;
 
+  const defaultAmenities = asEdit
+    ? review.amenities.map((amenity) => ({
+        id: amenity.id,
+        name: amenity.name,
+        category: { id: amenity.category.id, name: amenity.category.name },
+      }))
+    : [];
+
+  console.log(defaultAmenities);
+
   const form = useForm<CreateReviewType>({
     resolver: zodResolver(createReviewSchema),
-    defaultValues: {},
+    defaultValues: {
+      areaId: asEdit ? review.areaId : "",
+      amenities: defaultAmenities,
+      rating: asEdit ? String(review.rating) : "0",
+      description: asEdit ? review.description : "",
+      asAnonymous: asEdit ? !!review.asAnonymous : false,
+    },
   });
 
   const mutateCreateReview = api.review.create.useMutation({
     onSuccess: ({ data }) => {
+      form.reset();
       toast({
         variant: "success",
         description: `Successfully created review`,
@@ -88,15 +120,42 @@ export default function CreateReview({
     },
   });
 
+  const mutateUpdateReview = api.review.updateAdmin.useMutation({
+    onSuccess: ({ data }) => {
+      toast({
+        variant: "success",
+        description: `Successfully updated review`,
+      });
+      router.push("/reviews");
+      router.refresh();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: error?.message ?? "Error updating review. Try again",
+      });
+      console.error(error);
+      router.refresh();
+    },
+  });
+
   const onSubmit = async (data: CreateReviewType) => {
+    if (asEdit) {
+      mutateUpdateReview.mutate({ ...data, id: review.id });
+      return;
+    }
+
     mutateCreateReview.mutate(data);
   };
 
-  const isUpdating = mutateCreateReview.isPending;
+  const isUpdating =
+    mutateCreateReview.isPending || mutateUpdateReview.isPending;
 
   return (
     <div className="mx-auto max-w-[35rem]">
-      <div className="text-2xl font-medium">Create a new Review</div>
+      <div className="text-2xl font-medium">
+        {asEdit ? "Edit" : "Create a new"} Review
+      </div>
       <div className="my-6 w-full rounded-lg bg-brand-plain p-4 px-5 shadow-md">
         <Form {...form}>
           <form
@@ -303,7 +362,7 @@ export default function CreateReview({
               {isUpdating && (
                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Save
+              {asEdit ? "Update" : "Save"}
             </Button>
           </form>
         </Form>

@@ -49,7 +49,7 @@ async function users() {
       isConfirmed: true,
       picture: faker.image.avatar(),
       phone: faker.phone.number(),
-      emailVerified: faker.date.recent(),
+      emailVerified: new Date(),
     },
   });
 
