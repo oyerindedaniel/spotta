@@ -1,5 +1,4 @@
 import { TRPCRouterRecord } from "@trpc/server";
-import { z } from "zod";
 
 import { createAmenitySchema } from "@repo/validations";
 
@@ -36,6 +35,28 @@ export const amenityRouter = {
         data: createdAmenity,
       };
     }),
+  findAllCatergory: adminProtectedProcedure.query(async ({ ctx }) => {
+    const { db } = ctx;
+
+    const categories = await db.amenityCategory.findMany({});
+
+    return {
+      data: categories,
+    };
+  }),
+  findAll: adminProtectedProcedure.query(async ({ ctx }) => {
+    const { db } = ctx;
+
+    const amenities = await db.amenity.findMany({
+      include: {
+        category: true,
+      },
+    });
+
+    return {
+      data: amenities,
+    };
+  }),
   find: adminProtectedProcedure.query(async ({ ctx }) => {
     const { db, session } = ctx;
 

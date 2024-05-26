@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   Button,
+  useToast,
 } from "@repo/ui";
 
 import { AreasType } from "../columns";
@@ -23,6 +24,7 @@ interface Props {
 
 export default function DeleteArea({ isOpen, onOpen, data, onClose }: Props) {
   const router = useRouter();
+  const { toast } = useToast();
 
   const { id: areaId, name } = data;
 
@@ -30,9 +32,18 @@ export default function DeleteArea({ isOpen, onOpen, data, onClose }: Props) {
     onSuccess: () => {
       onClose();
       router.refresh();
+      toast({
+        variant: "success",
+        description: `Area deleted successful`,
+      });
     },
     onError: (error) => {
       console.error(error);
+      toast({
+        variant: "destructive",
+        description: error?.message || "Error deleting area. Try again",
+      });
+      router.refresh();
     },
   });
 

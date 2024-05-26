@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { LanguagesType } from "@repo/i18n";
 import { api } from "@repo/trpc/src/server";
 
-import CreateEditArea from "../../_components/areas/create-edit-area";
+import CreateEditArea from "../../_components/areas/create-edit";
 
 export default async function CreateAreaPage({
   params: { lng, id },
