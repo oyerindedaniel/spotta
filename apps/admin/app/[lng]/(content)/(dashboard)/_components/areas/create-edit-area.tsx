@@ -46,7 +46,6 @@ type AreaOutputType = RouterOutputs["area"]["findById"]["data"];
 
 type Props = {
   lng: LanguagesType;
-  session: User | null;
 } & (
   | {
       type: "create";
@@ -60,7 +59,6 @@ type Props = {
 export default function CreateEditArea({
   lng,
   type,
-  session,
   ...props
 }: Props): JSX.Element {
   const { t, i18n } = useClientTranslation({ lng });

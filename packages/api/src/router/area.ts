@@ -100,6 +100,24 @@ export const areaRouter = {
         data: updatedArea,
       };
     }),
+  delete: adminProtectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { db } = ctx;
+      const { id: areaId } = input;
+
+      await db.area.delete({
+        where: { id: areaId },
+      });
+
+      return {
+        data: true,
+      };
+    }),
   findAll: adminProtectedProcedure.query(async ({ ctx, input }) => {
     const { db } = ctx;
 

@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 
-import { useAuthAdmin } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 import { api } from "@repo/trpc/src/server";
 
@@ -11,8 +10,6 @@ export default async function CreateAreaPage({
 }: {
   params: { lng: LanguagesType; id: string };
 }) {
-  const session = await useAuthAdmin();
-
   const area = await api.area.findById({ id });
 
   if (!area) {
@@ -21,12 +18,7 @@ export default async function CreateAreaPage({
 
   return (
     <>
-      <CreateEditArea
-        type="edit"
-        area={area.data}
-        lng={lng}
-        session={session}
-      />
+      <CreateEditArea type="edit" area={area.data} lng={lng} />
     </>
   );
 }

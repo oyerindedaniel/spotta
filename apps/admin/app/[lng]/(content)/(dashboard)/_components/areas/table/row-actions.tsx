@@ -12,6 +12,7 @@ import {
 } from "@repo/ui";
 
 import { AreasType } from "./columns";
+import DeleteArea from "./modals/delete";
 import { ViewArea } from "./modals/view";
 
 export function AreasRowActions<TData>({
@@ -19,7 +20,18 @@ export function AreasRowActions<TData>({
 }: {
   row: Row<AreasType[number]>;
 }) {
-  const { onOpen, onClose, isOpen } = useDisclosure();
+  const {
+    onOpen: onOpenView,
+    onClose: onCloseView,
+    isOpen: isOpenView,
+  } = useDisclosure();
+
+  const {
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+    isOpen: isOpenDelete,
+  } = useDisclosure();
+
   const router = useRouter();
 
   const { id } = row.original;
@@ -27,24 +39,24 @@ export function AreasRowActions<TData>({
   return (
     <>
       <ViewArea
-        onOpen={onOpen}
-        onClose={onClose}
-        isOpen={isOpen}
+        onOpen={onOpenView}
+        onClose={onCloseView}
+        isOpen={isOpenView}
+        data={row.original}
+      />
+      <DeleteArea
+        onOpen={onOpenDelete}
+        onClose={onCloseDelete}
+        isOpen={isOpenDelete}
         data={row.original}
       />
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem
-          onClick={() => {
-            onOpen();
-          }}
-        >
-          View
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onOpenView()}>View</DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push(`/areas/${id}`)}>
           Edit
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onOpenDelete()}>
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>
