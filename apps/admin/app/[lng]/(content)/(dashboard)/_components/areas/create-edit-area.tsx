@@ -101,7 +101,7 @@ export default function CreateEditArea({
       const { name } = data;
       toast({
         variant: "success",
-        description: `Successfully created ${name} area`,
+        description: `Successfully created area: ${name}`,
       });
       router.push("/areas");
       router.refresh();
@@ -121,7 +121,7 @@ export default function CreateEditArea({
       const { name } = data;
       toast({
         variant: "success",
-        description: `Successfully updated ${name} area`,
+        description: `Successfully updated area: ${name} `,
       });
       router.push("/areas");
       router.refresh();
