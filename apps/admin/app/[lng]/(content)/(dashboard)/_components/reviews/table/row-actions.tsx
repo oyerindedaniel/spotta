@@ -1,14 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { ReviewStatus } from "@prisma/client";
 import { Row } from "@tanstack/react-table";
 
 import { useDisclosure } from "@repo/hooks/src/use-disclosure";
+import { api } from "@repo/trpc/src/react";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
+  useToast,
 } from "@repo/ui";
 
 import { ReviewsType } from "./columns";
@@ -31,8 +33,28 @@ export function ReviewsRowActions<TData>({
   } = useDisclosure();
 
   const router = useRouter();
+  const { toast } = useToast();
 
-  const { id } = row.original;
+  const { id, status } = row.original;
+
+  const updateStatus = api.review.updateStatus.useMutation({
+    onSuccess: ({ data }) => {
+      toast({
+        variant: "success",
+        description: `Successfully updated review status`,
+      });
+      router.refresh();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: error?.message,
+      });
+      router.refresh();
+    },
+  });
+
+  const isDisabled = updateStatus.isPending;
 
   return (
     <>
@@ -42,13 +64,29 @@ export function ReviewsRowActions<TData>({
           Edit
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => onOpenDelete()}>
-          Approve
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+        <DropdownMenuItem
+          disabled={isDisabled || status === "PENDING"}
+          onClick={() =>
+            updateStatus.mutate({ id, status: ReviewStatus.PENDING })
+          }
+        >
+          Pending
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onOpenDelete()}>
+        <DropdownMenuItem
+          disabled={isDisabled || status === "APPROVED"}
+          onClick={() =>
+            updateStatus.mutate({ id, status: ReviewStatus.APPROVED })
+          }
+        >
+          Approve
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          disabled={isDisabled || status === "DECLINED"}
+          onClick={() =>
+            updateStatus.mutate({ id, status: ReviewStatus.DECLINED })
+          }
+        >
           Decline
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </>

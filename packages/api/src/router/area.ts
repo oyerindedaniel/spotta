@@ -137,6 +137,9 @@ export const areaRouter = {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return {
