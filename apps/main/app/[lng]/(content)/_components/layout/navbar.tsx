@@ -51,7 +51,7 @@ export function Navbar({
 
   const {
     data: { refreshToken, ttl },
-    updateData,
+    clearData,
   } = useSessionStore();
 
   const { t, i18n } = useClientTranslation({ lng });
@@ -65,7 +65,7 @@ export function Navbar({
   const mutateLogout = api.auth.logout.useMutation({
     onSuccess: () => {
       router.push("/");
-      updateData({ refreshToken: "", sessionId: "", ttl: undefined });
+      clearData();
       stopTokenRefreshTimer();
       router.refresh();
       toast({

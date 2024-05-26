@@ -146,7 +146,6 @@ model ReviewReaction {
   @@unique([userId, dislikeReviewId])
 }
 
-
 model Media {
   id    String                 @id @default(uuid())
   src  String

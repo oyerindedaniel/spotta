@@ -5,6 +5,7 @@ import { ReviewStatus } from "@prisma/client";
 import { Row } from "@tanstack/react-table";
 
 import { useDisclosure } from "@repo/hooks/src/use-disclosure";
+import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { api } from "@repo/trpc/src/react";
 import {
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import {
 } from "@repo/ui";
 
 import { ReviewsType } from "./columns";
+import DeleteReview from "./modals/delete";
 
 export function ReviewsRowActions<TData>({
   row,
@@ -35,7 +37,17 @@ export function ReviewsRowActions<TData>({
   const router = useRouter();
   const { toast } = useToast();
 
-  const { id, status } = row.original;
+  const {
+    id,
+    status,
+    createdBy: { id: createdById },
+  } = row.original;
+
+  const {
+    data: { userId },
+  } = useSessionStore();
+
+  const isReviewOwner = userId === createdById;
 
   const updateStatus = api.review.updateStatus.useMutation({
     onSuccess: ({ data }) => {
@@ -58,11 +70,22 @@ export function ReviewsRowActions<TData>({
 
   return (
     <>
+      <DeleteReview
+        onOpen={onOpenDelete}
+        onClose={onCloseDelete}
+        isOpen={isOpenDelete}
+        data={row.original}
+      />
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem onClick={() => onOpenView()}>View</DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.push(`/areas/${id}`)}>
           Edit
         </DropdownMenuItem>
+        {isReviewOwner && (
+          <DropdownMenuItem onClick={() => onOpenDelete()}>
+            Delete
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           disabled={isDisabled || status === "PENDING"}

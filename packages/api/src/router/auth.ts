@@ -30,7 +30,7 @@ export const authRouter = {
   resumeSession: protectedProcedure.mutation(async ({ ctx }) => {
     const {
       session: {
-        user: { sessionId, sessionExpires },
+        user: { sessionId, sessionExpires, id },
       },
     } = ctx;
 
@@ -50,7 +50,7 @@ export const authRouter = {
     }
 
     return {
-      data: { ttl, sessionId, refreshToken },
+      data: { ttl, sessionId, refreshToken, id },
     };
   }),
   login: publicProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {

@@ -79,6 +79,24 @@ export const reviewRouter = {
       data: reviews,
     };
   }),
+  delete: adminProtectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { db } = ctx;
+      const { id: reviewId } = input;
+
+      await db.review.delete({
+        where: { id: reviewId },
+      });
+
+      return {
+        data: true,
+      };
+    }),
   findBy: adminProtectedProcedure
     .input(
       z.object({

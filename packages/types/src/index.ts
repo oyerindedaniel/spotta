@@ -8,6 +8,7 @@ export interface SessionData {
   refreshToken: string;
   ttl: number | undefined;
   sessionId: string;
+  userId: string;
 }
 
 export interface LatLng {

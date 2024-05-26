@@ -50,9 +50,9 @@ export function RefreshToken({ session }: { session: User | null }) {
         isInitialized.current = true;
         try {
           const {
-            data: { ttl, sessionId, refreshToken },
+            data: { id, ttl, sessionId, refreshToken },
           } = await mutateAsyncResumeSession();
-          updateData({ ttl, sessionId, refreshToken });
+          updateData({ ttl, sessionId, refreshToken, userId: id });
           startTokenRefreshTimer({
             refreshToken,
             expirationTime: ttl,
