@@ -87,8 +87,6 @@ export default function CreateReview({
       }))
     : [];
 
-  console.log(defaultAmenities);
-
   const form = useForm<CreateReviewType>({
     resolver: zodResolver(createReviewSchema),
     defaultValues: {
