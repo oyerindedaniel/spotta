@@ -13,10 +13,13 @@ function GroupedAmenities({
   groupedAmenities,
 }: GroupedAmenitiesProps): JSX.Element {
   return (
-    <div>
+    <div className="flex flex-wrap items-center gap-2">
       {Object.entries(groupedAmenities).map(([name, count]) => (
-        <Badge key={name}>
-          {name} {count}
+        <Badge key={name} className="flex items-center gap-2">
+          <span>{name}</span>
+          <span className="flex h-3 w-3 items-center justify-center rounded-full bg-green-400 p-2 text-[9px] text-white">
+            {count}
+          </span>
         </Badge>
       ))}
     </div>
