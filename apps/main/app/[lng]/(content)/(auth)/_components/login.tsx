@@ -65,7 +65,7 @@ export default function Login({
 
   const mutateLogin = api.auth.login.useMutation({
     onSuccess: ({ data }) => {
-      const { isConfirmed, email, refreshToken, sessionId, ttl } = data;
+      const { id, isConfirmed, email, refreshToken, sessionId, ttl } = data;
       form.reset();
       if (isConfirmed) {
         router.push(redirectUrl ?? "/");
@@ -76,7 +76,7 @@ export default function Login({
         });
       }
       router.refresh();
-      setData({ refreshToken, sessionId, ttl });
+      setData({ refreshToken, sessionId, ttl, userId: id });
       toast({
         variant: "success",
         description: "Login successful",
@@ -94,7 +94,7 @@ export default function Login({
 
   const mutateGoogleOauthLogin = api.user.googleoauth.useMutation({
     onSuccess: ({ data }) => {
-      const { refreshToken, sessionId, ttl } = data;
+      const { id, refreshToken, sessionId, ttl } = data;
       form.reset();
       toast({
         variant: "success",
@@ -102,7 +102,7 @@ export default function Login({
       });
       router.push(redirectUrlState ?? "/");
       router.refresh();
-      setData({ refreshToken, sessionId, ttl });
+      setData({ refreshToken, sessionId, ttl, userId: id });
     },
     onError: (error) => {
       toast({
@@ -116,7 +116,7 @@ export default function Login({
 
   const mutateGithubOauthLogin = api.user.githuboauth.useMutation({
     onSuccess: ({ data }) => {
-      const { refreshToken, sessionId, ttl } = data;
+      const { id, refreshToken, sessionId, ttl } = data;
       form.reset();
       toast({
         variant: "success",
@@ -124,7 +124,7 @@ export default function Login({
       });
       router.push(redirectUrlState ?? "/");
       router.refresh();
-      setData({ refreshToken, sessionId, ttl });
+      setData({ refreshToken, sessionId, ttl, userId: id });
     },
     onError: (error) => {
       toast({

@@ -96,6 +96,7 @@ export default function CreateEditArea({
   const mutateCreateArea = api.area.create.useMutation({
     onSuccess: ({ data }) => {
       const { name } = data;
+      form.reset();
       toast({
         variant: "success",
         description: `Successfully created area: ${name}`,
