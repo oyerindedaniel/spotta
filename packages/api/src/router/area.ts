@@ -219,11 +219,24 @@ export const areaRouter = {
           medias: true,
           reviews: {
             include: {
+              createdBy: true,
+              likeReactions: true,
+              dislikeReactions: true,
               amenities: true,
+              _count: {
+                select: {
+                  likeReactions: true,
+                  dislikeReactions: true,
+                },
+              },
             },
           },
         },
       });
+
+      if (!area) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "" });
+      }
 
       return {
         data: area,

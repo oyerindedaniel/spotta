@@ -52,7 +52,12 @@ export function AreasRowActions<TData>({
       />
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem onClick={() => onOpenView()}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push(`/areas/${id}`)}>
+        <DropdownMenuItem onClick={() => router.push(`areas/${id}`)}>
+          View Reviews
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => router.push(`areas/create-area/${id}`)}
+        >
           Edit
         </DropdownMenuItem>
         <DropdownMenuSeparator />

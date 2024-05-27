@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { LanguagesType } from "@repo/i18n";
 import { api } from "@repo/trpc/src/server";
 
-import CreateEditAmenity from "../../_components/amenities/create.edit";
+import CreateEditAmenity from "../../../_components/amenities/create.edit";
 
 export default async function EditAmenityPage({
   params: { lng, id },

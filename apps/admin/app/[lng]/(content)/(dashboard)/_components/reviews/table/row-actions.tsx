@@ -79,7 +79,9 @@ export function ReviewsRowActions<TData>({
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem onClick={() => onOpenView()}>View</DropdownMenuItem>
         {isReviewOwner && (
-          <DropdownMenuItem onClick={() => router.push(`/reviews/${id}`)}>
+          <DropdownMenuItem
+            onClick={() => router.push(`reviews/create-review/${id}`)}
+          >
             Edit
           </DropdownMenuItem>
         )}

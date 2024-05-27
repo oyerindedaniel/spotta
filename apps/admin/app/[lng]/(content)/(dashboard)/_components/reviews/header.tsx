@@ -7,6 +7,8 @@ import { User } from "@prisma/client";
 import { LanguagesType } from "@repo/i18n";
 import { buttonVariants } from "@repo/ui";
 
+import ReviewsAction from "./action";
+
 export default function ReviewsHeader({
   lng,
   session,
@@ -19,6 +21,7 @@ export default function ReviewsHeader({
       <div>
         <h3 className="text-2xl font-medium">All Reviews Created</h3>
       </div>
+      <ReviewsAction session={session} lng={lng} />
       <div className="flex items-center gap-4">
         <Link
           href="reviews/create-review"

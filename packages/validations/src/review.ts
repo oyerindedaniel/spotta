@@ -1,4 +1,4 @@
-import { ReviewStatus } from "@prisma/client";
+import { ReactionType, ReviewStatus } from "@prisma/client";
 import { z } from "zod";
 
 import { updateAmenitySchema } from "./amenity";
@@ -26,4 +26,19 @@ const updateReviewStatusSchema = z.object({
   ]),
 });
 
-export { createReviewSchema, updateReviewSchema, updateReviewStatusSchema };
+const updateReviewReactionSchema = z.object({
+  id: z.string().trim().min(1, { message: "Required" }),
+  type: z.union([
+    z.literal(ReactionType.LIKE),
+    z.literal(ReactionType.DISLIKE),
+    z.literal("UNLIKE"),
+    z.literal("UNDISLIKE"),
+  ]),
+});
+
+export {
+  createReviewSchema,
+  updateReviewSchema,
+  updateReviewStatusSchema,
+  updateReviewReactionSchema,
+};

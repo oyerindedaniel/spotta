@@ -35,4 +35,6 @@ export * from "./shared/google-button";
 export * from "./shared/loading";
 export * from "./shared/map";
 export * from "./shared/mode-toggler";
+export * from "./shared/review";
 export * from "./shared/star";
+export * from "./shared/rating";
