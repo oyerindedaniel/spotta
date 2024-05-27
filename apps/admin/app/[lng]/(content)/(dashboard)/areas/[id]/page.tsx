@@ -1,24 +1,18 @@
-import { redirect } from "next/navigation";
-
+import { useAuthAdmin } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
 
-import CreateEditArea from "../../_components/areas/create-edit";
+import { ReviewsListSuspense } from "../../_components/reviews/list";
 
-export default async function CreateAreaPage({
+export default async function AreasPage({
   params: { lng, id },
 }: {
   params: { lng: LanguagesType; id: string };
 }) {
-  const area = await api.area.findById({ id });
-
-  if (!area) {
-    redirect("/areas");
-  }
+  const session = await useAuthAdmin();
 
   return (
     <>
-      <CreateEditArea type="edit" area={area.data} lng={lng} />
+      <ReviewsListSuspense id={id} lng={lng} session={session} />
     </>
   );
 }

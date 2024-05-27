@@ -1,4 +1,8 @@
 import { Media } from "@prisma/client";
+import { formatDistanceToNowStrict } from "date-fns";
+import { enUS } from "date-fns/locale";
+
+// datefns.f
 
 import { StateCity, STATES } from "./states";
 
@@ -125,3 +129,9 @@ export const ensureArrayLength = (
   arr: string[],
   targetLength: number,
 ): string[] => arr.concat(Array(targetLength).fill("")).slice(0, targetLength);
+
+export const formatTimeAgo = (createdAt: Date): string =>
+  formatDistanceToNowStrict(createdAt, {
+    addSuffix: true,
+    locale: enUS,
+  });

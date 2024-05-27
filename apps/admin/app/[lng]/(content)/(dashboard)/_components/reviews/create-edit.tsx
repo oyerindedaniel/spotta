@@ -92,7 +92,7 @@ export default function CreateReview({
     defaultValues: {
       areaId: asEdit ? review.areaId : "",
       amenities: defaultAmenities,
-      rating: asEdit ? String(review.rating) : "0",
+      rating: asEdit ? String(review.rating) : "",
       description: asEdit ? review.description : "",
       asAnonymous: asEdit ? !!review.asAnonymous : false,
     },
@@ -308,7 +308,7 @@ export default function CreateReview({
                   <FormControl>
                     <StarRating
                       maxRating={5}
-                      defaultRating={Number(field?.value ?? 0)}
+                      defaultRating={Number(field?.value || 0)}
                       size={20}
                       onSetRating={field.onChange}
                     />

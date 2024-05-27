@@ -1,14 +1,14 @@
-import { ReviewStatus } from "@prisma/client";
+import { ReactionType, ReviewStatus } from "@prisma/client";
 import { z } from "zod";
 
 import { updateAmenitySchema } from "./amenity";
 
 const reviewSchema = z.object({
-  rating: z.string(),
+  rating: z.string().trim().min(1, { message: "Rating is required" }),
   asAnonymous: z.boolean().default(false),
-  amenities: z.array(updateAmenitySchema),
-  description: z.string(),
-  areaId: z.string(),
+  amenities: z.array(updateAmenitySchema).min(1, "Select at least one amenity"),
+  description: z.string().min(1, { message: "Descripiton is required" }),
+  areaId: z.string().trim().min(1, { message: "Area is required" }),
 });
 
 const createReviewSchema = reviewSchema.extend({});
@@ -26,4 +26,19 @@ const updateReviewStatusSchema = z.object({
   ]),
 });
 
-export { createReviewSchema, updateReviewStatusSchema, updateReviewSchema };
+const updateReviewReactionSchema = z.object({
+  id: z.string().trim().min(1, { message: "Required" }),
+  type: z.union([
+    z.literal(ReactionType.LIKE),
+    z.literal(ReactionType.DISLIKE),
+    z.literal("UNLIKE"),
+    z.literal("UNDISLIKE"),
+  ]),
+});
+
+export {
+  createReviewSchema,
+  updateReviewSchema,
+  updateReviewStatusSchema,
+  updateReviewReactionSchema,
+};

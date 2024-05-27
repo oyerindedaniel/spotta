@@ -11,14 +11,13 @@ import {
   DropdownMenuShortcut,
 } from "@repo/ui";
 
-import { AreasType } from "./columns";
-import DeleteArea from "./modals/delete";
-import { ViewArea } from "./modals/view";
+import { AmenitiesType } from "./columns";
+import DeleteAmenity from "./modals/delete";
 
-export function AreasRowActions<TData>({
+export function AmenitiesRowActions<TData>({
   row,
 }: {
-  row: Row<AreasType[number]>;
+  row: Row<AmenitiesType[number]>;
 }) {
   const {
     onOpen: onOpenView,
@@ -38,13 +37,13 @@ export function AreasRowActions<TData>({
 
   return (
     <>
-      <ViewArea
+      {/* <ViewArea
         onOpen={onOpenView}
         onClose={onCloseView}
         isOpen={isOpenView}
         data={row.original}
-      />
-      <DeleteArea
+      /> */}
+      <DeleteAmenity
         onOpen={onOpenDelete}
         onClose={onCloseDelete}
         isOpen={isOpenDelete}
@@ -52,11 +51,8 @@ export function AreasRowActions<TData>({
       />
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem onClick={() => onOpenView()}>View</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => router.push(`areas/${id}`)}>
-          View Reviews
-        </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => router.push(`areas/create-area/${id}`)}
+          onClick={() => router.push(`amenities/create-amenity/${id}`)}
         >
           Edit
         </DropdownMenuItem>

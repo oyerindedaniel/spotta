@@ -15,3 +15,10 @@ export interface LatLng {
   lat: number;
   lng: number;
 }
+
+export type reactionProps = {
+  isLiked: boolean;
+  isDisliked: boolean;
+  onToggleLike: (action: "LIKE" | "UNLIKE") => void;
+  onToggleDislike: (action: "DISLIKE" | "UNDISLIKE") => void;
+};

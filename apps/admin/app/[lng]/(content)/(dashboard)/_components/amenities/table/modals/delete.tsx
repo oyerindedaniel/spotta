@@ -13,35 +13,40 @@ import {
   useToast,
 } from "@repo/ui";
 
-import { ReviewsType } from "../columns";
+import { AmenitiesType } from "../columns";
 
 interface Props {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
-  data: ReviewsType[number];
+  data: AmenitiesType[number];
 }
 
-export default function DeleteReview({ isOpen, onOpen, data, onClose }: Props) {
+export default function DeleteAmenity({
+  isOpen,
+  onOpen,
+  data,
+  onClose,
+}: Props) {
   const router = useRouter();
   const { toast } = useToast();
 
-  const { id: reviewId } = data;
+  const { id: amenityId, name } = data;
 
-  const mutateDeleteReview = api.review.delete.useMutation({
+  const mutateDeleteAmenity = api.amenity.delete.useMutation({
     onSuccess: () => {
       onClose();
       router.refresh();
       toast({
         variant: "success",
-        description: `Review deleted successful`,
+        description: `Amenity deleted successful`,
       });
     },
     onError: (error) => {
       console.error(error);
       toast({
         variant: "destructive",
-        description: error?.message || "Error deleting review. Try again",
+        description: error?.message || "Error deleting amenity. Try again",
       });
       router.refresh();
     },
@@ -51,17 +56,17 @@ export default function DeleteReview({ isOpen, onOpen, data, onClose }: Props) {
     onClose();
   };
 
-  const isDeleting = mutateDeleteReview.isPending;
+  const isDeleting = mutateDeleteAmenity.isPending;
 
   return (
     <AlertDialog open={isOpen} onOpenChange={handleClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="text-xl">
-            Delete this review?
+            Delete this amenity?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {`Are you sure you want to delete this review. This action cannot be reversed.`}
+            {`Are you sure you want to delete area ‘${name}’. This action cannot be reversed.`}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -70,7 +75,7 @@ export default function DeleteReview({ isOpen, onOpen, data, onClose }: Props) {
             variant="destructive"
             size="sm"
             disabled={isDeleting}
-            onClick={() => mutateDeleteReview.mutate({ id: reviewId })}
+            onClick={() => mutateDeleteAmenity.mutate({ id: amenityId })}
           >
             {isDeleting && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
             Delete
