@@ -308,7 +308,7 @@ export default function CreateReview({
                   <FormControl>
                     <StarRating
                       maxRating={5}
-                      defaultRating={Number(field?.value ?? 0)}
+                      defaultRating={Number(field?.value || 0)}
                       size={20}
                       onSetRating={field.onChange}
                     />
