@@ -5,7 +5,7 @@ import { api } from "@repo/trpc/src/server";
 
 import CreateEditArea from "../../_components/areas/create-edit";
 
-export default async function CreateAreaPage({
+export default async function EditAreaPage({
   params: { lng, id },
 }: {
   params: { lng: LanguagesType; id: string };

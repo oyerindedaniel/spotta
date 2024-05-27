@@ -92,7 +92,7 @@ export default function CreateReview({
     defaultValues: {
       areaId: asEdit ? review.areaId : "",
       amenities: defaultAmenities,
-      rating: asEdit ? String(review.rating) : "0",
+      rating: asEdit ? String(review.rating) : "",
       description: asEdit ? review.description : "",
       asAnonymous: asEdit ? !!review.asAnonymous : false,
     },
