@@ -49,6 +49,65 @@ export default function Lists({
     },
   });
 
+  const mutateReviewLikeReaction = api.review.reviewLikeReaction.useMutation({
+    onSuccess: ({ data }) => {
+      toast({
+        variant: "success",
+        description: `Successfully updated review like reaction`,
+      });
+      router.refresh();
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        description:
+          error?.message ?? "Error updating review reaction. Try again",
+      });
+      console.error(error);
+      router.refresh();
+    },
+  });
+
+  const mutateReviewUnlikeReaction =
+    api.review.reviewUnlikeReaction.useMutation({
+      onSuccess: ({ data }) => {
+        toast({
+          variant: "success",
+          description: `Successfully updated review unlike reaction`,
+        });
+        router.refresh();
+      },
+      onError: (error) => {
+        toast({
+          variant: "destructive",
+          description:
+            error?.message ?? "Error updating review reaction. Try again",
+        });
+        console.error(error);
+        router.refresh();
+      },
+    });
+
+  const mutateReviewDislikeReaction =
+    api.review.reviewDislikeReaction.useMutation({
+      onSuccess: ({ data }) => {
+        toast({
+          variant: "success",
+          description: `Successfully updated review dislike reaction`,
+        });
+        router.refresh();
+      },
+      onError: (error) => {
+        toast({
+          variant: "destructive",
+          description:
+            error?.message ?? "Error updating review reaction. Try again",
+        });
+        console.error(error);
+        router.refresh();
+      },
+    });
+
   return (
     <div>
       <h2 className="mb-6 text-2xl font-semibold">
@@ -56,7 +115,14 @@ export default function Lists({
       </h2>
       <div className="flex w-[65%] flex-col gap-6">
         {reviews?.map((review) => (
-          <Review review={review} mutateFunc={mutateReviewReaction.mutate} />
+          <Review
+            key={review.id}
+            review={review}
+            mutateUnlikeFunc={mutateReviewUnlikeReaction.mutate}
+            mutateDislikeFunc={mutateReviewDislikeReaction.mutate}
+            mutateLikeFunc={mutateReviewLikeReaction.mutate}
+            mutateFunc={mutateReviewReaction.mutate}
+          />
         ))}
       </div>
     </div>

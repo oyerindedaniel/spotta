@@ -141,6 +141,13 @@ model ReviewReaction {
   likeReviewId      String?
   dislikeReview     Review?       @relation("DislikeReaction", fields: [dislikeReviewId], references: [id], onDelete: Cascade)
   dislikeReviewId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([likeReviewId])
+  @@index([dislikeReviewId])
+  @@index([type])
 
   @@unique([userId, likeReviewId])
   @@unique([userId, dislikeReviewId])

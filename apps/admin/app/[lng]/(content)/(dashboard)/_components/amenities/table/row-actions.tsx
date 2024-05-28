@@ -52,7 +52,7 @@ export function AmenitiesRowActions<TData>({
       <DropdownMenuContent align="end" className="w-[160px]">
         <DropdownMenuItem onClick={() => onOpenView()}>View</DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => router.push(`amenities/create-amenity/${id}`)}
+          onClick={() => router.push(`/amenities/create-amenity/${id}`)}
         >
           Edit
         </DropdownMenuItem>

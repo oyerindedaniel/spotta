@@ -230,7 +230,13 @@ export const areaRouter = {
                 },
               },
             },
+            orderBy: {
+              createdAt: "desc",
+            },
           },
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       });
 

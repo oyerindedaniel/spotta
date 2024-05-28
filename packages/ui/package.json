@@ -46,6 +46,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@react-google-maps/api": "^2.19.3",
     "@repo/api": "workspace:*",
+    "@repo/validations": "workspace:*",
     "@repo/hooks": "workspace:*",
     "@repo/utils": "workspace:*",
     "@tanstack/react-table": "^8.17.3",

@@ -3,9 +3,12 @@ import { z } from "zod";
 
 import {
   createReviewSchema,
+  updateReviewDislikeReactionSchema,
+  updateReviewLikeReactionSchema,
   updateReviewReactionSchema,
   updateReviewSchema,
   updateReviewStatusSchema,
+  updateReviewUnlikeReactionSchema,
 } from "@repo/validations";
 
 import { adminProtectedProcedure, protectedProcedure } from "../trpc";
@@ -164,6 +167,9 @@ export const reviewRouter = {
             },
           },
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       });
 
       return {
@@ -197,32 +203,49 @@ export const reviewRouter = {
             },
           ],
         },
-        include: {
-          user: true,
-          likeReview: true,
-          dislikeReview: true,
-        },
       });
 
+      const deleteReaction = async (reactionType: "LIKE" | "DISLIKE") => {
+        const whereClause =
+          reactionType === "LIKE"
+            ? {
+                userId_likeReviewId: {
+                  userId,
+                  likeReviewId: foundReaction!.likeReviewId!,
+                },
+              }
+            : {
+                userId_dislikeReviewId: {
+                  userId,
+                  dislikeReviewId: foundReaction!.dislikeReviewId!,
+                },
+              };
+
+        await db.reviewReaction.delete({ where: whereClause });
+      };
+
+      const createReaction = async (newType: "LIKE" | "DISLIKE") => {
+        const data =
+          newType === "LIKE"
+            ? { userId, type: newType, likeReviewId: reviewId }
+            : { userId, type: newType, dislikeReviewId: reviewId };
+
+        await db.reviewReaction.create({ data });
+      };
+
       if (type === "UNLIKE" && foundReaction?.type === "LIKE") {
-        await db.reviewReaction.delete({
-          where: {
-            userId_likeReviewId: {
-              userId,
-              likeReviewId: foundReaction.likeReviewId!,
-            },
-          },
-        });
+        await deleteReaction("LIKE");
         return successData;
       } else if (type === "UNDISLIKE" && foundReaction?.type === "DISLIKE") {
-        await db.reviewReaction.delete({
-          where: {
-            userId_dislikeReviewId: {
-              userId,
-              dislikeReviewId: foundReaction.dislikeReviewId!,
-            },
-          },
-        });
+        await deleteReaction("DISLIKE");
+        return successData;
+      } else if (type === "LIKE" && foundReaction?.type === "DISLIKE") {
+        await deleteReaction("DISLIKE");
+        await createReaction("LIKE");
+        return successData;
+      } else if (type === "DISLIKE" && foundReaction?.type === "LIKE") {
+        await deleteReaction("LIKE");
+        await createReaction("DISLIKE");
         return successData;
       } else if (foundReaction) {
         throw new TRPCError({
@@ -231,23 +254,214 @@ export const reviewRouter = {
         });
       }
 
-      const reactionData = {
-        userId,
-        type: type as "LIKE" | "DISLIKE",
+      // If no reaction is found and it's a new like or dislike
+      await createReaction(type as "LIKE" | "DISLIKE");
+      return successData;
+    }),
+  reviewLikeReaction: protectedProcedure
+    .input(updateReviewLikeReactionSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+
+      const { id: userId } = session.user;
+
+      const { id: reviewId, type } = input;
+
+      const successData = {
+        data: true,
       };
 
-      if (type === "LIKE") {
-        //@ts-ignore
-        reactionData.likeReviewId = reviewId;
-      } else if (type === "DISLIKE") {
-        //@ts-ignore
-        reactionData.dislikeReviewId = reviewId;
-      }
-
-      await db.reviewReaction.create({
-        data: reactionData,
+      const foundReaction = await db.reviewReaction.findFirst({
+        where: {
+          user: { id: userId },
+          OR: [
+            {
+              likeReview: { id: reviewId },
+              type: "LIKE",
+            },
+            {
+              dislikeReview: { id: reviewId },
+              type: "DISLIKE",
+            },
+          ],
+        },
       });
 
+      const deleteReaction = async (reactionType: "LIKE" | "DISLIKE") => {
+        const whereClause =
+          reactionType === "LIKE"
+            ? {
+                userId_likeReviewId: {
+                  userId,
+                  likeReviewId: foundReaction!.likeReviewId!,
+                },
+              }
+            : {
+                userId_dislikeReviewId: {
+                  userId,
+                  dislikeReviewId: foundReaction!.dislikeReviewId!,
+                },
+              };
+
+        await db.reviewReaction.delete({ where: whereClause });
+      };
+
+      const createReaction = async (newType: "LIKE" | "DISLIKE") => {
+        const data =
+          newType === "LIKE"
+            ? { userId, type: newType, likeReviewId: reviewId }
+            : { userId, type: newType, dislikeReviewId: reviewId };
+
+        await db.reviewReaction.create({ data });
+      };
+
+      if (type === "LIKE" && foundReaction?.type === "DISLIKE") {
+        await deleteReaction("DISLIKE");
+        await createReaction("LIKE");
+        return successData;
+      } else if (foundReaction) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `You have already ${foundReaction.type.toLowerCase()}d this review.`,
+        });
+      }
+
+      // If no reaction is found and it's a new like
+      await createReaction(type);
+      return successData;
+    }),
+  reviewDislikeReaction: protectedProcedure
+    .input(updateReviewDislikeReactionSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+
+      const { id: userId } = session.user;
+
+      const { id: reviewId, type } = input;
+
+      const successData = {
+        data: true,
+      };
+
+      const foundReaction = await db.reviewReaction.findFirst({
+        where: {
+          user: { id: userId },
+          OR: [
+            {
+              likeReview: { id: reviewId },
+              type: "LIKE",
+            },
+            {
+              dislikeReview: { id: reviewId },
+              type: "DISLIKE",
+            },
+          ],
+        },
+      });
+
+      const deleteReaction = async (reactionType: "LIKE" | "DISLIKE") => {
+        const whereClause =
+          reactionType === "LIKE"
+            ? {
+                userId_likeReviewId: {
+                  userId,
+                  likeReviewId: foundReaction!.likeReviewId!,
+                },
+              }
+            : {
+                userId_dislikeReviewId: {
+                  userId,
+                  dislikeReviewId: foundReaction!.dislikeReviewId!,
+                },
+              };
+
+        await db.reviewReaction.delete({ where: whereClause });
+      };
+
+      const createReaction = async (newType: "LIKE" | "DISLIKE") => {
+        const data =
+          newType === "LIKE"
+            ? { userId, type: newType, likeReviewId: reviewId }
+            : { userId, type: newType, dislikeReviewId: reviewId };
+
+        await db.reviewReaction.create({ data });
+      };
+
+      if (type === "DISLIKE" && foundReaction?.type === "LIKE") {
+        await deleteReaction("LIKE");
+        await createReaction("DISLIKE");
+        return successData;
+      } else if (foundReaction) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `You have already ${foundReaction.type.toLowerCase()}d this review.`,
+        });
+      }
+
+      // If no reaction is found and it's a new like or dislike
+      await createReaction(type as "LIKE" | "DISLIKE");
+      return successData;
+    }),
+  reviewUnlikeReaction: protectedProcedure
+    .input(updateReviewUnlikeReactionSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { session, db } = ctx;
+
+      const { id: userId } = session.user;
+
+      const { id: reviewId, type } = input;
+
+      const successData = {
+        data: true,
+      };
+
+      const foundReaction = await db.reviewReaction.findFirst({
+        where: {
+          userId: userId,
+          OR: [
+            {
+              likeReview: { id: reviewId },
+              type: "LIKE",
+            },
+            {
+              dislikeReview: { id: reviewId },
+              type: "DISLIKE",
+            },
+          ],
+        },
+      });
+
+      const deleteReaction = async (reactionType: "LIKE" | "DISLIKE") => {
+        const whereClause =
+          reactionType === "LIKE"
+            ? {
+                userId_likeReviewId: {
+                  userId,
+                  likeReviewId: foundReaction!.likeReviewId!,
+                },
+              }
+            : {
+                userId_dislikeReviewId: {
+                  userId,
+                  dislikeReviewId: foundReaction!.dislikeReviewId!,
+                },
+              };
+
+        await db.reviewReaction.delete({ where: whereClause });
+      };
+
+      if (type === "UNLIKE" && foundReaction?.type === "LIKE") {
+        await deleteReaction("LIKE");
+        return successData;
+      } else if (type === "UNDISLIKE" && foundReaction?.type === "DISLIKE") {
+        await deleteReaction("DISLIKE");
+        return successData;
+      } else if (foundReaction) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `You have already ${foundReaction.type.toLowerCase()}d this review.`,
+        });
+      }
       return successData;
     }),
   findBy: adminProtectedProcedure
