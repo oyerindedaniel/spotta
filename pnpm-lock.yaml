@@ -991,9 +991,18 @@ importers:
       '@repo/hooks':
         specifier: workspace:*
         version: link:../hooks
+      '@repo/i18n':
+        specifier: workspace:*
+        version: link:../i18
+      '@repo/trpc':
+        specifier: workspace:*
+        version: link:../trpc
       '@repo/utils':
         specifier: workspace:*
         version: link:../utils
+      '@repo/validations':
+        specifier: workspace:*
+        version: link:../validations
       '@tanstack/react-table':
         specifier: ^8.17.3
         version: 8.17.3(react-dom@18.3.1)(react@18.3.1)

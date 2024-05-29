@@ -1,7 +1,5 @@
-import { useAuthAdmin } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
-
-import CreateReview from "../../_components/reviews/create-edit";
+import { CreateEditReview } from "@repo/ui";
 
 export default async function CreateReviewPage({
   params: { lng },
@@ -10,7 +8,7 @@ export default async function CreateReviewPage({
 }) {
   return (
     <>
-      <CreateReview lng={lng} type="create" />
+      <CreateEditReview lng={lng} type="create" intent="normal" />
     </>
   );
 }

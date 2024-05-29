@@ -81,8 +81,8 @@ model Area {
     state     String
     lga       String
     address   String
-    longitude Int
-    latitude  Int
+    longitude Float
+    latitude  Float
     views   Int?  @default(0)
     createdAt      DateTime      @default(now())
     updatedAt DateTime @updatedAt
@@ -141,6 +141,13 @@ model ReviewReaction {
   likeReviewId      String?
   dislikeReview     Review?       @relation("DislikeReaction", fields: [dislikeReviewId], references: [id], onDelete: Cascade)
   dislikeReviewId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([likeReviewId])
+  @@index([dislikeReviewId])
+  @@index([type])
 
   @@unique([userId, likeReviewId])
   @@unique([userId, dislikeReviewId])

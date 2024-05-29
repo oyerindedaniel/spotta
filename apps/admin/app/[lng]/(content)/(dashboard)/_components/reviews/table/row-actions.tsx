@@ -80,7 +80,7 @@ export function ReviewsRowActions<TData>({
         <DropdownMenuItem onClick={() => onOpenView()}>View</DropdownMenuItem>
         {isReviewOwner && (
           <DropdownMenuItem
-            onClick={() => router.push(`reviews/create-review/${id}`)}
+            onClick={() => router.push(`/reviews/create-review/${id}`)}
           >
             Edit
           </DropdownMenuItem>

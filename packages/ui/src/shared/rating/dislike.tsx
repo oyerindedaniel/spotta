@@ -13,7 +13,7 @@ type DislikeButtonProps = Pick<
 };
 
 const DislikeButton: React.FC<DislikeButtonProps> = ({
-  size = 20,
+  size = 18,
   isDisliked,
   count,
   onToggleDislike,

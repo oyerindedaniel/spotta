@@ -188,6 +188,8 @@ export default function CreateEditArea({
         ...data,
         medias: createdMediaUrls as Array<string>,
       });
+
+      console.log(createdMediaUrls);
     } catch (err: any) {
       toast({
         variant: "destructive",

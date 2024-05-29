@@ -21,7 +21,7 @@ export default function AreasHeader({
       </div>
       <div className="flex items-center gap-4">
         <Link
-          href="areas/create-area"
+          href="/areas/create-area"
           className={cn("", buttonVariants({ size: "xs" }))}
         >
           CREATE AREA

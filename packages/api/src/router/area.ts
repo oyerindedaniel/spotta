@@ -222,7 +222,7 @@ export const areaRouter = {
               createdBy: true,
               likeReactions: true,
               dislikeReactions: true,
-              amenities: true,
+              amenities: { include: { category: true } },
               _count: {
                 select: {
                   likeReactions: true,
@@ -230,7 +230,13 @@ export const areaRouter = {
                 },
               },
             },
+            orderBy: {
+              createdAt: "desc",
+            },
           },
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       });
 

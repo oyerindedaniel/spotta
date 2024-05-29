@@ -10,7 +10,7 @@ type LikeButtonProps = Pick<reactionProps, "isLiked" | "onToggleLike"> & {
 };
 
 const LikeButton: React.FC<LikeButtonProps> = ({
-  size = 20,
+  size = 18,
   isLiked,
   count,
   onToggleLike,

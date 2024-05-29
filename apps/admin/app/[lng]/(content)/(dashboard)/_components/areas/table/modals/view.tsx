@@ -114,7 +114,7 @@ export function ViewArea({ isOpen, onOpen, onClose, data }: Props) {
             View Reviews
           </Button>
           <Button
-            onClick={() => router.push(`areas/create-area/${id}`)}
+            onClick={() => router.push(`/areas/create-area/${id}`)}
             className="w-2/4"
             type="button"
             variant="outline"

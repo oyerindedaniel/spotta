@@ -36,9 +36,27 @@ const updateReviewReactionSchema = z.object({
   ]),
 });
 
+const updateReviewLikeReactionSchema = z.object({
+  id: z.string().trim().min(1, { message: "Required" }),
+  type: z.literal(ReactionType.LIKE),
+});
+
+const updateReviewDislikeReactionSchema = z.object({
+  id: z.string().trim().min(1, { message: "Required" }),
+  type: z.literal(ReactionType.DISLIKE),
+});
+
+const updateReviewUnlikeReactionSchema = z.object({
+  id: z.string().trim().min(1, { message: "Required" }),
+  type: z.union([z.literal("UNLIKE"), z.literal("UNDISLIKE")]),
+});
+
 export {
   createReviewSchema,
+  updateReviewDislikeReactionSchema,
+  updateReviewLikeReactionSchema,
+  updateReviewReactionSchema,
   updateReviewSchema,
   updateReviewStatusSchema,
-  updateReviewReactionSchema,
+  updateReviewUnlikeReactionSchema,
 };
