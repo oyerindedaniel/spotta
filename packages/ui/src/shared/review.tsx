@@ -99,31 +99,6 @@ export function Review(props: Props) {
     }
   }, [initialRenderComplete]);
 
-  useEffect(() => {
-    // reset isFirstRenderComplete on shadow navigate
-    if (pathname) {
-      isFirstRenderCompleted.current = false;
-    }
-  }, [pathname]);
-
-  useEffect(() => {
-    // prevent mutate function from running on page load/reload
-    if (!isFirstRenderCompleted.current) {
-      isFirstRenderCompleted.current = true;
-      return;
-    }
-
-    if (debouncedReaction) {
-      if (debouncedReaction === "LIKE") {
-        return mutateLikeFunc({ id: reviewId, type: debouncedReaction });
-      } else if (debouncedReaction === "DISLIKE") {
-        return mutateDislikeFunc({ id: reviewId, type: debouncedReaction });
-      } else if (debouncedReaction === "UNDISLIKE" || reaction === "UNLIKE") {
-        mutateUnlikeFunc({ id: reviewId, type: debouncedReaction });
-      }
-    }
-  }, [debouncedReaction]);
-
   return (
     <div>
       <div className="mb-4">
@@ -168,9 +143,9 @@ export function Review(props: Props) {
               setDislikeCount((prevCount) =>
                 prevCount >= dislikeReactionsCount ? prevCount - 1 : 0
               );
-            // action === "LIKE"
-            //   ? mutateLikeFunc({ id: reviewId, type: action })
-            //   : mutateUnlikeFunc({ id: reviewId, type: action });
+            action === "LIKE"
+              ? mutateLikeFunc({ id: reviewId, type: action })
+              : mutateUnlikeFunc({ id: reviewId, type: action });
           }}
           count={likeCount}
         />
@@ -185,9 +160,9 @@ export function Review(props: Props) {
               setLikeCount((prevCount) =>
                 prevCount >= likeReactionCount ? prevCount - 1 : 0
               );
-            // action === "DISLIKE"
-            //   ? mutateDislikeFunc({ id: reviewId, type: action })
-            //   : mutateUnlikeFunc({ id: reviewId, type: action });
+            action === "DISLIKE"
+              ? mutateDislikeFunc({ id: reviewId, type: action })
+              : mutateUnlikeFunc({ id: reviewId, type: action });
           }}
           count={dislikeCount}
         />

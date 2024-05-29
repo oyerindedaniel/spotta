@@ -57,7 +57,7 @@ export const reviewRouter = {
       } = input;
 
       await db.review.update({
-        where: { id: reviewId, createdBy: { id: userId } },
+        where: { id: reviewId },
         data: {
           area: { connect: { id: areaId } },
           description,
@@ -85,7 +85,7 @@ export const reviewRouter = {
       const { id: reviewId, status } = input;
 
       await db.review.update({
-        where: { id: reviewId, createdBy: { id: userId } },
+        where: { id: reviewId },
         data: {
           status,
         },
