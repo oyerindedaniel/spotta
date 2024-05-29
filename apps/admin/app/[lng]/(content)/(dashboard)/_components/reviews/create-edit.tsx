@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,14 +49,29 @@ type Props = {
 } & (
   | {
       type: "create";
+      intent: "modal";
+      areaId: string;
+      onClose: () => void;
     }
   | {
       type: "edit";
       review: ReviewsOutputType;
+      intent: "modal";
+      areaId: string;
+      onClose: () => void;
+    }
+  | {
+      type: "create";
+      intent: "normal";
+    }
+  | {
+      type: "edit";
+      review: ReviewsOutputType;
+      intent: "normal";
     }
 );
 
-export default function CreateReview({
+export default function CreateEditReview({
   lng,
   type,
   ...props
@@ -66,6 +82,9 @@ export default function CreateReview({
   const { toast } = useToast();
 
   const review = (props as { review: ReviewsOutputType }).review;
+  const areaId = (props as { areaId: string }).areaId;
+  const onClose = (props as { onClose: () => void }).onClose;
+  const intent = props.intent;
   const asEdit = !!(type === "edit" && review);
 
   const { isPending, isError, data } = api.amenity.findAll.useQuery();
@@ -74,7 +93,9 @@ export default function CreateReview({
     isPending: isPendingAreas,
     isError: isErrorAreas,
     data: dataAreas,
-  } = api.area.findAllNoInclude.useQuery();
+  } = api.area.findAllNoInclude.useQuery(undefined, {
+    enabled: intent === "normal",
+  });
 
   const amenities = data?.data;
   const areas = dataAreas?.data;
@@ -101,11 +122,14 @@ export default function CreateReview({
   const mutateCreateReview = api.review.create.useMutation({
     onSuccess: ({ data }) => {
       form.reset();
+      intent === "modal" && onClose();
       toast({
         variant: "success",
         description: `Successfully created review`,
       });
-      router.push("/reviews");
+      {
+        intent === "normal" && router.push("/reviews");
+      }
       router.refresh();
     },
     onError: (error) => {
@@ -137,6 +161,12 @@ export default function CreateReview({
     },
   });
 
+  useEffect(() => {
+    if (intent === "modal") {
+      form.setValue("areaId", areaId);
+    }
+  }, [intent]);
+
   const onSubmit = async (data: CreateReviewType) => {
     if (asEdit) {
       mutateUpdateReview.mutate({ ...data, id: review.id });
@@ -150,84 +180,94 @@ export default function CreateReview({
     mutateCreateReview.isPending || mutateUpdateReview.isPending;
 
   return (
-    <div className="mx-auto max-w-[35rem]">
-      <div className="text-2xl font-medium">
-        {asEdit ? "Edit" : "Create a new"} Review
-      </div>
-      <div className="my-6 w-full rounded-lg bg-brand-plain p-4 px-5 shadow-md">
+    <div className={cn("", intent === "normal" && "mx-auto max-w-[35rem]")}>
+      {intent === "normal" && (
+        <div className="text-2xl font-medium">
+          {asEdit ? "Edit" : "Create a new"} Review
+        </div>
+      )}
+      <div
+        className={cn(
+          "my-6 w-full rounded-lg shadow-md",
+          intent === "normal" && "bg-brand-plain p-4 px-5",
+        )}
+      >
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex w-full max-w-[600px] flex-col gap-4"
           >
-            <FormField
-              control={form.control}
-              name="areaId"
-              render={({ field }) => (
-                <FormItem className="relative flex flex-col">
-                  <FormLabel>Name of area</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild className="h-11">
-                      <FormControl>
-                        <Button
-                          variant="unstyled"
-                          role="combobox"
-                          className={cn(
-                            "w-full justify-between bg-brand-primary font-normal text-gray-500",
-                            !field.value && "text-muted-foreground",
-                          )}
-                        >
-                          {isPendingAreas ? (
-                            <span>loading areas...</span>
-                          ) : isErrorAreas ? (
-                            <span>Error occurred</span>
-                          ) : field.value && areas ? (
-                            areas.find((area) => area.id === field.value)?.name
-                          ) : (
-                            "Select area"
-                          )}
-                          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="max-h-[300px] w-[33rem] rounded-lg p-0">
-                      <Command className="w-full">
-                        <CommandInput
-                          placeholder="Search areas..."
-                          className="h-9"
-                        />
-                        <CommandEmpty>No area found.</CommandEmpty>
-                        <CommandGroup>
-                          <CommandList>
-                            {areas &&
-                              areas.map((area) => (
-                                <CommandItem
-                                  value={area.name}
-                                  key={area.id}
-                                  onSelect={() => {
-                                    form.setValue("areaId", area.id);
-                                  }}
-                                >
-                                  {area.name}
-                                  <CheckIcon
-                                    className={cn(
-                                      "ml-auto h-4 w-4",
-                                      area.id === field.value
-                                        ? "opacity-100"
-                                        : "opacity-0",
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                          </CommandList>
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {intent === "normal" && (
+              <FormField
+                control={form.control}
+                name="areaId"
+                render={({ field }) => (
+                  <FormItem className="relative flex flex-col">
+                    <FormLabel>Name of area</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild className="h-11">
+                        <FormControl>
+                          <Button
+                            variant="unstyled"
+                            role="combobox"
+                            className={cn(
+                              "w-full justify-between bg-brand-primary font-normal text-gray-500",
+                              !field.value && "text-muted-foreground",
+                            )}
+                          >
+                            {isPendingAreas ? (
+                              <span>loading areas...</span>
+                            ) : isErrorAreas ? (
+                              <span>Error occurred</span>
+                            ) : field.value && areas ? (
+                              areas.find((area) => area.id === field.value)
+                                ?.name
+                            ) : (
+                              "Select area"
+                            )}
+                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="max-h-[300px] w-[33rem] rounded-lg p-0">
+                        <Command className="w-full">
+                          <CommandInput
+                            placeholder="Search areas..."
+                            className="h-9"
+                          />
+                          <CommandEmpty>No area found.</CommandEmpty>
+                          <CommandGroup>
+                            <CommandList>
+                              {areas &&
+                                areas.map((area) => (
+                                  <CommandItem
+                                    value={area.name}
+                                    key={area.id}
+                                    onSelect={() => {
+                                      form.setValue("areaId", area.id);
+                                    }}
+                                  >
+                                    {area.name}
+                                    <CheckIcon
+                                      className={cn(
+                                        "ml-auto h-4 w-4",
+                                        area.id === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                            </CommandList>
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="amenities"

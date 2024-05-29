@@ -123,7 +123,7 @@ export function Review(props: Props) {
         </div>
         <div className="text-sm">{description}</div>
       </div>
-      <div className="flex gap-3 items-center mb-5">
+      <div className="flex gap-3 items-center mb-3 flex-wrap">
         {amenities.map((amenity) => (
           <Badge key={amenity.id} variant="secondary">
             {amenity.name}
