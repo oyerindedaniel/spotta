@@ -30,82 +30,40 @@ export default function Lists({
 
   const { id: userId } = session ?? {};
 
-  const mutateReviewReaction = api.review.reviewReaction.useMutation({
-    onSuccess: ({ data }) => {
-      toast({
-        variant: "success",
-        description: `Successfully updated review reaction`,
-      });
+  const onComplete = (description: string) => {
+    const onSuccess = () => {
       router.refresh();
-    },
-    onError: (error) => {
+    };
+
+    const onError = (error: any) => {
       toast({
         variant: "destructive",
         description:
-          error?.message ?? "Error updating review reaction. Try again",
+          error?.message ??
+          `Error updating review ${description} reaction. Try again`,
       });
       console.error(error);
       router.refresh();
-    },
-  });
+    };
+
+    return { onSuccess, onError };
+  };
 
   const mutateReviewLikeReaction = api.review.reviewLikeReaction.useMutation({
-    onSuccess: ({ data }) => {
-      toast({
-        variant: "success",
-        description: `Successfully updated review like reaction`,
-      });
-      router.refresh();
-    },
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        description:
-          error?.message ?? "Error updating review reaction. Try again",
-      });
-      console.error(error);
-      router.refresh();
-    },
+    onSuccess: onComplete("like").onSuccess,
+    onError: onComplete("like").onError,
   });
 
   const mutateReviewUnlikeReaction =
     api.review.reviewUnlikeReaction.useMutation({
-      onSuccess: ({ data }) => {
-        toast({
-          variant: "success",
-          description: `Successfully updated review unlike reaction`,
-        });
-        router.refresh();
-      },
-      onError: (error) => {
-        toast({
-          variant: "destructive",
-          description:
-            error?.message ?? "Error updating review reaction. Try again",
-        });
-        console.error(error);
-        router.refresh();
-      },
+      onSuccess: onComplete("unlike").onSuccess,
+      onError: onComplete("unlike").onError,
     });
 
   const mutateReviewDislikeReaction =
     api.review.reviewDislikeReaction.useMutation({
-      onSuccess: ({ data }) => {
-        toast({
-          variant: "success",
-          description: `Successfully updated review dislike reaction`,
-        });
-        router.refresh();
-      },
-      onError: (error) => {
-        toast({
-          variant: "destructive",
-          description:
-            error?.message ?? "Error updating review reaction. Try again",
-        });
-        console.error(error);
-        router.refresh();
-      },
+      onSuccess: onComplete("dislike").onSuccess,
+      onError: onComplete("dislike").onError,
     });
 
   return (
@@ -121,7 +79,6 @@ export default function Lists({
             mutateUnlikeFunc={mutateReviewUnlikeReaction.mutate}
             mutateDislikeFunc={mutateReviewDislikeReaction.mutate}
             mutateLikeFunc={mutateReviewLikeReaction.mutate}
-            mutateFunc={mutateReviewReaction.mutate}
           />
         ))}
       </div>

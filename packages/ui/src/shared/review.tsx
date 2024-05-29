@@ -12,7 +12,8 @@ import {
   updateReviewReactionSchema,
   updateReviewUnlikeReactionSchema,
 } from "@repo/validations";
-import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { Avatar, AvatarFallback, AvatarImage, Badge } from "..";
 import { DislikeButton, LikeButton } from "./rating";
@@ -29,13 +30,12 @@ type ReviewUnlikeReactionType = z.infer<
 
 interface Props {
   review: Review;
-  mutateFunc: (data: ReviewReactionType) => void;
   mutateLikeFunc: (data: ReviewLikeReactionType) => void;
   mutateDislikeFunc: (data: ReviewDislikeReactionType) => void;
   mutateUnlikeFunc: (data: ReviewUnlikeReactionType) => void;
 }
 
-let count = 0;
+// TODO: make logic better
 
 export function Review(props: Props) {
   const {
@@ -55,10 +55,11 @@ export function Review(props: Props) {
     _count,
   } = props.review;
 
-  const { mutateFunc, mutateDislikeFunc, mutateLikeFunc, mutateUnlikeFunc } =
-    props;
+  const { mutateDislikeFunc, mutateLikeFunc, mutateUnlikeFunc } = props;
 
   const { firstName, lastName, picture, createdAt } = createdBy;
+
+  const pathname = usePathname();
 
   const {
     likeReactions: likeReactionCount,
@@ -75,19 +76,22 @@ export function Review(props: Props) {
       reaction.userId === userId && reaction.dislikeReviewId === reviewId
   )?.type;
 
+  const isFirstRenderCompleted = useRef(false);
+
   const defaultReaction = defaultLikeReaction || defaultDislikeReaction || null;
+
   const [reaction, setReaction] = useState<ReviewReactionType["type"] | null>(
     defaultReaction
   );
 
-  const debouncedReaction = useDebounce(reaction, 1500);
+  const debouncedReaction = useDebounce(reaction, 1000);
 
   const isLiked = reaction === "LIKE";
 
   const isDisliked = reaction === "DISLIKE";
 
-  const [likeCount, setLikeCount] = useState(likeReactionCount);
-  const [dislikeCount, setDislikeCount] = useState(dislikeReactionsCount);
+  const [likeCount, setLikeCount] = useState(likeReactionCount || 0);
+  const [dislikeCount, setDislikeCount] = useState(dislikeReactionsCount || 0);
 
   useEffect(() => {
     if (defaultReaction && initialRenderComplete) {
@@ -95,11 +99,30 @@ export function Review(props: Props) {
     }
   }, [initialRenderComplete]);
 
-  // useEffect(() => {
-  //   if (debouncedReaction) {
-  //     mutateFunc({ id: reviewId, type: debouncedReaction });
-  //   }
-  // }, [debouncedReaction]);
+  useEffect(() => {
+    // reset isFirstRenderComplete on shadow navigate
+    if (pathname) {
+      isFirstRenderCompleted.current = false;
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    // prevent mutate function from running on page load/reload
+    if (!isFirstRenderCompleted.current) {
+      isFirstRenderCompleted.current = true;
+      return;
+    }
+
+    if (debouncedReaction) {
+      if (debouncedReaction === "LIKE") {
+        return mutateLikeFunc({ id: reviewId, type: debouncedReaction });
+      } else if (debouncedReaction === "DISLIKE") {
+        return mutateDislikeFunc({ id: reviewId, type: debouncedReaction });
+      } else if (debouncedReaction === "UNDISLIKE" || reaction === "UNLIKE") {
+        mutateUnlikeFunc({ id: reviewId, type: debouncedReaction });
+      }
+    }
+  }, [debouncedReaction]);
 
   return (
     <div>
@@ -142,10 +165,12 @@ export function Review(props: Props) {
             );
             (dislikeReactionsCount !== dislikeCount ||
               defaultDislikeReaction) &&
-              setDislikeCount((prevCount) => prevCount - 1);
-            action === "LIKE"
-              ? mutateLikeFunc({ id: reviewId, type: action })
-              : mutateUnlikeFunc({ id: reviewId, type: action });
+              setDislikeCount((prevCount) =>
+                prevCount >= dislikeReactionsCount ? prevCount - 1 : 0
+              );
+            // action === "LIKE"
+            //   ? mutateLikeFunc({ id: reviewId, type: action })
+            //   : mutateUnlikeFunc({ id: reviewId, type: action });
           }}
           count={likeCount}
         />
@@ -157,11 +182,12 @@ export function Review(props: Props) {
               action === "DISLIKE" ? prevCount + 1 : prevCount - 1
             );
             (likeReactionCount !== likeCount || defaultLikeReaction) &&
-              setLikeCount((prevCount) => prevCount - 1);
-            action === "DISLIKE"
-              ? mutateDislikeFunc({ id: reviewId, type: action })
-              : mutateUnlikeFunc({ id: reviewId, type: action });
-            // mutateFunc({ id: reviewId, type: action });
+              setLikeCount((prevCount) =>
+                prevCount >= likeReactionCount ? prevCount - 1 : 0
+              );
+            // action === "DISLIKE"
+            //   ? mutateDislikeFunc({ id: reviewId, type: action })
+            //   : mutateUnlikeFunc({ id: reviewId, type: action });
           }}
           count={dislikeCount}
         />
