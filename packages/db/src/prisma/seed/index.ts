@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 import { seedAmenities } from "./amenities";
+import { seedAreas } from "./area";
 import { seedCategories } from "./category";
 import { seedUsers } from "./users";
 
@@ -17,6 +18,9 @@ async function main() {
 
   console.log("Seeding amenities...");
   await seedAmenities({ userId: admin.id, categories });
+
+  console.log("Seeding areas...");
+  await seedAreas({ userId: admin.id });
 }
 
 main()

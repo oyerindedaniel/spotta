@@ -2,11 +2,19 @@ import type { FileRouter } from "uploadthing/next";
 import cookie from "cookie";
 import { createUploadthing } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+import z from "zod";
 
 import { COOKIE_NAME } from "../../config";
 import { verifyToken } from "../../middleware/auth";
 
-const f = createUploadthing();
+const f = createUploadthing({
+  errorFormatter: (err) => {
+    return {
+      message: err.message,
+      zodError: err.cause instanceof z.ZodError ? err.cause.flatten() : null,
+    };
+  },
+});
 
 const auth = async (req: Request) => {
   const cookies = cookie.parse(req.headers?.get?.("cookie") ?? "");
