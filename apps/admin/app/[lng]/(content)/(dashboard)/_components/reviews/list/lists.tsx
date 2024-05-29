@@ -8,10 +8,14 @@ import { RouterOutputs } from "@repo/api";
 import { useDisclosure } from "@repo/hooks/src/use-disclosure";
 import { LanguagesType } from "@repo/i18n";
 import { api } from "@repo/trpc/src/react";
-import { Button, ModalContainer, Review, useToast } from "@repo/ui";
+import {
+  Button,
+  CreateEditReview,
+  ModalContainer,
+  Review,
+  useToast,
+} from "@repo/ui";
 import { updateReviewReactionSchema } from "@repo/validations";
-
-import CreateEditReview from "../create-edit";
 
 export type AreaType = RouterOutputs["area"]["findById"]["data"];
 
@@ -99,6 +103,7 @@ export default function Lists({
           <div className="flex flex-col gap-6">
             {reviews?.map((review) => (
               <Review
+                lng={lng}
                 key={review.id}
                 review={review}
                 mutateUnlikeFunc={mutateReviewUnlikeReaction.mutate}

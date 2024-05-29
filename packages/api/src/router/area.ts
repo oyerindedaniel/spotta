@@ -222,7 +222,7 @@ export const areaRouter = {
               createdBy: true,
               likeReactions: true,
               dislikeReactions: true,
-              amenities: true,
+              amenities: { include: { category: true } },
               _count: {
                 select: {
                   likeReactions: true,

@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -10,12 +8,15 @@ import {
   ChevronDownIcon,
   ReloadIcon,
 } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { RouterOutputs } from "@repo/api";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { api } from "@repo/trpc/src/react";
+import { createReviewSchema } from "@repo/validations";
 import {
   Button,
   Checkbox,
@@ -37,8 +38,7 @@ import {
   StarRating,
   Textarea,
   useToast,
-} from "@repo/ui";
-import { createReviewSchema } from "@repo/validations";
+} from "..";
 
 type CreateReviewType = z.infer<typeof createReviewSchema>;
 
@@ -71,9 +71,10 @@ type Props = {
     }
 );
 
-export default function CreateEditReview({
+export function CreateEditReview({
   lng,
   type,
+  intent,
   ...props
 }: Props): JSX.Element {
   const { t, i18n } = useClientTranslation({ lng });
@@ -84,7 +85,6 @@ export default function CreateEditReview({
   const review = (props as { review: ReviewsOutputType }).review;
   const areaId = (props as { areaId: string }).areaId;
   const onClose = (props as { onClose: () => void }).onClose;
-  const intent = props.intent;
   const asEdit = !!(type === "edit" && review);
 
   const { isPending, isError, data } = api.amenity.findAll.useQuery();
@@ -144,11 +144,14 @@ export default function CreateEditReview({
 
   const mutateUpdateReview = api.review.updateAdmin.useMutation({
     onSuccess: ({ data }) => {
+      intent === "modal" && onClose();
       toast({
         variant: "success",
         description: `Successfully updated review`,
       });
-      router.push("/reviews");
+      {
+        intent === "normal" && router.push("/reviews");
+      }
       router.refresh();
     },
     onError: (error) => {
@@ -160,6 +163,8 @@ export default function CreateEditReview({
       router.refresh();
     },
   });
+
+  console.log(form.formState.errors);
 
   useEffect(() => {
     if (intent === "modal") {
@@ -188,8 +193,8 @@ export default function CreateEditReview({
       )}
       <div
         className={cn(
-          "my-6 w-full rounded-lg shadow-md",
-          intent === "normal" && "bg-brand-plain p-4 px-5",
+          "w-full rounded-lg shadow-md",
+          intent === "normal" && "my-6 bg-brand-plain p-4 px-5"
         )}
       >
         <Form {...form}>
@@ -212,7 +217,7 @@ export default function CreateEditReview({
                             role="combobox"
                             className={cn(
                               "w-full justify-between bg-brand-primary font-normal text-gray-500",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
                             {isPendingAreas ? (
@@ -253,7 +258,7 @@ export default function CreateEditReview({
                                         "ml-auto h-4 w-4",
                                         area.id === field.value
                                           ? "opacity-100"
-                                          : "opacity-0",
+                                          : "opacity-0"
                                       )}
                                     />
                                   </CommandItem>
@@ -308,7 +313,7 @@ export default function CreateEditReview({
                                     <Checkbox
                                       className="mt-2"
                                       checked={field.value?.some(
-                                        (value) => value.id === amenity.id,
+                                        (value) => value.id === amenity.id
                                       )}
                                       onCheckedChange={(checked) => {
                                         checked
@@ -319,8 +324,8 @@ export default function CreateEditReview({
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value) =>
-                                                  value.id !== amenity.id,
-                                              ),
+                                                  value.id !== amenity.id
+                                              )
                                             );
                                       }}
                                     />
