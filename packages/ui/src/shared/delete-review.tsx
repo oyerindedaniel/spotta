@@ -1,5 +1,7 @@
-import { useRouter } from "next/navigation";
+"use client";
+
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 
 import { api } from "@repo/trpc/src/react";
 import {
@@ -11,9 +13,11 @@ import {
   AlertDialogTitle,
   Button,
   useToast,
-} from "@repo/ui";
+} from "..";
 
-import { ReviewsType } from "../columns";
+import { RouterOutputs } from "@repo/api";
+
+export type ReviewsType = RouterOutputs["review"]["findAll"]["data"];
 
 interface Props {
   isOpen: boolean;
@@ -22,7 +26,7 @@ interface Props {
   data: ReviewsType[number];
 }
 
-export default function DeleteReview({ isOpen, onOpen, data, onClose }: Props) {
+export function DeleteReview({ isOpen, onOpen, data, onClose }: Props) {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -41,7 +45,7 @@ export default function DeleteReview({ isOpen, onOpen, data, onClose }: Props) {
       console.error(error);
       toast({
         variant: "destructive",
-        description: error?.message || "Error deleting review. Try again",
+        description: error?.message ?? "Error deleting review. Try again",
       });
       router.refresh();
     },

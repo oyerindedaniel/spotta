@@ -127,9 +127,9 @@ export function CreateEditReview({
         variant: "success",
         description: `Successfully created review`,
       });
-      {
-        intent === "normal" && router.push("/reviews");
-      }
+
+      intent === "normal" && router.push("/reviews");
+
       router.refresh();
     },
     onError: (error) => {
@@ -163,8 +163,6 @@ export function CreateEditReview({
       router.refresh();
     },
   });
-
-  console.log(form.formState.errors);
 
   useEffect(() => {
     if (intent === "modal") {

@@ -1,5 +1,6 @@
 "use client";
 
+import { Area } from "@prisma/client";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { RouterOutputs } from "@repo/api";
 import { useDebounce } from "@repo/hooks/src/use-debounce";
@@ -24,6 +25,7 @@ import {
   Badge,
   Button,
   CreateEditReview,
+  DeleteReview,
   ModalContainer,
 } from "..";
 import { DislikeButton, LikeButton } from "./rating";
@@ -59,6 +61,7 @@ export function Review(props: Props) {
     areaId,
     id: reviewId,
     createdBy,
+    createdAt,
     description,
     rating,
     amenities,
@@ -70,13 +73,7 @@ export function Review(props: Props) {
   const { mutateDislikeFunc, mutateLikeFunc, mutateUnlikeFunc, lng, review } =
     props;
 
-  const {
-    id: createdById,
-    firstName,
-    lastName,
-    picture,
-    createdAt,
-  } = createdBy;
+  const { id: createdById, firstName, lastName, picture } = createdBy;
 
   const {
     isOpen: isOpenEdit,
@@ -141,17 +138,16 @@ export function Review(props: Props) {
           type="edit"
           intent="modal"
           areaId={areaId}
-          review={{ ...(review as any) }}
+          review={{ ...review, area: {} as Area }}
           onClose={onCloseEdit}
         />
       </ModalContainer>
-      <ModalContainer
-        isOpen={isOpenDelete}
+      <DeleteReview
+        onOpen={onOpenDelete}
         onClose={onCloseDelete}
-        title="Delete review"
-      >
-        <></>
-      </ModalContainer>
+        isOpen={isOpenDelete}
+        data={{ ...review, area: {} as Area }}
+      />
       <div>
         {userId === createdById && (
           <div className="flex justify-end mb-2 gap-1.5">
@@ -171,7 +167,7 @@ export function Review(props: Props) {
               </svg>
             </Button>
             <Button
-              onClick={() => {}}
+              onClick={onOpenDelete}
               variant="ghost"
               size="icon"
               className="justify-self-end"

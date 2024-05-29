@@ -40,3 +40,4 @@ export * from "./shared/star";
 export * from "./shared/rating";
 export * from "./shared/modal-container";
 export * from "./shared/create-edit-review";
+export * from "./shared/delete-review";

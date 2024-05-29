@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { ReloadIcon } from "@radix-ui/react-icons";
 

@@ -121,7 +121,7 @@ export const reviewRouter = {
       data: reviews,
     };
   }),
-  delete: adminProtectedProcedure
+  delete: protectedProcedure
     .input(
       z.object({
         id: z.string(),
