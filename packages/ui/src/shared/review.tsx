@@ -120,6 +120,9 @@ export function Review(props: Props) {
   const [likeCount, setLikeCount] = useState(likeReactionCount || 0);
   const [dislikeCount, setDislikeCount] = useState(dislikeReactionsCount || 0);
 
+  const [yourLikeCount, setYourLikeCount] = useState();
+  const [yourDislikeCount, setYourDislikeCount] = useState();
+
   useEffect(() => {
     if (defaultReaction && initialRenderComplete) {
       setReaction(defaultReaction);
@@ -220,11 +223,9 @@ export function Review(props: Props) {
               setLikeCount((prevCount) =>
                 action === "LIKE" ? prevCount + 1 : prevCount - 1
               );
-              (dislikeReactionsCount !== dislikeCount ||
-                defaultDislikeReaction) &&
-                setDislikeCount((prevCount) =>
-                  prevCount >= dislikeReactionsCount ? prevCount - 1 : 0
-                );
+              if (reaction === "DISLIKE") {
+                setDislikeCount((prevCount) => prevCount - 1);
+              }
               action === "LIKE"
                 ? mutateLikeFunc({ id: reviewId, type: action })
                 : mutateUnlikeFunc({ id: reviewId, type: action });
@@ -238,10 +239,9 @@ export function Review(props: Props) {
               setDislikeCount((prevCount) =>
                 action === "DISLIKE" ? prevCount + 1 : prevCount - 1
               );
-              (likeReactionCount !== likeCount || defaultLikeReaction) &&
-                setLikeCount((prevCount) =>
-                  prevCount >= likeReactionCount ? prevCount - 1 : 0
-                );
+              if (reaction === "LIKE") {
+                setLikeCount((prevCount) => prevCount - 1);
+              }
               action === "DISLIKE"
                 ? mutateDislikeFunc({ id: reviewId, type: action })
                 : mutateUnlikeFunc({ id: reviewId, type: action });

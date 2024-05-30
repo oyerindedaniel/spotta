@@ -41,7 +41,7 @@ export default function Lists({
 
   const onComplete = (description: string) => {
     const onSuccess = () => {
-      router.refresh();
+      // router.refresh();
     };
 
     const onError = (error: any) => {
@@ -52,7 +52,7 @@ export default function Lists({
           `Error updating review ${description} reaction. Try again`,
       });
       console.error(error);
-      router.refresh();
+      // router.refresh();
     };
 
     return { onSuccess, onError };
