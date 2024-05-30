@@ -96,7 +96,7 @@ export default function Lists({
             <h2 className="text-2xl font-semibold">
               {name}, {state}
             </h2>
-            <Button className="uppercase" onClick={() => onOpen()}>
+            <Button size="xs" className="uppercase" onClick={() => onOpen()}>
               leave a review
             </Button>
           </div>

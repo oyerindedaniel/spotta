@@ -120,9 +120,6 @@ export function Review(props: Props) {
   const [likeCount, setLikeCount] = useState(likeReactionCount || 0);
   const [dislikeCount, setDislikeCount] = useState(dislikeReactionsCount || 0);
 
-  const [yourLikeCount, setYourLikeCount] = useState();
-  const [yourDislikeCount, setYourDislikeCount] = useState();
-
   useEffect(() => {
     if (defaultReaction && initialRenderComplete) {
       setReaction(defaultReaction);
