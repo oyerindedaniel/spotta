@@ -8,6 +8,7 @@ import { useDisclosure } from "@repo/hooks/src/use-disclosure";
 import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { api } from "@repo/trpc/src/react";
 import {
+  DeleteReview,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -15,7 +16,6 @@ import {
 } from "@repo/ui";
 
 import { ReviewsType } from "./columns";
-import DeleteReview from "./modals/delete";
 
 export function ReviewsRowActions<TData>({
   row,

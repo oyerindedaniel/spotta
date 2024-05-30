@@ -1,7 +1,7 @@
 import { useAuthAdmin } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 
-import Dashboard from "../_components/dashboard";
+import DashboardSuspense from "../_components/dashboard";
 
 export default async function DashboardPage({
   params: { lng },
@@ -12,7 +12,7 @@ export default async function DashboardPage({
 
   return (
     <>
-      <Dashboard lng={lng} session={session} />
+      <DashboardSuspense lng={lng} session={session} />
     </>
   );
 }

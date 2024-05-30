@@ -127,9 +127,9 @@ export function CreateEditReview({
         variant: "success",
         description: `Successfully created review`,
       });
-      {
-        intent === "normal" && router.push("/reviews");
-      }
+
+      intent === "normal" && router.push("/reviews");
+
       router.refresh();
     },
     onError: (error) => {
@@ -164,8 +164,6 @@ export function CreateEditReview({
     },
   });
 
-  console.log(form.formState.errors);
-
   useEffect(() => {
     if (intent === "modal") {
       form.setValue("areaId", areaId);
@@ -193,8 +191,9 @@ export function CreateEditReview({
       )}
       <div
         className={cn(
-          "w-full rounded-lg shadow-md",
-          intent === "normal" && "my-6 bg-brand-plain p-4 px-5"
+          "w-full",
+          intent === "normal" &&
+            "my-6 rounded-lg shadow-md bg-brand-plain p-4 px-5"
         )}
       >
         <Form {...form}>
