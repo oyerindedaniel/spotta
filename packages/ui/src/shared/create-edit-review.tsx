@@ -191,8 +191,9 @@ export function CreateEditReview({
       )}
       <div
         className={cn(
-          "w-full rounded-lg shadow-md",
-          intent === "normal" && "my-6 bg-brand-plain p-4 px-5"
+          "w-full",
+          intent === "normal" &&
+            "my-6 rounded-lg shadow-md bg-brand-plain p-4 px-5"
         )}
       >
         <Form {...form}>

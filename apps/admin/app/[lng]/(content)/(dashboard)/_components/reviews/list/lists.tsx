@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useRouter } from "next/navigation";
 import { User } from "@prisma/client";
 import { z } from "zod";
@@ -13,6 +14,7 @@ import {
   CreateEditReview,
   ModalContainer,
   Review,
+  Separator,
   useToast,
 } from "@repo/ui";
 import { updateReviewReactionSchema } from "@repo/validations";
@@ -101,15 +103,17 @@ export default function Lists({
             </Button>
           </div>
           <div className="flex flex-col gap-6">
-            {reviews?.map((review) => (
-              <Review
-                lng={lng}
-                key={review.id}
-                review={review}
-                mutateUnlikeFunc={mutateReviewUnlikeReaction.mutate}
-                mutateDislikeFunc={mutateReviewDislikeReaction.mutate}
-                mutateLikeFunc={mutateReviewLikeReaction.mutate}
-              />
+            {reviews?.map((review, idx) => (
+              <React.Fragment key={review.id}>
+                <Review
+                  lng={lng}
+                  review={review}
+                  mutateUnlikeFunc={mutateReviewUnlikeReaction.mutate}
+                  mutateDislikeFunc={mutateReviewDislikeReaction.mutate}
+                  mutateLikeFunc={mutateReviewLikeReaction.mutate}
+                />
+                {idx !== reviews.length - 1 && <Separator />}
+              </React.Fragment>
             ))}
           </div>
         </div>

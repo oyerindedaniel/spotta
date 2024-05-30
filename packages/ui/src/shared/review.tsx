@@ -27,6 +27,7 @@ import {
   CreateEditReview,
   DeleteReview,
   ModalContainer,
+  Separator,
 } from "..";
 import { DislikeButton, LikeButton } from "./rating";
 
@@ -131,7 +132,7 @@ export function Review(props: Props) {
       <ModalContainer
         isOpen={isOpenEdit}
         onClose={onCloseEdit}
-        title="Edit review"
+        title="Edit Review"
       >
         <CreateEditReview
           lng={lng}
