@@ -10,3 +10,5 @@ export const NON_DASHBOARD_PAGES = [
   "/en/areas",
   "/fr/areas",
 ];
+
+export const AREA_PAGES = ["/en/areas", "/fr/areas"];

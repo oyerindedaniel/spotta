@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { NON_DASHBOARD_PAGES } from "@/app/[lng]/constants";
+import { AREA_PAGES, NON_DASHBOARD_PAGES } from "@/app/[lng]/constants";
 import { Icons } from "@/assets";
 import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";
@@ -83,14 +83,14 @@ export function Navbar({
     <header
       className={cn(
         "w-full bg-background",
-        {
-          "bg-[#F2F6FD] dark:bg-[#242428]": ["/en/areas", "/fr/areas"].some(
-            (route) => pathname.startsWith(route),
-          ),
-        },
-        NON_DASHBOARD_PAGES.some((route) => pathname.startsWith(route))
+        NON_DASHBOARD_PAGES.includes(pathname.split("/").slice(0, 3).join("/"))
           ? "block"
           : "fixed top-0 z-50",
+        {
+          "bg-[#F2F6FD] dark:bg-[#242428]": AREA_PAGES.some((route) =>
+            pathname.startsWith(route),
+          ),
+        },
       )}
     >
       <div className="flex w-full items-center justify-between px-6 py-3 md:px-14">
