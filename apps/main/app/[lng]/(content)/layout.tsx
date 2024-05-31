@@ -16,7 +16,7 @@ export default async function Layout({ children, params }: LayoutProps) {
       {/* <AutoCounter /> */}
       <RefreshToken session={session} />
       <Navbar lng={params.lng} session={session} />
-      <main> {children}</main>
+      <main>{children}</main>
     </>
   );
 }

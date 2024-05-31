@@ -174,7 +174,7 @@ export default function CreateEditArea({
       } catch (err: any) {
         toast({
           variant: "destructive",
-          title: err?.message ?? "Error updating area. Try Again",
+          title: err?.message || "Error updating area. Try Again",
         });
       }
       return;
@@ -191,7 +191,7 @@ export default function CreateEditArea({
     } catch (err: any) {
       toast({
         variant: "destructive",
-        title: err?.message ?? "Error creating area",
+        title: err?.message || "Error creating area",
       });
     }
   };

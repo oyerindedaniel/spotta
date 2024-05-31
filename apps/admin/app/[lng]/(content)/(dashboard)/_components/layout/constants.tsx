@@ -1,5 +1,7 @@
 "use client";
 
+import { Icons } from "@/assets";
+
 export type SideBarLink = {
   icon: React.ComponentType<IconProps>;
   name: string;
@@ -30,6 +32,11 @@ export const SIDEBAR_LINKS: SideBarLinks = [
         />
       </svg>
     ),
+  },
+  {
+    name: "Users",
+    url: "users",
+    icon: Icons.users,
   },
   {
     name: "Areas",

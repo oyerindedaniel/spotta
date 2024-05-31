@@ -83,7 +83,14 @@ export function Navbar({
     <header
       className={cn(
         "w-full bg-background",
-        NON_DASHBOARD_PAGES.includes(pathname) ? "block" : "fixed top-0 z-50",
+        {
+          "bg-[#F2F6FD] dark:bg-[#242428]": ["/en/areas", "/fr/areas"].some(
+            (route) => pathname.startsWith(route),
+          ),
+        },
+        NON_DASHBOARD_PAGES.some((route) => pathname.startsWith(route))
+          ? "block"
+          : "fixed top-0 z-50",
       )}
     >
       <div className="flex w-full items-center justify-between px-6 py-3 md:px-14">
@@ -137,7 +144,7 @@ export function Navbar({
                       <DropdownMenuGroup>
                         <DropdownMenuItem asChild>
                           <Link
-                            href="profile"
+                            href="/profile"
                             className={cn(
                               "w-full cursor-pointer",
                               buttonVariants({

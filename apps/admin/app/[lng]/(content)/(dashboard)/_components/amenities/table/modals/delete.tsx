@@ -86,7 +86,7 @@ export default function DeleteAmenity({
             onClick={onClose}
             variant="outline"
             size="sm"
-            className="mb-3 w-full md:mb-0 md:w-2/4"
+            className="w-full md:w-2/4"
             disabled={isDeleting}
           >
             Cancel

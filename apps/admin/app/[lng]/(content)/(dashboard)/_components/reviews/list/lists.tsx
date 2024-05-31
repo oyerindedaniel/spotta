@@ -41,42 +41,6 @@ export default function Lists({
 
   const { id: userId } = session ?? {};
 
-  const onComplete = (description: string) => {
-    const onSuccess = () => {
-      // router.refresh();
-    };
-
-    const onError = (error: any) => {
-      toast({
-        variant: "destructive",
-        description:
-          error?.message ??
-          `Error updating review ${description} reaction. Try again`,
-      });
-      console.error(error);
-      // router.refresh();
-    };
-
-    return { onSuccess, onError };
-  };
-
-  const mutateReviewLikeReaction = api.review.reviewLikeReaction.useMutation({
-    onSuccess: onComplete("like").onSuccess,
-    onError: onComplete("like").onError,
-  });
-
-  const mutateReviewUnlikeReaction =
-    api.review.reviewUnlikeReaction.useMutation({
-      onSuccess: onComplete("unlike").onSuccess,
-      onError: onComplete("unlike").onError,
-    });
-
-  const mutateReviewDislikeReaction =
-    api.review.reviewDislikeReaction.useMutation({
-      onSuccess: onComplete("dislike").onSuccess,
-      onError: onComplete("dislike").onError,
-    });
-
   const onModalClose = () => {
     onClose();
   };
@@ -105,13 +69,7 @@ export default function Lists({
           <div className="flex flex-col gap-6">
             {reviews?.map((review, idx) => (
               <React.Fragment key={review.id}>
-                <Review
-                  lng={lng}
-                  review={review}
-                  mutateUnlikeFunc={mutateReviewUnlikeReaction.mutate}
-                  mutateDislikeFunc={mutateReviewDislikeReaction.mutate}
-                  mutateLikeFunc={mutateReviewLikeReaction.mutate}
-                />
+                <Review lng={lng} review={review} />
                 {idx !== reviews.length - 1 && <Separator />}
               </React.Fragment>
             ))}

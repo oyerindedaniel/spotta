@@ -67,6 +67,11 @@ export default function Login({
     onSuccess: ({ data }) => {
       const { id, isConfirmed, email, refreshToken, sessionId, ttl } = data;
       form.reset();
+      setData({ refreshToken, sessionId, ttl, userId: id });
+      toast({
+        variant: "success",
+        description: "Login successful",
+      });
       if (isConfirmed) {
         router.push(redirectUrl ?? "/");
       } else {
@@ -76,11 +81,6 @@ export default function Login({
         });
       }
       router.refresh();
-      setData({ refreshToken, sessionId, ttl, userId: id });
-      toast({
-        variant: "success",
-        description: "Login successful",
-      });
     },
     onError: (error) => {
       console.error(error);

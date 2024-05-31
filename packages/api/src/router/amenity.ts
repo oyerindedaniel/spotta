@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { createAmenitySchema, updateAmenitySchema } from "@repo/validations";
 
-import { adminProtectedProcedure } from "../trpc";
+import { adminProtectedProcedure, publicProcedure } from "../trpc";
 
 export const amenityRouter = {
   create: adminProtectedProcedure
@@ -73,7 +73,7 @@ export const amenityRouter = {
       data: categories,
     };
   }),
-  findAll: adminProtectedProcedure.query(async ({ ctx }) => {
+  findAll: publicProcedure.query(async ({ ctx }) => {
     const { db } = ctx;
 
     const amenities = await db.amenity.findMany({

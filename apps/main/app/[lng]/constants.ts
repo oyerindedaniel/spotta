@@ -7,4 +7,6 @@ export const NON_DASHBOARD_PAGES = [
   "/fr/register",
   "/en/verify-email",
   "/fr/verify-email",
+  "/en/areas",
+  "/fr/areas",
 ];

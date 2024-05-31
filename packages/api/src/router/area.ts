@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { createAreaSchema, updateAreaSchema } from "@repo/validations";
 
-import { adminProtectedProcedure } from "../trpc";
+import { adminProtectedProcedure, publicProcedure } from "../trpc";
 import { generateUniqueSlug } from "../utils";
 
 export const areaRouter = {
@@ -153,6 +153,120 @@ export const areaRouter = {
       data: areas,
     };
   }),
+  findAllHomeSearch: publicProcedure.query(async ({ ctx, input }) => {
+    const { db } = ctx;
+
+    const areas = await db.area.findMany({
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+    });
+
+    return {
+      data: areas,
+    };
+  }),
+  findById: adminProtectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { db } = ctx;
+
+      const { id: areaId } = input;
+
+      const area = await db.area.findFirst({
+        where: { id: areaId },
+        include: {
+          createdBy: true,
+          medias: true,
+          reviews: {
+            include: {
+              createdBy: true,
+              likeReactions: true,
+              dislikeReactions: true,
+              amenities: { include: { category: true } },
+              _count: {
+                select: {
+                  likeReactions: true,
+                  dislikeReactions: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      if (!area) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "" });
+      }
+
+      return {
+        data: area,
+      };
+    }),
+  findBySlug: publicProcedure
+    .input(
+      z.object({
+        slug: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { db } = ctx;
+
+      const { slug } = input;
+
+      const initialLimit = 10;
+      const initialSkip = 0;
+
+      const amenities = await db.amenity.findMany({});
+
+      const area = await db.area.findFirst({
+        where: { slug },
+        include: {
+          medias: true,
+          reviews: {
+            take: initialLimit,
+            skip: initialSkip,
+            cursor: undefined,
+            include: {
+              amenities: { include: { category: true } },
+              createdBy: true,
+              likeReactions: true,
+              dislikeReactions: true,
+              _count: {
+                select: { likeReactions: true, dislikeReactions: true },
+              },
+            },
+            orderBy: { createdAt: "desc" },
+          },
+          _count: {
+            select: { reviews: true },
+          },
+        },
+      });
+
+      if (!area) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Area does not exist",
+        });
+      }
+
+      return {
+        data: { area, amenities },
+      };
+    }),
   groupAmenityByAreaId: adminProtectedProcedure
     .input(
       z.object({
@@ -199,53 +313,6 @@ export const areaRouter = {
 
       return {
         data: groupedAmenities,
-      };
-    }),
-  findById: adminProtectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const { db } = ctx;
-
-      const { id: areaId } = input;
-
-      const area = await db.area.findFirst({
-        where: { id: areaId },
-        include: {
-          createdBy: true,
-          medias: true,
-          reviews: {
-            include: {
-              createdBy: true,
-              likeReactions: true,
-              dislikeReactions: true,
-              amenities: { include: { category: true } },
-              _count: {
-                select: {
-                  likeReactions: true,
-                  dislikeReactions: true,
-                },
-              },
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-
-      if (!area) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "" });
-      }
-
-      return {
-        data: area,
       };
     }),
 } satisfies TRPCRouterRecord;
