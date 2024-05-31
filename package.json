@@ -7,17 +7,25 @@
     "dev:main": "dotenv -e .env -c -- turbo run dev --filter=@repo/main",
     "dev:admin": "dotenv -e .env -c -- turbo run dev --filter=@repo/admin",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,mdx,css,scss,yaml,yml}\"",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "dotenv-cli": "^7.4.1",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.5",
     "prettier": "^3.2.5",
     "turbo": "latest"
   },
   "packageManager": "pnpm@8.9.0",
   "engines": {
     "node": ">=18"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx,json,md,mdx,css,scss,yaml,yml}": [
+      "prettier --write"
+    ]
   }
 }
