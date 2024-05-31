@@ -84,9 +84,7 @@ export function Navbar({
     <header
       className={cn(
         "w-full bg-background",
-        NON_DASHBOARD_PAGES.some((route) => pathname.startsWith(route))
-          ? "block"
-          : "fixed top-0 z-50",
+        NON_DASHBOARD_PAGES.includes(pathname) ? "block" : "fixed top-0 z-50",
       )}
     >
       <div className="flex w-full items-center justify-between px-6 py-3 md:px-14">

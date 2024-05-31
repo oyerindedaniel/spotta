@@ -6,6 +6,7 @@ import { LanguagesType } from "@repo/i18n";
 import { api } from "@repo/trpc/src/server";
 
 import AreaHeader from "./header";
+import AreaMedia from "./media";
 import AreaReview from "./review";
 
 export async function Area({
@@ -28,7 +29,7 @@ export async function Area({
       <AreaHeader lng={lng} area={area.data} />
       <div className="px-6 pb-3 pt-6 md:px-14">
         <AreaReview lng={lng} area={area.data} session={session} />
-        <div className="w-[40%]"></div>
+        <AreaMedia lng={lng} area={area.data} session={session} />
       </div>
     </div>
   );

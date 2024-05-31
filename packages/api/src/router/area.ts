@@ -248,6 +248,7 @@ export const areaRouter = {
                 select: { likeReactions: true, dislikeReactions: true },
               },
             },
+            orderBy: { createdAt: "desc" },
           },
           _count: {
             select: { reviews: true },
