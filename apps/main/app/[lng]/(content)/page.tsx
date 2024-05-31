@@ -1,18 +1,14 @@
-"use client";
+import HomeSearchInput from "@/components/home-search/input";
 
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { LanguagesType } from "@repo/i18n";
+import { api } from "@repo/trpc/src/server";
 
-import { LanguagesType, useClientTranslation } from "@repo/i18n";
-import { Button, Input } from "@repo/ui";
-
-export default function Page({
+export default async function Page({
   params: { lng },
 }: {
   params: { lng: LanguagesType };
-}): JSX.Element {
-  const { t, i18n } = useClientTranslation({ lng });
-
-  // console.log({ resolvedLanguage: i18n.resolvedLanguage });
+}) {
+  const areas = await api.area.findAllHomeSearch();
 
   return (
     <div className="flex h-[calc(100vh-64px)] justify-between gap-3 px-6 py-3 md:px-14">
@@ -24,18 +20,7 @@ export default function Page({
           See through the lenses of people who have lived or visited the
           neighbourhood you might have in mind.
         </p>
-        <form>
-          <Input
-            className="mb-4"
-            leftIcon={
-              <MagnifyingGlassIcon className="size-5 text-[#0D2159] dark:text-[#BACAF5]" />
-            }
-            placeholder="Enter Address"
-          />
-          <Button type="submit" size="lg" className="uppercase">
-            Search
-          </Button>
-        </form>
+        <HomeSearchInput lng={lng} areas={areas.data} />
       </div>
       <div className="w-[40%]"></div>
     </div>

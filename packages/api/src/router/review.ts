@@ -56,6 +56,24 @@ export const reviewRouter = {
         areaId,
       } = input;
 
+      const currentReview = await db.review.findUnique({
+        where: { id: reviewId },
+        select: {
+          amenities: true,
+        },
+      });
+
+      if (!currentReview) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Review does not exist",
+        });
+      }
+
+      const currentAmenityIds = currentReview.amenities.map((amenity) => ({
+        id: amenity.id,
+      }));
+
       await db.review.update({
         where: { id: reviewId },
         data: {
@@ -64,6 +82,7 @@ export const reviewRouter = {
           rating: Number(rating),
           asAnonymous,
           amenities: {
+            disconnect: currentAmenityIds,
             connect: amenities.map((amenity) => ({
               id: amenity.id,
             })),

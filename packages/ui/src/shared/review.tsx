@@ -1,6 +1,6 @@
 "use client";
 
-import { Area } from "@prisma/client";
+import { Area, User } from "@prisma/client";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { RouterOutputs } from "@repo/api";
 import { useDebounce } from "@repo/hooks/src/use-debounce";
@@ -8,17 +8,14 @@ import { useDisclosure } from "@repo/hooks/src/use-disclosure";
 import { useInitialRender } from "@repo/hooks/src/use-initial-render";
 import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { LanguagesType } from "@repo/i18n";
+import { api } from "@repo/trpc/src/react";
 import { formatTimeAgo, getInitials } from "@repo/utils";
-import {
-  updateReviewDislikeReactionSchema,
-  updateReviewLikeReactionSchema,
-  updateReviewReactionSchema,
-  updateReviewUnlikeReactionSchema,
-} from "@repo/validations";
-import { usePathname } from "next/navigation";
+import { updateReviewReactionSchema } from "@repo/validations";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import {
+  AuthModal,
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -27,26 +24,17 @@ import {
   CreateEditReview,
   DeleteReview,
   ModalContainer,
-  Separator,
+  useToast,
 } from "..";
 import { DislikeButton, LikeButton } from "./rating";
 
 type Review = RouterOutputs["area"]["findById"]["data"]["reviews"][number];
 type ReviewReactionType = z.infer<typeof updateReviewReactionSchema>;
-type ReviewLikeReactionType = z.infer<typeof updateReviewLikeReactionSchema>;
-type ReviewDislikeReactionType = z.infer<
-  typeof updateReviewDislikeReactionSchema
->;
-type ReviewUnlikeReactionType = z.infer<
-  typeof updateReviewUnlikeReactionSchema
->;
 
 interface Props {
   lng: LanguagesType;
   review: Review;
-  mutateLikeFunc: (data: ReviewLikeReactionType) => void;
-  mutateDislikeFunc: (data: ReviewDislikeReactionType) => void;
-  mutateUnlikeFunc: (data: ReviewUnlikeReactionType) => void;
+  session?: User | null;
 }
 
 // TODO: make logic better
@@ -55,6 +43,9 @@ export function Review(props: Props) {
   const {
     data: { userId },
   } = useSessionStore();
+
+  const { toast } = useToast();
+  const router = useRouter();
 
   const initialRenderComplete = useInitialRender();
 
@@ -71,8 +62,7 @@ export function Review(props: Props) {
     _count,
   } = props.review;
 
-  const { mutateDislikeFunc, mutateLikeFunc, mutateUnlikeFunc, lng, review } =
-    props;
+  const { session, lng, review } = props;
 
   const { id: createdById, firstName, lastName, picture } = createdBy;
 
@@ -85,6 +75,11 @@ export function Review(props: Props) {
     isOpen: isOpenDelete,
     onClose: onCloseDelete,
     onOpen: onOpenDelete,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenSession,
+    onClose: onCloseSession,
+    onOpen: onOpenSession,
   } = useDisclosure();
 
   const pathname = usePathname();
@@ -127,8 +122,50 @@ export function Review(props: Props) {
     }
   }, [initialRenderComplete]);
 
+  const onComplete = (description: string) => {
+    const onSuccess = () => {
+      // router.refresh();
+    };
+
+    const onError = (error: any) => {
+      router.refresh();
+      toast({
+        variant: "destructive",
+        description:
+          error?.message ??
+          `Error updating review ${description} reaction. Try again`,
+      });
+      console.error(error);
+    };
+
+    return { onSuccess, onError };
+  };
+
+  const mutateLikeFunc = api.review.reviewLikeReaction.useMutation({
+    onSuccess: onComplete("like").onSuccess,
+    onError: onComplete("like").onError,
+  });
+
+  const mutateUnlikeFunc = api.review.reviewUnlikeReaction.useMutation({
+    onSuccess: onComplete("unlike").onSuccess,
+    onError: onComplete("unlike").onError,
+  });
+
+  const mutateDislikeFunc = api.review.reviewDislikeReaction.useMutation({
+    onSuccess: onComplete("dislike").onSuccess,
+    onError: onComplete("dislike").onError,
+  });
+
   return (
     <>
+      <AuthModal
+        title="Reviews"
+        body="To add a reaction to this review, please login or create an account with us."
+        lng={lng}
+        isOpen={isOpenSession}
+        onClose={onCloseSession}
+        onOpen={onOpenSession}
+      />
       <ModalContainer
         isOpen={isOpenEdit}
         onClose={onCloseEdit}
@@ -217,6 +254,9 @@ export function Review(props: Props) {
           <LikeButton
             isLiked={isLiked}
             onToggleLike={(action) => {
+              if (!session) {
+                return onOpenSession();
+              }
               setReaction(action);
               setLikeCount((prevCount) =>
                 action === "LIKE" ? prevCount + 1 : prevCount - 1
@@ -225,14 +265,17 @@ export function Review(props: Props) {
                 setDislikeCount((prevCount) => prevCount - 1);
               }
               action === "LIKE"
-                ? mutateLikeFunc({ id: reviewId, type: action })
-                : mutateUnlikeFunc({ id: reviewId, type: action });
+                ? mutateLikeFunc.mutate({ id: reviewId, type: action })
+                : mutateUnlikeFunc.mutate({ id: reviewId, type: action });
             }}
             count={likeCount}
           />
           <DislikeButton
             isDisliked={isDisliked}
             onToggleDislike={(action) => {
+              if (!session) {
+                return onOpenSession();
+              }
               setReaction(action);
               setDislikeCount((prevCount) =>
                 action === "DISLIKE" ? prevCount + 1 : prevCount - 1
@@ -241,8 +284,8 @@ export function Review(props: Props) {
                 setLikeCount((prevCount) => prevCount - 1);
               }
               action === "DISLIKE"
-                ? mutateDislikeFunc({ id: reviewId, type: action })
-                : mutateUnlikeFunc({ id: reviewId, type: action });
+                ? mutateDislikeFunc.mutate({ id: reviewId, type: action })
+                : mutateUnlikeFunc.mutate({ id: reviewId, type: action });
             }}
             count={dislikeCount}
           />
