@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { Icons } from "@/assets";
+import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";
 
 import { RouterOutputs } from "@repo/api";
@@ -52,7 +53,7 @@ export default function AreaReview({
       </ModalContainer>
       <div>
         {reviews && reviews.length > 0 ? (
-          <div className="w-[60%]">
+          <div>
             <div className="flex flex-col gap-6">
               {reviews?.map((review, idx) => (
                 <React.Fragment key={review.id}>
@@ -63,7 +64,7 @@ export default function AreaReview({
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-8">
+          <div className="mx-auto flex flex-col items-center justify-center py-8">
             <Image
               src={Icons.emptyState}
               alt={`No review for area: ${name}`}
