@@ -40,7 +40,7 @@ const Sidebar: FC<SidebarProps> = ({ lng, sidebarItems }) => {
                     Idx !== sidebarItems.length - 1 && "mb-3",
                   )}
                 >
-                  <Icon />
+                  <Icon className="h-4 w-4" />
                   <span className="block font-medium capitalize">
                     {link.name}
                   </span>

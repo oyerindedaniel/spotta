@@ -125,7 +125,7 @@ export const userRouter = {
     .mutation(async ({ ctx, input }) => {
       const { db, session } = ctx;
 
-      const { id, email: oldUserEmail } = session.user;
+      const { id, email: oldUserEmail, role } = session.user;
 
       const { firstName, lastName, phone, email, picture } = input;
 
@@ -138,7 +138,7 @@ export const userRouter = {
           lastName,
           phone,
           email,
-          role: "USER",
+          role,
           ...(oldUserEmail.toLowerCase() !== email.toLowerCase() && {
             isConfirmed: false,
           }),
@@ -657,6 +657,42 @@ export const userRouter = {
         },
         data: {
           invalidatedAt: new Date(),
+        },
+      });
+
+      return {
+        data: true,
+      };
+    }),
+  findAll: adminProtectedProcedure.query(async ({ ctx }) => {
+    const { db } = ctx;
+
+    const users = await db.user.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+
+    return {
+      data: users,
+    };
+  }),
+  updateConfrimation: adminProtectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        isConfirmed: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { db } = ctx;
+
+      const { id, isConfirmed } = input;
+
+      await db.user.update({
+        where: {
+          id,
+        },
+        data: {
+          isConfirmed,
         },
       });
 

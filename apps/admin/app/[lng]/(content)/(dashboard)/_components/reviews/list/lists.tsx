@@ -47,6 +47,7 @@ export default function Lists({
     };
 
     const onError = (error: any) => {
+      router.refresh();
       toast({
         variant: "destructive",
         description:
@@ -54,7 +55,6 @@ export default function Lists({
           `Error updating review ${description} reaction. Try again`,
       });
       console.error(error);
-      // router.refresh();
     };
 
     return { onSuccess, onError };
