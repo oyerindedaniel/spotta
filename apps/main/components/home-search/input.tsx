@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default function HomeSearchInput({ lng, areas }: Props) {
-  const [isTagInputFocused, setIsTapInputFocused] = React.useState(false);
+  const [isInputFocused, setIsInputFocused] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
 
   const ref = React.useRef<HTMLDivElement>(null);
@@ -31,7 +31,7 @@ export default function HomeSearchInput({ lng, areas }: Props) {
   React.useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
-        setIsTapInputFocused(false);
+        setIsInputFocused(false);
       }
     };
 
@@ -53,13 +53,13 @@ export default function HomeSearchInput({ lng, areas }: Props) {
           <CommandInput
             required
             placeholder="Enter address"
-            onFocus={() => setIsTapInputFocused(true)}
+            onFocus={() => setIsInputFocused(true)}
           />
           <CommandList
             className={cn(
               "absolute bottom-0 left-0 right-0 z-20 w-full translate-y-full rounded-b-lg bg-brand-primary",
               {
-                hidden: !isTagInputFocused,
+                hidden: !isInputFocused,
               },
             )}
           >
