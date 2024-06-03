@@ -5,7 +5,7 @@ interface SeedAreaParams {
 }
 
 async function areas({ userId }: SeedAreaParams) {
-  // Define the areas to be seeded
+  // areas to be seeded
   const areaData = [
     {
       slug: "central-park",

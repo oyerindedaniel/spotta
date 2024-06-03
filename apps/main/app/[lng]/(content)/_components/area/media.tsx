@@ -34,7 +34,7 @@ export default function AreaMedia({
             className="object-cover"
             fill
           />
-          <div className="absolute flex h-full w-full cursor-pointer items-center justify-center bg-black/50 text-center text-sm uppercase group-hover:opacity-100">
+          <div className="absolute flex h-full w-full cursor-pointer items-center justify-center bg-black/70 text-center text-sm uppercase text-white transition-all group-hover:scale-105 group-hover:font-semibold group-hover:opacity-100">
             <span>View more</span>
           </div>
         </div>
