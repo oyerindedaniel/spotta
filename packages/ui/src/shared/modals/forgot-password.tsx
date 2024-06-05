@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useModal } from "@/hooks/use-modal-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeftIcon, ReloadIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { api } from "@repo/trpc/src/react";
+import { useModal } from "@repo/hooks/src/use-modal-store";
+import { api } from "@repo/api/src/react";
+import {
+  ForgotPasswordConfirmationType,
+  ForgotPasswordEnum,
+  ForgotPasswordType,
+  forgotPasswordConfirmationSchema,
+  forgotPasswordSchema,
+} from "@repo/validations";
 import {
   Button,
   Dialog,
@@ -28,14 +35,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
   useToast,
-} from "@repo/ui";
-import {
-  forgotPasswordConfirmationSchema,
-  ForgotPasswordConfirmationType,
-  ForgotPasswordEnum,
-  forgotPasswordSchema,
-  ForgotPasswordType,
-} from "@repo/validations";
+} from "../../";
 
 type FormDataType<T extends ForgotPasswordEnum> =
   T extends ForgotPasswordEnum.ForgotPassword

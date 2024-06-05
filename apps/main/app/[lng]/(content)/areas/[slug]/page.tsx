@@ -1,4 +1,4 @@
-import { useAuth } from "@repo/hooks";
+import { getUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
 
 import AreaSuspense from "../../_components/area";
@@ -8,7 +8,7 @@ export default async function AreaPage({
 }: {
   params: { lng: LanguagesType; slug: string };
 }) {
-  const session = await useAuth();
+  const session = await getUserDTO();
 
   return (
     <>

@@ -1,14 +1,15 @@
 "use client";
 
-import { Area, User } from "@prisma/client";
+import { Area } from "@prisma/client";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { RouterOutputs } from "@repo/api";
+import { api } from "@repo/api/src/react";
 import { useDebounce } from "@repo/hooks/src/use-debounce";
 import { useDisclosure } from "@repo/hooks/src/use-disclosure";
 import { useInitialRender } from "@repo/hooks/src/use-initial-render";
 import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/react";
+import { UserDTO } from "@repo/types";
 import { formatTimeAgo, getInitials } from "@repo/utils";
 import { updateReviewReactionSchema } from "@repo/validations";
 import { usePathname, useRouter } from "next/navigation";
@@ -34,7 +35,7 @@ type ReviewReactionType = z.infer<typeof updateReviewReactionSchema>;
 interface Props {
   lng: LanguagesType;
   review: Review;
-  session?: User | null;
+  session?: UserDTO;
 }
 
 // TODO: make logic better
@@ -91,12 +92,12 @@ export function Review(props: Props) {
 
   const defaultLikeReaction = likeReactions.find(
     (reaction) =>
-      reaction.userId === userId && reaction.likeReviewId === reviewId
+      reaction.userId === userId && reaction.likeReviewId === reviewId,
   )?.type;
 
   const defaultDislikeReaction = dislikeReactions.find(
     (reaction) =>
-      reaction.userId === userId && reaction.dislikeReviewId === reviewId
+      reaction.userId === userId && reaction.dislikeReviewId === reviewId,
   )?.type;
 
   const isFirstRenderCompleted = useRef(false);
@@ -104,7 +105,7 @@ export function Review(props: Props) {
   const defaultReaction = defaultLikeReaction || defaultDislikeReaction || null;
 
   const [reaction, setReaction] = useState<ReviewReactionType["type"] | null>(
-    defaultReaction
+    defaultReaction,
   );
 
   const debouncedReaction = useDebounce(reaction, 1000);
@@ -259,7 +260,7 @@ export function Review(props: Props) {
               }
               setReaction(action);
               setLikeCount((prevCount) =>
-                action === "LIKE" ? prevCount + 1 : prevCount - 1
+                action === "LIKE" ? prevCount + 1 : prevCount - 1,
               );
               if (reaction === "DISLIKE") {
                 setDislikeCount((prevCount) => prevCount - 1);
@@ -278,7 +279,7 @@ export function Review(props: Props) {
               }
               setReaction(action);
               setDislikeCount((prevCount) =>
-                action === "DISLIKE" ? prevCount + 1 : prevCount - 1
+                action === "DISLIKE" ? prevCount + 1 : prevCount - 1,
               );
               if (reaction === "LIKE") {
                 setLikeCount((prevCount) => prevCount - 1);

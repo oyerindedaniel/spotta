@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { User } from "@prisma/client";
 
+import { api } from "@repo/api/src/react";
 import { useInitialRender } from "@repo/hooks/src/use-initial-render";
 import { useSessionStore } from "@repo/hooks/src/use-session-store";
-import { api } from "@repo/trpc/src/react";
+import { UserSession } from "@repo/types";
 import { startTokenRefreshTimer, stopTokenRefreshTimer } from "@repo/utils";
 
-export function RefreshToken({ session }: { session: User | null }) {
+export function RefreshToken({ session }: { session: UserSession }) {
   const initialRenderComplete = useInitialRender();
 
   const {

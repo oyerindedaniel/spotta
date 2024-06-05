@@ -3,12 +3,11 @@
 import React from "react";
 import Image from "next/image";
 import { Icons } from "@/assets";
-import { cn } from "@/lib/utils";
-import { User } from "@prisma/client";
 
 import { RouterOutputs } from "@repo/api";
 import { useDisclosure } from "@repo/hooks/src/use-disclosure";
 import { LanguagesType } from "@repo/i18n";
+import { UserDTO } from "@repo/types";
 import {
   Button,
   CreateEditReview,
@@ -24,7 +23,7 @@ export default function AreaReview({
 }: {
   lng: LanguagesType;
   area: RouterOutputs["area"]["findBySlug"]["data"];
-  session: User | null;
+  session: UserDTO;
 }) {
   const {
     isOpen: isOpenReview,

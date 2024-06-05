@@ -1,6 +1,6 @@
 import { RefreshToken } from "@/components/refresh-token";
 
-import { useAuth } from "@repo/hooks";
+import { getUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
 
 import { Navbar } from "./_components/layout/navbar";
@@ -10,7 +10,7 @@ interface LayoutProps extends React.PropsWithChildren<{}> {
 }
 
 export default async function Layout({ children, params }: LayoutProps) {
-  const session = await useAuth();
+  const session = await getUserDTO();
   return (
     <>
       {/* <AutoCounter /> */}

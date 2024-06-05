@@ -1,8 +1,7 @@
 "use client";
 
-import { User } from "@prisma/client";
-
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
+import { UserSession } from "@repo/types";
 
 export default function StatCard({
   lng,
@@ -14,7 +13,7 @@ export default function StatCard({
   children,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
   icon?: React.ComponentType<React.HTMLAttributes<SVGElement>>;
   count: number;
   name: string;

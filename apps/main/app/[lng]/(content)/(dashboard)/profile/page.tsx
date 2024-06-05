@@ -1,4 +1,4 @@
-import { useAuth } from "@repo/hooks";
+import { getUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
 
 import Profile from "../_components/profile";
@@ -8,7 +8,7 @@ export default async function ProfilePage({
 }: {
   params: { lng: LanguagesType };
 }) {
-  const session = await useAuth();
+  const session = await getUserDTO({ update: true });
 
   return (
     <>

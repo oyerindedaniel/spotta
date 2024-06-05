@@ -1,17 +1,17 @@
 import { Suspense } from "react";
 import StatCard from "@/components/stat-card";
-import { User } from "@prisma/client";
 import { format } from "date-fns";
 
+import { api } from "@repo/api/src/server";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
+import { UserSession } from "@repo/types";
 
 export async function Dashboard({
   lng,
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
 }) {
   // console.log({ resolvedLanguage: i18n.resolvedLanguage });
 
@@ -86,7 +86,7 @@ export default function DashboardSuspense({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
 }): JSX.Element {
   return (
     <Suspense>

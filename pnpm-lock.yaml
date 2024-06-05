@@ -43,6 +43,9 @@ importers:
       "@repo/api":
         specifier: workspace:*
         version: link:../../packages/api
+      "@repo/data":
+        specifier: workspace:*
+        version: link:../../packages/data
       "@repo/db":
         specifier: workspace:*
         version: link:../../packages/db
@@ -52,9 +55,6 @@ importers:
       "@repo/i18n":
         specifier: workspace:*
         version: link:../../packages/i18
-      "@repo/trpc":
-        specifier: workspace:*
-        version: link:../../packages/trpc
       "@repo/ui":
         specifier: workspace:*
         version: link:../../packages/ui
@@ -203,6 +203,9 @@ importers:
       "@repo/api":
         specifier: workspace:*
         version: link:../../packages/api
+      "@repo/data":
+        specifier: workspace:*
+        version: link:../../packages/data
       "@repo/db":
         specifier: workspace:*
         version: link:../../packages/db
@@ -212,9 +215,6 @@ importers:
       "@repo/i18n":
         specifier: workspace:*
         version: link:../../packages/i18
-      "@repo/trpc":
-        specifier: workspace:*
-        version: link:../../packages/trpc
       "@repo/ui":
         specifier: workspace:*
         version: link:../../packages/ui
@@ -406,18 +406,21 @@ importers:
       "@repo/email":
         specifier: workspace:*
         version: link:../email
-      "@repo/hooks":
-        specifier: workspace:*
-        version: link:../hooks
-      "@repo/trpc":
-        specifier: workspace:*
-        version: link:../trpc
       "@repo/types":
         specifier: workspace:*
         version: link:../types
       "@repo/validations":
         specifier: workspace:*
         version: link:../validations
+      "@tanstack/react-query":
+        specifier: ^5.32.0
+        version: 5.36.0(react@18.3.1)
+      "@trpc/client":
+        specifier: 11.0.0-rc.334
+        version: 11.0.0-rc.334(@trpc/server@11.0.0-rc.334)
+      "@trpc/react-query":
+        specifier: 11.0.0-rc.334
+        version: 11.0.0-rc.334(@tanstack/react-query@5.36.0)(@trpc/client@11.0.0-rc.334)(@trpc/server@11.0.0-rc.334)(react-dom@18.3.1)(react@18.3.1)
       "@trpc/server":
         specifier: 11.0.0-rc.334
         version: 11.0.0-rc.334
@@ -442,6 +445,9 @@ importers:
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -454,6 +460,15 @@ importers:
       qs:
         specifier: ^6.12.1
         version: 6.12.1
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
       slugify:
         specifier: ^1.6.6
         version: 1.6.6
@@ -497,12 +512,61 @@ importers:
       "@types/qs":
         specifier: ^6.9.15
         version: 6.9.15
+      "@types/react":
+        specifier: ^18.2.61
+        version: 18.3.2
+      "@types/react-dom":
+        specifier: ^18.2.19
+        version: 18.3.0
       "@types/uuid":
         specifier: ^9.0.8
         version: 9.0.8
       dotenv-cli:
         specifier: ^7.4.1
         version: 7.4.2
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      prettier:
+        specifier: ^3.2.5
+        version: 3.2.5
+      prisma:
+        specifier: ^5.13.0
+        version: 5.13.0
+      typescript:
+        specifier: ^5.3.3
+        version: 5.4.5
+
+  packages/data:
+    dependencies:
+      "@prisma/client":
+        specifier: ^5.13.0
+        version: 5.13.0(prisma@5.13.0)
+      "@repo/api":
+        specifier: workspace:*
+        version: link:../api
+      "@repo/types":
+        specifier: workspace:*
+        version: link:../types
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+    devDependencies:
+      "@repo/eslint-config":
+        specifier: workspace:*
+        version: link:../eslint-config
+      "@repo/prettier-config":
+        specifier: workspace:*
+        version: link:../prettier-config
+      "@repo/typescript-config":
+        specifier: workspace:*
+        version: link:../typescript-config
+      "@types/node":
+        specifier: ^20.12.7
+        version: 20.12.11
+      "@types/react":
+        specifier: ^18.2.61
+        version: 18.3.2
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -649,21 +713,12 @@ importers:
       "@prisma/client":
         specifier: ^5.13.0
         version: 5.13.0(prisma@5.13.0)
-      "@repo/api":
-        specifier: workspace:*
-        version: link:../api
-      "@repo/trpc":
-        specifier: workspace:*
-        version: link:../trpc
       "@repo/types":
         specifier: workspace:*
         version: link:../types
-      "@repo/ui":
+      "@repo/uploadthing":
         specifier: workspace:*
-        version: link:../ui
-      "@repo/utils":
-        specifier: workspace:*
-        version: link:../utils
+        version: link:../upload-thing
       "@uploadthing/react":
         specifier: ^6.5.3
         version: 6.5.3(next@14.2.3)(react@18.3.1)(uploadthing@6.10.3)
@@ -831,73 +886,6 @@ importers:
         specifier: ^5.3.3
         version: 5.4.5
 
-  packages/trpc:
-    dependencies:
-      "@tanstack/react-query":
-        specifier: ^5.32.0
-        version: 5.36.0(react@18.3.1)
-      "@trpc/client":
-        specifier: 11.0.0-rc.334
-        version: 11.0.0-rc.334(@trpc/server@11.0.0-rc.334)
-      "@trpc/react-query":
-        specifier: 11.0.0-rc.334
-        version: 11.0.0-rc.334(@tanstack/react-query@5.36.0)(@trpc/client@11.0.0-rc.334)(@trpc/server@11.0.0-rc.334)(react-dom@18.3.1)(react@18.3.1)
-      "@trpc/server":
-        specifier: 11.0.0-rc.334
-        version: 11.0.0-rc.334
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.4.5
-      next:
-        specifier: ^14.1.1
-        version: 14.2.3(react-dom@18.3.1)(react@18.3.1)
-      react:
-        specifier: ^18.2.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.3.1(react@18.3.1)
-      server-only:
-        specifier: ^0.0.1
-        version: 0.0.1
-      superjson:
-        specifier: ^2.2.1
-        version: 2.2.1
-    devDependencies:
-      "@repo/api":
-        specifier: workspace:*
-        version: link:../api
-      "@repo/db":
-        specifier: workspace:*
-        version: link:../db
-      "@repo/eslint-config":
-        specifier: workspace:*
-        version: link:../eslint-config
-      "@repo/prettier-config":
-        specifier: workspace:*
-        version: link:../prettier-config
-      "@repo/typescript-config":
-        specifier: workspace:*
-        version: link:../typescript-config
-      "@types/node":
-        specifier: ^20.12.7
-        version: 20.12.11
-      "@types/react":
-        specifier: ^18.2.61
-        version: 18.3.2
-      "@types/react-dom":
-        specifier: ^18.2.19
-        version: 18.3.0
-      eslint:
-        specifier: ^8.57.0
-        version: 8.57.0
-      prettier:
-        specifier: ^3.2.5
-        version: 3.2.5
-      typescript:
-        specifier: ^5.3.3
-        version: 5.4.5
-
   packages/types:
     dependencies:
       "@prisma/client":
@@ -999,9 +987,6 @@ importers:
       "@repo/i18n":
         specifier: workspace:*
         version: link:../i18
-      "@repo/trpc":
-        specifier: workspace:*
-        version: link:../trpc
       "@repo/utils":
         specifier: workspace:*
         version: link:../utils
@@ -1091,38 +1076,14 @@ importers:
         specifier: ^5.3.3
         version: 5.4.5
 
-  packages/utils:
+  packages/upload-thing:
     dependencies:
-      "@prisma/client":
-        specifier: ^5.13.0
-        version: 5.13.0(prisma@5.13.0)
       "@repo/api":
         specifier: workspace:*
         version: link:../api
-      "@repo/hooks":
-        specifier: workspace:*
-        version: link:../hooks
-      "@repo/i18n":
-        specifier: workspace:*
-        version: link:../i18
-      "@repo/trpc":
-        specifier: workspace:*
-        version: link:../trpc
-      "@repo/types":
-        specifier: workspace:*
-        version: link:../types
-      "@tanstack/react-query":
-        specifier: ^5.32.0
-        version: 5.36.0(react@18.3.1)
       "@uploadthing/react":
         specifier: ^6.5.3
         version: 6.5.3(next@14.2.3)(react@18.3.1)(uploadthing@6.10.3)
-      date-fns:
-        specifier: ^3.6.0
-        version: 3.6.0
-      react:
-        specifier: ^18.2.0
-        version: 18.3.1
       uploadthing:
         specifier: ^6.10.3
         version: 6.10.3(next@14.2.3)(tailwindcss@3.4.3)
@@ -1136,12 +1097,145 @@ importers:
       "@repo/typescript-config":
         specifier: workspace:*
         version: link:../typescript-config
+      dotenv-cli:
+        specifier: ^7.4.1
+        version: 7.4.2
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.0
+      prettier:
+        specifier: ^3.2.5
+        version: 3.2.5
+      typescript:
+        specifier: ^5.3.3
+        version: 5.4.5
+
+  packages/utils:
+    dependencies:
+      "@prisma/client":
+        specifier: ^5.13.0
+        version: 5.13.0(prisma@5.13.0)
+      "@repo/api":
+        specifier: workspace:*
+        version: link:../api
+      "@repo/db":
+        specifier: workspace:*
+        version: link:../db
+      "@repo/email":
+        specifier: workspace:*
+        version: link:../email
+      "@repo/hooks":
+        specifier: workspace:*
+        version: link:../hooks
+      "@repo/types":
+        specifier: workspace:*
+        version: link:../types
+      "@repo/validations":
+        specifier: workspace:*
+        version: link:../validations
+      "@tanstack/react-query":
+        specifier: ^5.32.0
+        version: 5.36.0(react@18.3.1)
+      "@trpc/client":
+        specifier: 11.0.0-rc.334
+        version: 11.0.0-rc.334(@trpc/server@11.0.0-rc.334)
+      "@trpc/react-query":
+        specifier: 11.0.0-rc.334
+        version: 11.0.0-rc.334(@tanstack/react-query@5.36.0)(@trpc/client@11.0.0-rc.334)(@trpc/server@11.0.0-rc.334)(react-dom@18.3.1)(react@18.3.1)
+      "@trpc/server":
+        specifier: 11.0.0-rc.334
+        version: 11.0.0-rc.334
+      "@upstash/redis":
+        specifier: ^1.30.1
+        version: 1.30.1
+      axios:
+        specifier: ^1.6.8
+        version: 1.6.8
+      bcryptjs:
+        specifier: ^2.4.3
+        version: 2.4.3
+      cookie:
+        specifier: ^0.6.0
+        version: 0.6.0
+      crypto-js:
+        specifier: ^4.2.0
+        version: 4.2.0
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      next:
+        specifier: ^14.1.1
+        version: 14.2.3(react-dom@18.3.1)(react@18.3.1)
+      qs:
+        specifier: ^6.12.1
+        version: 6.12.1
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      slugify:
+        specifier: ^1.6.6
+        version: 1.6.6
+      superjson:
+        specifier: ^2.2.1
+        version: 2.2.1
+      uuid:
+        specifier: ^9.0.1
+        version: 9.0.1
+      zod:
+        specifier: ^3.23.0
+        version: 3.23.8
+    devDependencies:
+      "@repo/eslint-config":
+        specifier: workspace:*
+        version: link:../eslint-config
+      "@repo/prettier-config":
+        specifier: workspace:*
+        version: link:../prettier-config
+      "@repo/typescript-config":
+        specifier: workspace:*
+        version: link:../typescript-config
+      "@types/bcryptjs":
+        specifier: ^2.4.6
+        version: 2.4.6
+      "@types/cookie":
+        specifier: ^0.6.0
+        version: 0.6.0
+      "@types/jsonwebtoken":
+        specifier: ^9.0.6
+        version: 9.0.6
+      "@types/lodash":
+        specifier: ^4.17.0
+        version: 4.17.1
       "@types/node":
         specifier: ^20.12.7
         version: 20.12.11
+      "@types/qs":
+        specifier: ^6.9.15
+        version: 6.9.15
       "@types/react":
         specifier: ^18.2.61
         version: 18.3.2
+      "@types/react-dom":
+        specifier: ^18.2.19
+        version: 18.3.0
+      "@types/uuid":
+        specifier: ^9.0.8
+        version: 9.0.8
       dotenv-cli:
         specifier: ^7.4.1
         version: 7.4.2

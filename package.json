@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": " dotenv -e .env -- turbo dev --concurrency 12",
+    "dev": " dotenv -e .env -- turbo dev --concurrency 13",
     "dev:main": "dotenv -e .env -c -- turbo run dev --filter=@repo/main",
     "dev:admin": "dotenv -e .env -c -- turbo run dev --filter=@repo/admin",
     "lint": "turbo lint",

@@ -6,8 +6,8 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { api } from "@repo/api/src/react";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/react";
 import {
   Button,
   Form,

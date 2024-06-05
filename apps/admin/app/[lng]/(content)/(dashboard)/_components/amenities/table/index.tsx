@@ -1,7 +1,8 @@
 import { User } from "@prisma/client";
 
+import { api } from "@repo/api/src/server";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
+import { UserSession } from "@repo/types";
 import { DataTable } from "@repo/ui/src/components/ui/data-table";
 
 import { amenitiesColumns } from "./columns";
@@ -11,7 +12,7 @@ export default async function AmenitiesTable({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
 }) {
   const amenities = await api.amenity.findAll();
 

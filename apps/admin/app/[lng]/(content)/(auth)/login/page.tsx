@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { useAuthAdmin } from "@repo/hooks";
+import { getAdminUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
 
 import Login from "../_components/login";
@@ -10,7 +10,7 @@ export default async function LoginPage({
 }: {
   params: { lng: LanguagesType };
 }) {
-  const session = await useAuthAdmin();
+  const session = await getAdminUserDTO();
 
   if (session) {
     redirect("/");

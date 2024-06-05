@@ -1,4 +1,4 @@
-import { useAuth } from "@repo/hooks";
+import { getUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
 
 import VerifyEmail from "../_components/verify-email";
@@ -8,7 +8,7 @@ export default async function VerfiyEmailPage({
 }: {
   params: { lng: LanguagesType };
 }) {
-  const session = await useAuth();
+  const session = await getUserDTO();
 
   return <VerifyEmail lng={lng} session={session} />;
 }

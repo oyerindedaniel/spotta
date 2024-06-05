@@ -1,7 +1,8 @@
 import { User } from "@prisma/client";
 
+import { api } from "@repo/api/src/server";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
+import { UserDTO } from "@repo/types";
 
 import Session from "./session";
 
@@ -10,7 +11,7 @@ export default async function Sessions({
   user,
 }: {
   lng: LanguagesType;
-  user: User | null;
+  user: UserDTO;
 }) {
   // const getUserSessions = nextCache(
   //   async () => api.user.sessions(),

@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { User } from "@prisma/client";
 
+import { api } from "@repo/api/src/server";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
+import { UserSession } from "@repo/types";
 
 import Lists from "./lists";
 
@@ -13,7 +13,7 @@ export async function ReviewsList({
   id,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
   id: string;
 }) {
   const area = await api.area.findById({ id });
@@ -31,7 +31,7 @@ export async function ReviewsListSuspense({
   id,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
   id: string;
 }) {
   return (

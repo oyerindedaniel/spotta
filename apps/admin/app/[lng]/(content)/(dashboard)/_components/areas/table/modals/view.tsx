@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import GroupedAmenities from "@/components/group-amenities";
 import { format } from "date-fns";
 
-import { api } from "@repo/trpc/src/react";
+import { api } from "@repo/api/src/react";
 import {
   Button,
   Dialog,

@@ -5,11 +5,11 @@ import Link from "next/link";
 import { redirect, useSearchParams } from "next/navigation";
 import { Icons } from "@/assets";
 import { cn } from "@/lib/utils";
-import { User } from "@prisma/client";
 import { BiSolidError } from "react-icons/bi";
 
+import { api } from "@repo/api/src/react";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/react";
+import { UserDTO } from "@repo/types";
 import { buttonVariants, Loading } from "@repo/ui";
 
 export default function VerifyEmail({
@@ -17,7 +17,7 @@ export default function VerifyEmail({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserDTO;
 }): JSX.Element {
   const searchParams = useSearchParams();
   const token = searchParams?.get?.("token") as string;

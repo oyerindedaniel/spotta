@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { User } from "@prisma/client";
 
+import { api } from "@repo/api/src/server";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
+import { UserDTO } from "@repo/types";
 
 import AreaHeader from "./header";
 import AreaMedia from "./media";
@@ -17,7 +17,7 @@ export async function Area({
 }: {
   lng: LanguagesType;
   slug: string;
-  session: User | null;
+  session: UserDTO;
 }) {
   const area = await api.area.findBySlug({ slug });
 
@@ -53,7 +53,7 @@ export default async function AreaSuspense({
 }: {
   lng: LanguagesType;
   slug: string;
-  session: User | null;
+  session: UserDTO;
 }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>

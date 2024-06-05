@@ -5,11 +5,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Icons } from "@/assets";
 import { cn } from "@/lib/utils";
-import { User } from "@prisma/client";
 
+import { api } from "@repo/api/src/react";
 import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
-import { api } from "@repo/trpc/src/react";
+import { UserSession } from "@repo/types";
 import {
   Avatar,
   AvatarFallback,
@@ -41,7 +41,7 @@ export function Navbar({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
 }) {
   const pathname = usePathname();
   const router = useRouter();

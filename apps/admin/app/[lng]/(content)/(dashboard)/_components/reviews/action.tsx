@@ -1,9 +1,9 @@
 "use client";
 
-import { User } from "@prisma/client";
 import { ListBulletIcon, ViewGridIcon } from "@radix-ui/react-icons";
 
 import { LanguagesType } from "@repo/i18n";
+import { UserSession } from "@repo/types";
 import { Button } from "@repo/ui";
 
 export default function ReviewsAction({
@@ -11,7 +11,7 @@ export default function ReviewsAction({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
 }) {
   return (
     <div className="ml-auto mr-8 flex items-center justify-between gap-2">

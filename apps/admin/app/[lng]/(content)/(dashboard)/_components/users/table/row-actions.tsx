@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import { Row } from "@tanstack/react-table";
 
+import { api } from "@repo/api/src/react";
 import { useDisclosure } from "@repo/hooks/src/use-disclosure";
 import { useSessionStore } from "@repo/hooks/src/use-session-store";
-import { api } from "@repo/trpc/src/react";
 import {
   DropdownMenuContent,
   DropdownMenuItem,

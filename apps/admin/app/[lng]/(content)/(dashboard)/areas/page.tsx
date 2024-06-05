@@ -1,6 +1,5 @@
-import { useAuthAdmin } from "@repo/hooks";
+import { getAdminUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
 
 import Areas from "../_components/areas";
 
@@ -9,7 +8,7 @@ export default async function AreasPage({
 }: {
   params: { lng: LanguagesType };
 }) {
-  const session = await useAuthAdmin();
+  const session = await getAdminUserDTO();
 
   return (
     <>

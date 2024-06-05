@@ -8,9 +8,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { RouterOutputs } from "@repo/api";
+import { api } from "@repo/api/src/react";
 import { useUploadThing } from "@repo/hooks/src/use-upload-file";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
-import { api } from "@repo/trpc/src/react";
 import {
   Button,
   FileUploader,
