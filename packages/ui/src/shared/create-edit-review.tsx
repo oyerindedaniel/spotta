@@ -217,7 +217,7 @@ export function CreateEditReview({
           className={cn(
             "w-full",
             intent === "normal" &&
-              "my-6 rounded-lg shadow-md bg-brand-plain p-4 px-5"
+              "my-6 rounded-lg shadow-md bg-brand-plain p-4 px-5",
           )}
         >
           <Form {...form}>
@@ -240,7 +240,7 @@ export function CreateEditReview({
                               role="combobox"
                               className={cn(
                                 "w-full justify-between bg-brand-primary font-normal text-gray-500",
-                                !field.value && "text-muted-foreground"
+                                !field.value && "text-muted-foreground",
                               )}
                             >
                               {isPendingAreas ? (
@@ -281,7 +281,7 @@ export function CreateEditReview({
                                           "ml-auto h-4 w-4",
                                           area.id === field.value
                                             ? "opacity-100"
-                                            : "opacity-0"
+                                            : "opacity-0",
                                         )}
                                       />
                                     </CommandItem>
@@ -336,7 +336,7 @@ export function CreateEditReview({
                                       <Checkbox
                                         className="mt-2"
                                         checked={field.value?.some(
-                                          (value) => value.id === amenity.id
+                                          (value) => value.id === amenity.id,
                                         )}
                                         onCheckedChange={(checked) => {
                                           checked
@@ -347,8 +347,8 @@ export function CreateEditReview({
                                             : field.onChange(
                                                 field.value?.filter(
                                                   (value) =>
-                                                    value.id !== amenity.id
-                                                )
+                                                    value.id !== amenity.id,
+                                                ),
                                               );
                                         }}
                                       />

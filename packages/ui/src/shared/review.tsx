@@ -92,12 +92,12 @@ export function Review(props: Props) {
 
   const defaultLikeReaction = likeReactions.find(
     (reaction) =>
-      reaction.userId === userId && reaction.likeReviewId === reviewId
+      reaction.userId === userId && reaction.likeReviewId === reviewId,
   )?.type;
 
   const defaultDislikeReaction = dislikeReactions.find(
     (reaction) =>
-      reaction.userId === userId && reaction.dislikeReviewId === reviewId
+      reaction.userId === userId && reaction.dislikeReviewId === reviewId,
   )?.type;
 
   const isFirstRenderCompleted = useRef(false);
@@ -105,7 +105,7 @@ export function Review(props: Props) {
   const defaultReaction = defaultLikeReaction || defaultDislikeReaction || null;
 
   const [reaction, setReaction] = useState<ReviewReactionType["type"] | null>(
-    defaultReaction
+    defaultReaction,
   );
 
   const debouncedReaction = useDebounce(reaction, 1000);
@@ -260,7 +260,7 @@ export function Review(props: Props) {
               }
               setReaction(action);
               setLikeCount((prevCount) =>
-                action === "LIKE" ? prevCount + 1 : prevCount - 1
+                action === "LIKE" ? prevCount + 1 : prevCount - 1,
               );
               if (reaction === "DISLIKE") {
                 setDislikeCount((prevCount) => prevCount - 1);
@@ -279,7 +279,7 @@ export function Review(props: Props) {
               }
               setReaction(action);
               setDislikeCount((prevCount) =>
-                action === "DISLIKE" ? prevCount + 1 : prevCount - 1
+                action === "DISLIKE" ? prevCount + 1 : prevCount - 1,
               );
               if (reaction === "LIKE") {
                 setLikeCount((prevCount) => prevCount - 1);

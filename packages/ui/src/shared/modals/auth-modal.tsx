@@ -49,7 +49,7 @@ export function AuthModal({
             href={`${assignRedirectUrl({ redirectUrl: `${pathname}`, goToPageUrl: `${lng}/login` })}`}
             className={cn(
               "font-semibold uppercase text-brand-blue w-full md:w-2/4",
-              buttonVariants({ variant: "default", size: "sm" })
+              buttonVariants({ variant: "default", size: "sm" }),
             )}
           >
             login

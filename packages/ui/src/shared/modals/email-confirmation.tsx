@@ -40,7 +40,7 @@ export function EmailConfirmation() {
           rel="noopener noreferrer"
           className={cn(
             "font-semibold uppercase",
-            buttonVariants({ size: "lg" })
+            buttonVariants({ size: "lg" }),
           )}
         >
           Go to your mailbox

@@ -56,7 +56,7 @@ export function ForgotPassword() {
   const router = useRouter();
 
   const [status, setStatus] = useState<ForgotPasswordEnum>(
-    ForgotPasswordEnum.ForgotPassword
+    ForgotPasswordEnum.ForgotPassword,
   );
 
   const handleClose = () => {
@@ -140,7 +140,7 @@ export function ForgotPassword() {
         data as ForgotPasswordConfirmationType;
 
       return mutateForgotPasswordConfirmation.mutate(
-        forgotPasswordConfirmationData
+        forgotPasswordConfirmationData,
       );
     }
   };
