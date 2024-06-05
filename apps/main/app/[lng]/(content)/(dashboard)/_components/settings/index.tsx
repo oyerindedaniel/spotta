@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { useAuth } from "@repo/hooks";
+import { getUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui";
 
@@ -8,7 +8,7 @@ import ResetPassword from "./reset-password";
 import Sessions from "./sessions";
 
 export default async function Settings({ lng }: { lng: LanguagesType }) {
-  const user = await useAuth();
+  const user = await getUserDTO();
   return (
     <div>
       <Tabs defaultValue="session" className="w-full">

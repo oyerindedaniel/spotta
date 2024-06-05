@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { useAuth } from "@repo/hooks";
+import { getUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
 
 import { SIDEBAR_LINKS } from "./_components/layout/constants";
@@ -14,7 +14,7 @@ export default async function Layout({
   children,
   params: { lng },
 }: LayoutProps) {
-  const session = await useAuth();
+  const session = await getUserDTO();
 
   if (!session) {
     redirect("/login");

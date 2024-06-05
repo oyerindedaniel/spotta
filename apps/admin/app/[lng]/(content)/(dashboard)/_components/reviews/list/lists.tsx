@@ -2,13 +2,12 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { User } from "@prisma/client";
 import { z } from "zod";
 
 import { RouterOutputs } from "@repo/api";
 import { useDisclosure } from "@repo/hooks/src/use-disclosure";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/react";
+import { UserSession } from "@repo/types";
 import {
   Button,
   CreateEditReview,
@@ -29,7 +28,7 @@ export default function Lists({
   area,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
   area: AreaType;
 }) {
   const { toast } = useToast();

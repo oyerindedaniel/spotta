@@ -1,14 +1,15 @@
 "use client";
 
-import { Area, User } from "@prisma/client";
+import { Area } from "@prisma/client";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { RouterOutputs } from "@repo/api";
+import { api } from "@repo/api/src/react";
 import { useDebounce } from "@repo/hooks/src/use-debounce";
 import { useDisclosure } from "@repo/hooks/src/use-disclosure";
 import { useInitialRender } from "@repo/hooks/src/use-initial-render";
 import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/react";
+import { UserDTO } from "@repo/types";
 import { formatTimeAgo, getInitials } from "@repo/utils";
 import { updateReviewReactionSchema } from "@repo/validations";
 import { usePathname, useRouter } from "next/navigation";
@@ -34,7 +35,7 @@ type ReviewReactionType = z.infer<typeof updateReviewReactionSchema>;
 interface Props {
   lng: LanguagesType;
   review: Review;
-  session?: User | null;
+  session?: UserDTO;
 }
 
 // TODO: make logic better

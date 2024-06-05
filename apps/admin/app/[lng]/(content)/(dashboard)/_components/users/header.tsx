@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";
 
 import { LanguagesType } from "@repo/i18n";
+import { UserSession } from "@repo/types";
 import { buttonVariants } from "@repo/ui";
 
 export default function UsersHeader({
@@ -12,7 +13,7 @@ export default function UsersHeader({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
 }) {
   return (
     <div className="flex items-center justify-between">

@@ -1,4 +1,4 @@
-// import { TRPCReactProvider } from "@repo/trpc/src/react";
+// import { TRPCReactProvider } from "@repo/api/src/react";
 
 import "@repo/ui/css/styles.css";
 
@@ -10,8 +10,8 @@ import { ModalProvider } from "@/providers/modal-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { dir } from "i18next";
 
+import { TRPCReactProvider } from "@repo/api/src/react";
 import { languages, LanguagesType } from "@repo/i18n";
-import { TRPCReactProvider } from "@repo/trpc/src/react";
 import { Toaster } from "@repo/ui";
 
 export async function generateStaticParams() {

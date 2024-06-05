@@ -5,7 +5,7 @@ import * as React from "react";
 import { UploadFilesOptions } from "uploadthing/types";
 
 import type { OurFileRouter } from "@repo/api";
-import { uploadFiles } from "@repo/utils";
+import { uploadFiles } from "@repo/uploadthing";
 
 export interface UploadedFile<T = unknown> extends ClientUploadedFileData<T> {}
 

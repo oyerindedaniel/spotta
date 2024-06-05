@@ -1,12 +1,11 @@
 "use client";
 
-import Image from "next/image";
-import { Icons } from "@/assets";
-import { useModal } from "@/hooks/use-modal-store";
 import { cn } from "@/lib/utils";
+import { Icons } from "./assets";
 
-import { buttonVariants, Dialog, DialogContent } from "@repo/ui";
+import { useModal } from "@repo/hooks/src/use-modal-store";
 import { getEmailProviderLink } from "@repo/utils";
+import { buttonVariants, Dialog, DialogContent } from "../../";
 
 export function EmailConfirmation() {
   const { isOpen, onClose, type, data } = useModal();
@@ -24,13 +23,7 @@ export function EmailConfirmation() {
       <DialogContent className="sm:max-w-[425px]">
         <div>
           <div className="mb-5 flex flex-col items-center justify-center">
-            <Image
-              alt="Email verification"
-              className="mb-3"
-              height={70}
-              src={Icons.email}
-              width={70}
-            />
+            <Icons.email className="w-16 h-16 mb-1.5" />
             <span className="text-sm font-medium text-brand-blue">
               Verify E-mail Address
             </span>
@@ -47,7 +40,7 @@ export function EmailConfirmation() {
           rel="noopener noreferrer"
           className={cn(
             "font-semibold uppercase",
-            buttonVariants({ size: "lg" }),
+            buttonVariants({ size: "lg" })
           )}
         >
           Go to your mailbox

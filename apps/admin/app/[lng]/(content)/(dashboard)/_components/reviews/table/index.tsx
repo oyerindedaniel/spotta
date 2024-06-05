@@ -1,7 +1,6 @@
-import { User } from "@prisma/client";
-
+import { api } from "@repo/api/src/server";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
+import { UserSession } from "@repo/types";
 import { DataTable } from "@repo/ui/src/components/ui/data-table";
 
 import { reviewsColumns } from "./columns";
@@ -11,7 +10,7 @@ export default async function ReviewsTable({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
 }) {
   const reviews = await api.review.findAll();
 

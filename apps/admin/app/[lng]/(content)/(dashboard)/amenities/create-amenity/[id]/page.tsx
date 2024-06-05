@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
+import { api } from "@repo/api/src/server";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
 
 import CreateEditAmenity from "../../../_components/amenities/create.edit";
 

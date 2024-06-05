@@ -2,14 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@prisma/client";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { api } from "@repo/api/src/react";
 import { useUploadThing } from "@repo/hooks/src/use-upload-file";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/react";
+import { UserDTO, UserDTOWithContact } from "@repo/types";
 import {
   Avatar,
   AvatarFallback,
@@ -34,7 +34,7 @@ export default function Profile({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserDTO;
 }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -45,7 +45,8 @@ export default function Profile({
     "profileImageUploader",
   );
 
-  const { firstName, lastName, phone, email, picture } = session ?? {};
+  const { firstName, lastName, phone, email, picture } =
+    (session as UserDTOWithContact) ?? {};
 
   const defaultPicture = new Array(picture).filter(Boolean);
 

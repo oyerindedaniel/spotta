@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { ReviewStatus } from "@prisma/client";
 import { Row } from "@tanstack/react-table";
 
+import { api } from "@repo/api/src/react";
 import { useDisclosure } from "@repo/hooks/src/use-disclosure";
 import { useSessionStore } from "@repo/hooks/src/use-session-store";
-import { api } from "@repo/trpc/src/react";
 import {
   DeleteReview,
   DropdownMenuContent,

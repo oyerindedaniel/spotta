@@ -4,16 +4,17 @@ import { useEffect } from "react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Icons } from "@/assets";
-import { useModal } from "@/hooks/use-modal-store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AuthService, User } from "@prisma/client";
+import { AuthService } from "@prisma/client";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { api } from "@repo/api/src/react";
+import { useModal } from "@repo/hooks/src/use-modal-store";
 import { useSessionStore } from "@repo/hooks/src/use-session-store";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
-import { api } from "@repo/trpc/src/react";
+import { UserDTO } from "@repo/types";
 import {
   AuthSeparator,
   Button,
@@ -37,7 +38,7 @@ export default function Login({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserDTO;
 }): JSX.Element {
   const router = useRouter();
 

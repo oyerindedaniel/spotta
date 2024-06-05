@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { User } from "@prisma/client";
 
 import { RouterOutputs } from "@repo/api";
 import { LanguagesType } from "@repo/i18n";
+import { UserDTO } from "@repo/types";
 
 export default function AreaMedia({
   lng,
@@ -13,7 +13,7 @@ export default function AreaMedia({
 }: {
   lng: LanguagesType;
   area: RouterOutputs["area"]["findBySlug"]["data"];
-  session: User | null;
+  session: UserDTO;
 }) {
   const { area: foundArea } = area ?? {};
 
@@ -34,7 +34,7 @@ export default function AreaMedia({
             className="object-cover"
             fill
           />
-          <div className="absolute flex h-full w-full cursor-pointer items-center justify-center bg-black/70 text-center text-sm uppercase text-white transition-all group-hover:scale-105 group-hover:font-semibold group-hover:opacity-100">
+          <div className="absolute flex h-full w-full cursor-pointer items-center justify-center bg-black/70 text-center text-sm uppercase text-white transition-all group-hover:scale-105 group-hover:font-semibold">
             <span>View more</span>
           </div>
         </div>

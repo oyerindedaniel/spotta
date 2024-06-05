@@ -3,7 +3,7 @@
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 
-import { api } from "@repo/trpc/src/react";
+import { api } from "@repo/api/src/react";
 import {
   AlertDialog,
   AlertDialogContent,

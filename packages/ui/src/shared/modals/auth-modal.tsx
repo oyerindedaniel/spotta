@@ -43,7 +43,7 @@ export function AuthModal({
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        <div>{body}</div>
+        <div className="text-sm">{body}</div>
         <DialogFooter>
           <Link
             href={`${assignRedirectUrl({ redirectUrl: `${pathname}`, goToPageUrl: `${lng}/login` })}`}

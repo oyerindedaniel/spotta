@@ -1,4 +1,4 @@
-import { useAuthAdmin } from "@repo/hooks";
+import { getAdminUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
 
 import Amenities from "../_components/amenities";
@@ -8,7 +8,7 @@ export default async function AmenitiesPage({
 }: {
   params: { lng: LanguagesType };
 }) {
-  const session = await useAuthAdmin();
+  const session = await getAdminUserDTO();
 
   return (
     <>

@@ -51,7 +51,6 @@
     "@repo/utils": "workspace:*",
     "@tanstack/react-table": "^8.17.3",
     "class-variance-authority": "^0.7.0",
-    "@repo/trpc": "workspace:*",
     "@repo/i18n": "workspace:*",
     "clsx": "^2.1.0",
     "cmdk": "^1.0.0",

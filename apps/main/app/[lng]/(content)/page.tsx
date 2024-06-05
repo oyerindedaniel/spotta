@@ -1,7 +1,7 @@
 import HomeSearchInput from "@/components/home-search/input";
 
+import { api } from "@repo/api/src/server";
 import { LanguagesType } from "@repo/i18n";
-import { api } from "@repo/trpc/src/server";
 
 export default async function Page({
   params: { lng },

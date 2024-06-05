@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EmailConfirmation } from "@/components/modals/email-confirmation";
-import { ForgotPassword } from "@/components/modals/forgot-password";
+
+import { EmailConfirmation, ForgotPassword } from "@repo/ui";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);

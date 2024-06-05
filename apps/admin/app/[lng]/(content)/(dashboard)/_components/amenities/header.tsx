@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { User } from "@prisma/client";
 
 import { LanguagesType } from "@repo/i18n";
+import { UserSession } from "@repo/types";
 import { buttonVariants } from "@repo/ui";
 
 export default function AmenitiesHeader({
@@ -12,7 +12,7 @@ export default function AmenitiesHeader({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
 }) {
   return (
     <div className="flex items-center justify-between">

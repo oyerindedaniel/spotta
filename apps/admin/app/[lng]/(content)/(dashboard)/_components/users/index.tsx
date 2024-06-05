@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { User } from "@prisma/client";
 
 import { LanguagesType } from "@repo/i18n";
+import { UserSession } from "@repo/types";
 
 import UsersHeader from "./header";
 import UsersTable from "./table";
@@ -11,7 +12,7 @@ export default function Users({
   session,
 }: {
   lng: LanguagesType;
-  session: User | null;
+  session: UserSession;
 }): JSX.Element {
   return (
     <div className="flex flex-col gap-8">
