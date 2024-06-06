@@ -1,16 +1,17 @@
 "use client";
 
-import { RouterOutputs } from "@repo/api";
 import { useDisclosure } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 import { Badge, Button, CreateEditReview, ModalContainer } from "@repo/ui";
+
+import { AreaBySlug } from ".";
 
 export default function AreaHeader({
   lng,
   area,
 }: {
   lng: LanguagesType;
-  area: RouterOutputs["area"]["findBySlug"]["data"];
+  area: AreaBySlug;
 }) {
   const {
     isOpen: isOpenReview,

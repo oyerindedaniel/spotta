@@ -4,7 +4,6 @@ import React from "react";
 import Image from "next/image";
 import { Icons } from "@/assets";
 
-import { RouterOutputs } from "@repo/api";
 import { useDisclosure } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 import { UserDTO } from "@repo/types";
@@ -16,13 +15,15 @@ import {
   Separator,
 } from "@repo/ui";
 
+import { AreaBySlug } from ".";
+
 export default function AreaReview({
   lng,
   area,
   session,
 }: {
   lng: LanguagesType;
-  area: RouterOutputs["area"]["findBySlug"]["data"];
+  area: AreaBySlug;
   session: UserDTO;
 }) {
   const {

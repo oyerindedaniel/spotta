@@ -2,13 +2,16 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 
+import { RouterOutputs } from "@repo/api";
 import { api } from "@repo/api/src/server";
 import { LanguagesType } from "@repo/i18n";
 import { UserDTO } from "@repo/types";
 
 import AreaHeader from "./header";
+import AreaMediaComment from "./media-comment";
 import AreaReview from "./review";
-import AreaMediaReview from "./review/container";
+
+export type AreaBySlug = RouterOutputs["area"]["findBySlug"]["data"];
 
 export async function Area({
   lng,
@@ -36,7 +39,7 @@ export async function Area({
         <div className={cn("", reviews.length > 0 ? "w-[55%]" : "w-full")}>
           <AreaReview lng={lng} area={area.data} session={session} />
         </div>
-        <AreaMediaReview lng={lng} area={area.data} session={session} />
+        <AreaMediaComment lng={lng} area={area.data} session={session} />
       </div>
     </div>
   );
