@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Row } from "@tanstack/react-table";
 
-import { useDisclosure } from "@repo/hooks/src/use-disclosure";
+import { useDisclosure } from "@repo/hooks";
 import {
   DropdownMenuContent,
   DropdownMenuItem,

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { api } from "@repo/api/src/react";
-import { useUploadThing } from "@repo/hooks/src/use-upload-file";
+import { useUploadThing } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 import { UserDTO, UserDTOWithContact } from "@repo/types";
 import {
@@ -26,7 +26,7 @@ import {
   UncontrolledFormMessage,
   useToast,
 } from "@repo/ui";
-import { filterFilesForUpload, getInitials } from "@repo/utils";
+import { getInitials, separateMediaFilesAndUrls } from "@repo/utils";
 import { updateSchema } from "@repo/validations";
 
 export default function Profile({
@@ -89,12 +89,10 @@ export default function Profile({
   });
 
   const onSubmit = async (data: UpdateProfileType) => {
-    const isPictureFile = !!filterFilesForUpload(data.picture).length;
+    const { hasFile, mediaFiles } = separateMediaFilesAndUrls(data.picture);
     try {
-      const profileImgUrl = isPictureFile
-        ? (await startUpload(filterFilesForUpload(data.picture)))?.map(
-            (data) => data.url,
-          )
+      const profileImgUrl = hasFile
+        ? (await startUpload(mediaFiles))?.map((data) => data.url)
         : pictures;
       mutateUpdateUser.mutate({
         ...data,

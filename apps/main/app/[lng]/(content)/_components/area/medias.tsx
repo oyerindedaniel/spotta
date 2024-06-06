@@ -2,17 +2,18 @@
 
 import Image from "next/image";
 
-import { RouterOutputs } from "@repo/api";
 import { LanguagesType } from "@repo/i18n";
 import { UserDTO } from "@repo/types";
 
-export default function AreaMedia({
+import { AreaBySlug } from ".";
+
+export default function AreaMedias({
   lng,
   area,
   session,
 }: {
   lng: LanguagesType;
-  area: RouterOutputs["area"]["findBySlug"]["data"];
+  area: AreaBySlug;
   session: UserDTO;
 }) {
   const { area: foundArea } = area ?? {};

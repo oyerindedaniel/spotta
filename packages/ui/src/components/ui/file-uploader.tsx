@@ -1,7 +1,7 @@
 "use client";
 
 import { Cross2Icon, UploadIcon } from "@radix-ui/react-icons";
-import { useControllableState } from "@repo/hooks/src/use-controllable-state";
+import { useControllableState } from "@repo/hooks";
 import Image from "next/image";
 import * as React from "react";
 import Dropzone, {
@@ -133,7 +133,7 @@ function FileUploader(props: FileUploaderProps) {
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
-        })
+        }),
       );
 
       const updatedFiles = files ? [...files, ...newFiles] : newFiles;
@@ -146,7 +146,7 @@ function FileUploader(props: FileUploaderProps) {
       }
 
       const filesForUpload = filterFilesForUpload(
-        files ? [...files, ...newFiles] : newFiles
+        files ? [...files, ...newFiles] : newFiles,
       );
 
       if (
@@ -168,7 +168,7 @@ function FileUploader(props: FileUploaderProps) {
       }
     },
 
-    [files, maxFiles, multiple, onUpload, setFiles]
+    [files, maxFiles, multiple, onUpload, setFiles],
   );
 
   function onRemove(index: number) {
@@ -197,7 +197,7 @@ function FileUploader(props: FileUploaderProps) {
     <div
       className={cn(
         "relative flex flex-col overflow-hidden",
-        files?.length && "gap-6"
+        files?.length && "gap-6",
       )}
     >
       <Dropzone
@@ -216,7 +216,7 @@ function FileUploader(props: FileUploaderProps) {
               "ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               isDragActive && "border-muted-foreground/50",
               isDisabled && "pointer-events-none opacity-60",
-              className
+              className,
             )}
             {...dropzoneProps}
           >
@@ -275,7 +275,7 @@ function FileUploader(props: FileUploaderProps) {
                   file={file}
                   onRemove={() => onRemove(index)}
                 />
-              )
+              ),
             )}
           </div>
         </ScrollArea>

@@ -189,11 +189,13 @@ export const areaRouter = {
               createdBy: true,
               likeReactions: true,
               dislikeReactions: true,
+              comments: true,
               amenities: { include: { category: true } },
               _count: {
                 select: {
                   likeReactions: true,
                   dislikeReactions: true,
+                  comments: true,
                 },
               },
             },
@@ -208,7 +210,10 @@ export const areaRouter = {
       });
 
       if (!area) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "" });
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Area not available",
+        });
       }
 
       return {
@@ -244,8 +249,13 @@ export const areaRouter = {
               createdBy: true,
               likeReactions: true,
               dislikeReactions: true,
+              comments: true,
               _count: {
-                select: { likeReactions: true, dislikeReactions: true },
+                select: {
+                  likeReactions: true,
+                  dislikeReactions: true,
+                  comments: true,
+                },
               },
             },
             orderBy: { createdAt: "desc" },

@@ -2,13 +2,17 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 
+import { RouterOutputs } from "@repo/api";
 import { api } from "@repo/api/src/server";
 import { LanguagesType } from "@repo/i18n";
 import { UserDTO } from "@repo/types";
 
 import AreaHeader from "./header";
-import AreaMedia from "./media";
-import AreaReview from "./review";
+import AreaMedias from "./medias";
+import Review from "./review";
+import AreaReviews from "./reviews";
+
+export type AreaBySlug = RouterOutputs["area"]["findBySlug"]["data"];
 
 export async function Area({
   lng,
@@ -26,21 +30,25 @@ export async function Area({
   }
 
   const {
-    area: { medias, reviews },
+    area: { reviews },
   } = area.data;
 
   return (
     <div>
       <AreaHeader lng={lng} area={area.data} />
       <div className={cn("flex justify-between gap-6 px-6 pb-3 pt-6 md:px-14")}>
-        <div className={cn("", reviews.length > 0 ? "w-[60%]" : "w-full")}>
-          <AreaReview lng={lng} area={area.data} session={session} />
+        <div className={cn("", reviews.length > 0 ? "w-[55%]" : "w-full")}>
+          <AreaReviews lng={lng} area={area.data} session={session} />
         </div>
-        {reviews && reviews.length > 0 && (
-          <div className={cn("", reviews.length > 0 ? "" : "w-full")}>
-            <AreaMedia lng={lng} area={area.data} session={session} />
-          </div>
-        )}
+        <div
+          className={cn(
+            "flex flex-col gap-5",
+            reviews.length > 0 ? "w-[45%]" : "w-full",
+          )}
+        >
+          <Review lng={lng} session={session} />
+          <AreaMedias lng={lng} area={area.data} session={session} />
+        </div>
       </div>
     </div>
   );

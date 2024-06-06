@@ -3,8 +3,7 @@
 import { useEffect, useRef } from "react";
 
 import { api } from "@repo/api/src/react";
-import { useInitialRender } from "@repo/hooks/src/use-initial-render";
-import { useSessionStore } from "@repo/hooks/src/use-session-store";
+import { useInitialRender, useSessionStore } from "@repo/hooks";
 import { UserSession } from "@repo/types";
 import { startTokenRefreshTimer, stopTokenRefreshTimer } from "@repo/utils";
 

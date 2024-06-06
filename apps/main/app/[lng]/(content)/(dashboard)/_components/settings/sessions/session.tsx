@@ -6,7 +6,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
 
 import { api } from "@repo/api/src/react";
-import { useSessionStore } from "@repo/hooks/src/use-session-store";
+import { useSessionStore } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 import { Badge, Button, useToast } from "@repo/ui";
 

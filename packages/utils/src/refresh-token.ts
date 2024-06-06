@@ -1,4 +1,4 @@
-import { useSessionStore } from "@repo/hooks/src/use-session-store";
+import { useSessionStore } from "@repo/hooks";
 
 type RefreshTokenProps = {
   expirationTime: number;

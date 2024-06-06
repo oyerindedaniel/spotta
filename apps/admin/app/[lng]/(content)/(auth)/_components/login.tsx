@@ -11,8 +11,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { api } from "@repo/api/src/react";
-import { useModal } from "@repo/hooks/src/use-modal-store";
-import { useSessionStore } from "@repo/hooks/src/use-session-store";
+import { useModal, useSessionStore } from "@repo/hooks";
 import { LanguagesType, useClientTranslation } from "@repo/i18n";
 import { UserSession } from "@repo/types";
 import {

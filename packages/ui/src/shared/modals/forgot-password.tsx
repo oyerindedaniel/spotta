@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useModal } from "@repo/hooks/src/use-modal-store";
 import { api } from "@repo/api/src/react";
+import { useModal } from "@repo/hooks";
 import {
   ForgotPasswordConfirmationType,
   ForgotPasswordEnum,
