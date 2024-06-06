@@ -8,8 +8,9 @@ import { LanguagesType } from "@repo/i18n";
 import { UserDTO } from "@repo/types";
 
 import AreaHeader from "./header";
-import AreaMediaComment from "./media-comment";
-import AreaReview from "./review";
+import AreaMedias from "./medias";
+import Review from "./review";
+import AreaReviews from "./reviews";
 
 export type AreaBySlug = RouterOutputs["area"]["findBySlug"]["data"];
 
@@ -37,9 +38,17 @@ export async function Area({
       <AreaHeader lng={lng} area={area.data} />
       <div className={cn("flex justify-between gap-6 px-6 pb-3 pt-6 md:px-14")}>
         <div className={cn("", reviews.length > 0 ? "w-[55%]" : "w-full")}>
-          <AreaReview lng={lng} area={area.data} session={session} />
+          <AreaReviews lng={lng} area={area.data} session={session} />
         </div>
-        <AreaMediaComment lng={lng} area={area.data} session={session} />
+        <div
+          className={cn(
+            "flex flex-col gap-5",
+            reviews.length > 0 ? "w-[45%]" : "w-full",
+          )}
+        >
+          <Review lng={lng} session={session} />
+          <AreaMedias lng={lng} area={area.data} session={session} />
+        </div>
       </div>
     </div>
   );

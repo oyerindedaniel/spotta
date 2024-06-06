@@ -7,7 +7,7 @@ import { UserDTO } from "@repo/types";
 
 import { AreaBySlug } from ".";
 
-export default function AreaMedia({
+export default function AreaMedias({
   lng,
   area,
   session,

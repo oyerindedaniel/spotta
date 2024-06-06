@@ -1,8 +1,9 @@
+import { cache } from "react";
 import { User } from "@prisma/client";
 
 import { getCurrentUser } from "./auth";
 
-export async function getAdminUserDTO(): Promise<User | null> {
+export const getAdminUserDTO = cache(async (): Promise<User | null> => {
   const currentUser = await getCurrentUser();
 
   if (!currentUser || currentUser.role !== "ADMIN") {
@@ -10,4 +11,4 @@ export async function getAdminUserDTO(): Promise<User | null> {
   }
 
   return currentUser;
-}
+});

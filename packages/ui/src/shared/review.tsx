@@ -27,7 +27,7 @@ import {
 import { CommentButton } from "./comment";
 import { DislikeButton, LikeButton } from "./rating";
 
-type Review = RouterOutputs["area"]["findById"]["data"]["reviews"][number];
+type Review = RouterOutputs["review"]["findById"]["data"];
 type ReviewReactionType = z.infer<typeof updateReviewReactionSchema>;
 
 interface Props {
@@ -86,6 +86,7 @@ export function Review(props: Props) {
   const {
     likeReactions: likeReactionCount,
     dislikeReactions: dislikeReactionsCount,
+    comments: commentsCount,
   } = _count;
 
   const defaultLikeReaction = likeReactions.find(
@@ -181,10 +182,7 @@ export function Review(props: Props) {
         isOpen={isOpenDelete}
         data={{ ...review, area: {} as Area }}
       />
-      <div
-        className="cursor-pointer"
-        onClick={() => router.push(`${pathname}?review=${reviewId}`)}
-      >
+      <div>
         {userId === createdById && (
           <div className="flex justify-end mb-2 gap-1.5">
             <Button
@@ -293,7 +291,7 @@ export function Review(props: Props) {
           />
           <CommentButton
             onClick={() => router.push(`${pathname}?review=${reviewId}`)}
-            count={0}
+            count={commentsCount}
           />
         </div>
       </div>

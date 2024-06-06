@@ -2,6 +2,7 @@ import { TRPCError, TRPCRouterRecord } from "@trpc/server";
 import { z } from "zod";
 
 import {
+  createReviewCommentSchema,
   createReviewSchema,
   updateReviewDislikeReactionSchema,
   updateReviewLikeReactionSchema,
@@ -11,7 +12,11 @@ import {
   updateReviewUnlikeReactionSchema,
 } from "@repo/validations";
 
-import { adminProtectedProcedure, protectedProcedure } from "../trpc";
+import {
+  adminProtectedProcedure,
+  protectedProcedure,
+  publicProcedure,
+} from "../trpc";
 
 export const reviewRouter = {
   create: adminProtectedProcedure
@@ -38,6 +43,25 @@ export const reviewRouter = {
 
       return {
         data: createdReview,
+      };
+    }),
+  createComment: protectedProcedure
+    .input(createReviewCommentSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { db, session } = ctx;
+      const { id: userId } = session.user;
+      const { reviewId, comment } = input;
+
+      const createdReviewComment = await db.reviewComment.create({
+        data: {
+          comment,
+          review: { connect: { id: reviewId } },
+          user: { connect: { id: userId } },
+        },
+      });
+
+      return {
+        data: createdReviewComment,
       };
     }),
   updateAdmin: adminProtectedProcedure
@@ -160,7 +184,7 @@ export const reviewRouter = {
         data: true,
       };
     }),
-  findById: adminProtectedProcedure
+  findById: publicProcedure
     .input(
       z.object({
         id: z.string(),
@@ -176,6 +200,9 @@ export const reviewRouter = {
         include: {
           area: true,
           createdBy: true,
+          likeReactions: true,
+          dislikeReactions: true,
+          comments: true,
           amenities: {
             include: { category: true },
           },
@@ -183,6 +210,7 @@ export const reviewRouter = {
             select: {
               likeReactions: true,
               dislikeReactions: true,
+              comments: true,
             },
           },
         },
@@ -190,6 +218,13 @@ export const reviewRouter = {
           createdAt: "desc",
         },
       });
+
+      if (!review) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Review not available",
+        });
+      }
 
       return {
         data: review,
