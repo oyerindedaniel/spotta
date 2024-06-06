@@ -4,16 +4,13 @@ import { Area } from "@prisma/client";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { RouterOutputs } from "@repo/api";
 import { api } from "@repo/api/src/react";
-import { useDebounce } from "@repo/hooks/src/use-debounce";
-import { useDisclosure } from "@repo/hooks/src/use-disclosure";
-import { useInitialRender } from "@repo/hooks/src/use-initial-render";
-import { useSessionStore } from "@repo/hooks/src/use-session-store";
+import { useDisclosure, useInitialRender, useSessionStore } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 import { UserDTO } from "@repo/types";
 import { formatTimeAgo, getInitials } from "@repo/utils";
 import { updateReviewReactionSchema } from "@repo/validations";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import {
   AuthModal,
@@ -27,6 +24,7 @@ import {
   ModalContainer,
   useToast,
 } from "..";
+import { CommentButton } from "./comment";
 import { DislikeButton, LikeButton } from "./rating";
 
 type Review = RouterOutputs["area"]["findById"]["data"]["reviews"][number];
@@ -52,6 +50,7 @@ export function Review(props: Props) {
 
   const {
     areaId,
+    asAnonymous,
     id: reviewId,
     createdBy,
     createdAt,
@@ -64,8 +63,7 @@ export function Review(props: Props) {
   } = props.review;
 
   const { session, lng, review } = props;
-
-  const { id: createdById, firstName, lastName, picture } = createdBy;
+  const { id: createdById, firstName, lastName, picture, role } = createdBy;
 
   const {
     isOpen: isOpenEdit,
@@ -100,15 +98,11 @@ export function Review(props: Props) {
       reaction.userId === userId && reaction.dislikeReviewId === reviewId,
   )?.type;
 
-  const isFirstRenderCompleted = useRef(false);
-
   const defaultReaction = defaultLikeReaction || defaultDislikeReaction || null;
 
   const [reaction, setReaction] = useState<ReviewReactionType["type"] | null>(
     defaultReaction,
   );
-
-  const debouncedReaction = useDebounce(reaction, 1000);
 
   const isLiked = reaction === "LIKE";
 
@@ -158,7 +152,7 @@ export function Review(props: Props) {
   });
 
   return (
-    <>
+    <div>
       <AuthModal
         title="Reviews"
         body="To add a reaction to this review, please login or create an account with us."
@@ -187,7 +181,10 @@ export function Review(props: Props) {
         isOpen={isOpenDelete}
         data={{ ...review, area: {} as Area }}
       />
-      <div>
+      <div
+        className="cursor-pointer"
+        onClick={() => router.push(`${pathname}?review=${reviewId}`)}
+      >
         {userId === createdById && (
           <div className="flex justify-end mb-2 gap-1.5">
             <Button
@@ -231,10 +228,14 @@ export function Review(props: Props) {
                   {getInitials(`${firstName} ${lastName}`)}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <span className="capitalize">{firstName}</span>{" "}
-                <span className="capitalize">{lastName.slice(0, 1)}.</span>
-              </div>
+              {asAnonymous && role === "USER" ? (
+                <span className="capitalize">Anonymous</span>
+              ) : (
+                <div>
+                  <span className="capitalize">{firstName}</span>{" "}
+                  <span className="capitalize">{lastName.slice(0, 1)}.</span>
+                </div>
+              )}
               <span className="text-gray-500">{formatTimeAgo(createdAt)}</span>
             </div>
             <span className="flex self-start items-center gap-1">
@@ -290,8 +291,12 @@ export function Review(props: Props) {
             }}
             count={dislikeCount}
           />
+          <CommentButton
+            onClick={() => router.push(`${pathname}?review=${reviewId}`)}
+            count={0}
+          />
         </div>
       </div>
-    </>
+    </div>
   );
 }

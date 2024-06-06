@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { api } from "@repo/api/src/react";
-import { useUploadThing } from "@repo/hooks/src/use-upload-file";
+import { useUploadThing } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 import { UserDTO, UserDTOWithContact } from "@repo/types";
 import {

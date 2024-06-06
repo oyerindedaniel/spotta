@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Icons } from "@/assets";
 
 import { RouterOutputs } from "@repo/api";
-import { useDisclosure } from "@repo/hooks/src/use-disclosure";
+import { useDisclosure } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 import { UserDTO } from "@repo/types";
 import {

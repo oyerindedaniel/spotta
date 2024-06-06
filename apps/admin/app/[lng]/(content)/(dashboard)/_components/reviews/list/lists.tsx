@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 
 import { RouterOutputs } from "@repo/api";
-import { useDisclosure } from "@repo/hooks/src/use-disclosure";
+import { useDisclosure } from "@repo/hooks";
 import { LanguagesType } from "@repo/i18n";
 import { UserSession } from "@repo/types";
 import {

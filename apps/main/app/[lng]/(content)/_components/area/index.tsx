@@ -7,8 +7,8 @@ import { LanguagesType } from "@repo/i18n";
 import { UserDTO } from "@repo/types";
 
 import AreaHeader from "./header";
-import AreaMedia from "./media";
 import AreaReview from "./review";
+import AreaMediaReview from "./review/container";
 
 export async function Area({
   lng,
@@ -26,21 +26,17 @@ export async function Area({
   }
 
   const {
-    area: { medias, reviews },
+    area: { reviews },
   } = area.data;
 
   return (
     <div>
       <AreaHeader lng={lng} area={area.data} />
       <div className={cn("flex justify-between gap-6 px-6 pb-3 pt-6 md:px-14")}>
-        <div className={cn("", reviews.length > 0 ? "w-[60%]" : "w-full")}>
+        <div className={cn("", reviews.length > 0 ? "w-[55%]" : "w-full")}>
           <AreaReview lng={lng} area={area.data} session={session} />
         </div>
-        {reviews && reviews.length > 0 && (
-          <div className={cn("", reviews.length > 0 ? "" : "w-full")}>
-            <AreaMedia lng={lng} area={area.data} session={session} />
-          </div>
-        )}
+        <AreaMediaReview lng={lng} area={area.data} session={session} />
       </div>
     </div>
   );

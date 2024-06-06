@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Icons } from "./assets";
 
-import { useModal } from "@repo/hooks/src/use-modal-store";
+import { useModal } from "@repo/hooks";
 import { getEmailProviderLink } from "@repo/utils";
 import { buttonVariants, Dialog, DialogContent } from "../../";
 

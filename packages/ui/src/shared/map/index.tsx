@@ -7,7 +7,7 @@ import {
   Polyline,
   useJsApiLoader,
 } from "@react-google-maps/api";
-import { useCurrentLocation } from "@repo/hooks/src/use-current-location";
+import { useCurrentLocation } from "@repo/hooks";
 import { LatLng } from "@repo/types";
 import { useCallback, useState } from "react";
 import {
