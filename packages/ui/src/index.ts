@@ -30,6 +30,7 @@ export * from "./components/ui/use-toast";
 // SHARED
 export * from "./shared/action-tooltip";
 export * from "./shared/auth-separator";
+export * from "./shared/comment";
 export * from "./shared/create-edit-review";
 export * from "./shared/delete-review";
 export * from "./shared/github-button";
@@ -42,3 +43,4 @@ export * from "./shared/mode-toggler";
 export * from "./shared/rating";
 export * from "./shared/review";
 export * from "./shared/star";
+export * from "./shared/blur-image";

@@ -53,19 +53,19 @@ export default function CommentInput({
   const mutateCreateComment = api.review.createComment.useMutation({
     onSuccess: ({ data }) => {
       form.reset({ comment: "", reviewId: review.id });
-      utils.review.findById.setData(
-        { id: review.id },
-        {
-          data: {
-            ...review,
-            _count: {
-              ...review._count,
-              comments: review._count.comments + 1,
-            },
-          },
-        },
-        {},
-      );
+      // utils.review.findById.setData(
+      //   { id: review.id },
+      //   {
+      //     data: {
+      //       ...review,
+      //       _count: {
+      //         ...review._count,
+      //         comments: review._count.comments + 1,
+      //       },
+      //     },
+      //   },
+      //   {},
+      // );
       toast({
         variant: "success",
         description: `Successfully created comment`,
@@ -119,7 +119,7 @@ export default function CommentInput({
               disabled={mutateCreateComment.isPending}
             >
               {mutateCreateComment.isPending && (
-                <ReloadIcon className="mr-2 h-3 w-3 animate-spin" />
+                <ReloadIcon className="mr-2 h-3.5 w-3.5 animate-spin" />
               )}
               Post
             </Button>

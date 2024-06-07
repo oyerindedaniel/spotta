@@ -134,15 +134,14 @@ export function CreateEditReview({
   const mutateCreateReview = api.review.create.useMutation({
     onSuccess: ({ data }) => {
       form.reset();
-      intent === "modal" && onClose();
       toast({
         variant: "success",
         description: `Successfully created review`,
       });
 
       intent === "normal" && router.push("/reviews");
-
       router.refresh();
+      intent === "modal" && onClose();
     },
     onError: (error) => {
       toast({
@@ -156,15 +155,14 @@ export function CreateEditReview({
 
   const mutateUpdateReview = api.review.updateAdmin.useMutation({
     onSuccess: ({ data }) => {
-      intent === "modal" && onClose();
       toast({
         variant: "success",
         description: `Successfully updated review`,
       });
-      {
-        intent === "normal" && router.push("/reviews");
-      }
+      intent === "normal" && router.push("/reviews");
+      console.log("daniel oyerinde");
       router.refresh();
+      intent === "modal" && onClose();
     },
     onError: (error) => {
       toast({

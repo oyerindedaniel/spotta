@@ -322,7 +322,7 @@ export const reviewRouter = {
       const { id: reviewId, type } = input;
 
       const successData = {
-        data: true,
+        data: type,
       };
 
       const foundReaction = await db.reviewReaction.findFirst({
@@ -394,7 +394,7 @@ export const reviewRouter = {
       const { id: reviewId, type } = input;
 
       const successData = {
-        data: true,
+        data: type,
       };
 
       const foundReaction = await db.reviewReaction.findFirst({
@@ -466,7 +466,7 @@ export const reviewRouter = {
       const { id: reviewId, type } = input;
 
       const successData = {
-        data: true,
+        data: type,
       };
 
       const foundReaction = await db.reviewReaction.findFirst({
@@ -517,6 +517,49 @@ export const reviewRouter = {
         });
       }
       return successData;
+    }),
+  findByCommentId: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { db } = ctx;
+
+      const { id: commentId } = input;
+
+      const comment = await db.reviewComment.findFirst({
+        where: { id: commentId },
+        include: {
+          user: true,
+          review: true,
+          replies: true,
+          likeReactions: true,
+          dislikeReactions: true,
+          _count: {
+            select: {
+              likeReactions: true,
+              dislikeReactions: true,
+              replies: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      if (!comment) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Comment not available",
+        });
+      }
+
+      return {
+        data: comment,
+      };
     }),
   findBy: adminProtectedProcedure
     .input(
