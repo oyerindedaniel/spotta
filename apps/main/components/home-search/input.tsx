@@ -65,7 +65,7 @@ export default function HomeSearchInput({ lng, areas }: Props) {
           >
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
-              <ScrollArea className="h-fit w-full pr-3">
+              <ScrollArea className="h-fit w-full">
                 <div className="max-h-28">
                   {areas.map((area) => (
                     <CommandItem key={area.id} className="py-2.5">

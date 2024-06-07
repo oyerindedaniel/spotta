@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { Icons } from "@/assets";
 import { Area } from "@prisma/client";
 
@@ -33,9 +34,17 @@ export default function AreaReviews({
     onClose: onCloseReview,
   } = useDisclosure();
 
+  const searchParams = useSearchParams();
+
+  const reviewId = searchParams?.get("review");
+
   const { area: foundArea } = area ?? {};
 
   const { id: areaId, reviews, name } = foundArea;
+
+  const filteredReviews = reviewId
+    ? reviews.filter((review) => review.id !== reviewId)
+    : reviews;
 
   return (
     <>
@@ -53,10 +62,10 @@ export default function AreaReviews({
         />
       </ModalContainer>
       <div>
-        {reviews && reviews.length > 0 ? (
+        {filteredReviews && filteredReviews.length > 0 ? (
           <div>
             <div className="flex flex-col gap-6">
-              {reviews?.map((review, idx) => (
+              {filteredReviews?.map((review, idx) => (
                 <React.Fragment key={review.id}>
                   <Review
                     lng={lng}

@@ -27,10 +27,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           type={type === "password" ? (show ? "text" : "password") : type}
           className={cn(
-            "flex h-11 w-full rounded-md border bg-brand-primary border-input px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-blue disabled:cursor-not-allowed disabled:opacity-50",
+            "flex h-11 w-full rounded-md border bg-brand-primary border-input px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary focus-visible:ring-brand-blue disabled:cursor-not-allowed disabled:opacity-50",
             leftIcon && "pl-10",
             rightIcon && "pr-[60px]",
-            className
+            className,
           )}
           ref={ref}
           {...props}
@@ -54,7 +54,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ) : null}
       </div>
     );
-  }
+  },
 );
 Input.displayName = "Input";
 

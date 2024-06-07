@@ -1,7 +1,5 @@
 "use client";
 
-import { Area } from "@prisma/client";
-import { StarFilledIcon } from "@radix-ui/react-icons";
 import { RouterOutputs } from "@repo/api";
 import { api } from "@repo/api/src/react";
 import { useDisclosure, useInitialRender, useSessionStore } from "@repo/hooks";
@@ -17,28 +15,23 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  Badge,
-  CreateEditReview,
-  DeleteReview,
-  ModalContainer,
   useToast,
-} from "..";
-import { ButtonDelete, ButtonEdit } from "./button";
-import { CommentButton } from "./comment";
-import { DislikeButton, LikeButton } from "./rating";
+} from "../..";
+import { ButtonDelete, ButtonEdit } from "../button";
+import { DislikeButton, LikeButton } from "../rating";
 
-type Review = RouterOutputs["review"]["findById"]["data"];
+type Comment = RouterOutputs["review"]["findByCommentId"]["data"];
 type ReviewReactionType = z.infer<typeof updateReviewReactionSchema>;
 
 interface Props {
   lng: LanguagesType;
-  review: Review;
+  comment: Comment;
   session?: UserDTO;
 }
 
 // TODO: make logic better
 
-export function Review(props: Props) {
+function Comment(props: Props) {
   const {
     data: { userId },
   } = useSessionStore();
@@ -48,22 +41,20 @@ export function Review(props: Props) {
 
   const initialRenderComplete = useInitialRender();
 
+  const { session, lng, comment } = props;
+
   const {
-    areaId,
-    asAnonymous,
-    id: reviewId,
-    createdBy,
+    id: commentId,
     createdAt,
-    description,
-    rating,
-    amenities,
+    asAnonymous,
+    comment: commentDescription,
+    user,
+    _count,
     likeReactions,
     dislikeReactions,
-    _count,
-  } = props.review;
+  } = comment;
 
-  const { session, lng, review } = props;
-  const { id: createdById, firstName, lastName, picture, role } = createdBy;
+  const { id: createdById, firstName, lastName, picture, role } = user;
 
   const {
     isOpen: isOpenEdit,
@@ -86,17 +77,17 @@ export function Review(props: Props) {
   const {
     likeReactions: likeReactionCount,
     dislikeReactions: dislikeReactionsCount,
-    comments: commentsCount,
+    replies: repliesCount,
   } = _count;
 
   const defaultLikeReaction = likeReactions.find(
     (reaction) =>
-      reaction.userId === userId && reaction.likeReviewId === reviewId,
+      reaction.userId === userId && reaction.likeCommentId === commentId,
   )?.type;
 
   const defaultDislikeReaction = dislikeReactions.find(
     (reaction) =>
-      reaction.userId === userId && reaction.dislikeReviewId === reviewId,
+      reaction.userId === userId && reaction.dislikeCommentId === commentId,
   )?.type;
 
   const defaultReaction = defaultLikeReaction || defaultDislikeReaction || null;
@@ -164,33 +155,19 @@ export function Review(props: Props) {
   return (
     <div>
       <AuthModal
-        title="Reviews"
-        body="To add a reaction to this review, please login or create an account with us."
+        title="Comments"
+        body="To add a reaction to this comment, please login or create an account with us."
         lng={lng}
         isOpen={isOpenSession}
         onClose={onCloseSession}
         onOpen={onOpenSession}
       />
-      <ModalContainer
-        isOpen={isOpenEdit}
-        onClose={onCloseEdit}
-        title="Edit Review"
-      >
-        <CreateEditReview
-          lng={lng}
-          type="edit"
-          intent="modal"
-          areaId={areaId}
-          review={{ ...review, area: {} as Area }}
-          onClose={onCloseEdit}
-        />
-      </ModalContainer>
-      <DeleteReview
+      {/* <DeleteReview
         onOpen={onOpenDelete}
         onClose={onCloseDelete}
         isOpen={isOpenDelete}
         data={{ ...review, area: {} as Area }}
-      />
+      /> */}
       <div>
         {userId === createdById && (
           <div className="flex justify-end mb-2 gap-1.5">
@@ -199,7 +176,7 @@ export function Review(props: Props) {
           </div>
         )}
         <div className="mb-4">
-          <div className="flex justify-between">
+          <div>
             <div className="flex items-center gap-3 text-sm mb-3">
               <Avatar>
                 <AvatarImage src={picture ?? ""} alt={`@${firstName}`} />
@@ -217,19 +194,8 @@ export function Review(props: Props) {
               )}
               <span className="text-gray-500">{formatTimeAgo(createdAt)}</span>
             </div>
-            <span className="flex self-start items-center gap-1">
-              <StarFilledIcon color="#fcc419" />
-              {`${rating}.0`}
-            </span>
           </div>
-          <div className="text-sm">{description}</div>
-        </div>
-        <div className="flex gap-3 items-center mb-3 flex-wrap">
-          {amenities.map((amenity) => (
-            <Badge key={amenity.id} variant="secondary">
-              {amenity.name}
-            </Badge>
-          ))}
+          <div className="text-sm">{commentDescription}</div>
         </div>
         <div className="flex gap-6 items-center">
           <LikeButton
@@ -246,8 +212,8 @@ export function Review(props: Props) {
                 setDislikeCount((prevCount) => prevCount - 1);
               }
               action === "LIKE"
-                ? mutateLikeFunc.mutate({ id: reviewId, type: action })
-                : mutateUnlikeFunc.mutate({ id: reviewId, type: action });
+                ? mutateLikeFunc.mutate({ id: commentId, type: action })
+                : mutateUnlikeFunc.mutate({ id: commentId, type: action });
             }}
             count={likeCount}
           />
@@ -265,17 +231,16 @@ export function Review(props: Props) {
                 setLikeCount((prevCount) => prevCount - 1);
               }
               action === "DISLIKE"
-                ? mutateDislikeFunc.mutate({ id: reviewId, type: action })
-                : mutateUnlikeFunc.mutate({ id: reviewId, type: action });
+                ? mutateDislikeFunc.mutate({ id: commentId, type: action })
+                : mutateUnlikeFunc.mutate({ id: commentId, type: action });
             }}
             count={dislikeCount}
-          />
-          <CommentButton
-            onClick={() => router.push(`${pathname}?review=${reviewId}`)}
-            count={commentsCount}
           />
         </div>
       </div>
     </div>
   );
 }
+
+export { CommentButton } from "./button";
+export { Comment };

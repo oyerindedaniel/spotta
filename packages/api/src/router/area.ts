@@ -189,7 +189,22 @@ export const areaRouter = {
               createdBy: true,
               likeReactions: true,
               dislikeReactions: true,
-              comments: true,
+              comments: {
+                include: {
+                  user: true,
+                  review: true,
+                  replies: true,
+                  likeReactions: true,
+                  dislikeReactions: true,
+                  _count: {
+                    select: {
+                      likeReactions: true,
+                      dislikeReactions: true,
+                      replies: true,
+                    },
+                  },
+                },
+              },
               amenities: { include: { category: true } },
               _count: {
                 select: {
@@ -249,7 +264,22 @@ export const areaRouter = {
               createdBy: true,
               likeReactions: true,
               dislikeReactions: true,
-              comments: true,
+              comments: {
+                include: {
+                  user: true,
+                  review: true,
+                  replies: true,
+                  likeReactions: true,
+                  dislikeReactions: true,
+                  _count: {
+                    select: {
+                      likeReactions: true,
+                      dislikeReactions: true,
+                      replies: true,
+                    },
+                  },
+                },
+              },
               _count: {
                 select: {
                   likeReactions: true,

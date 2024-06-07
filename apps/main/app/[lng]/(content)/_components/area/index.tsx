@@ -46,7 +46,11 @@ export async function Area({
             reviews.length > 0 ? "w-[45%]" : "w-full",
           )}
         >
-          <Review lng={lng} session={session} />
+          <Review
+            lng={lng}
+            session={session}
+            reviews={area.data.area.reviews}
+          />
           <AreaMedias lng={lng} area={area.data} session={session} />
         </div>
       </div>
