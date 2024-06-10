@@ -1,7 +1,6 @@
-import { RefreshToken } from "@/components/refresh-token";
-
 import { getAdminUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
+import { RefreshToken } from "@repo/ui";
 
 import { Navbar } from "./navbar";
 
@@ -11,10 +10,6 @@ interface LayoutProps extends React.PropsWithChildren<{}> {
 
 export default async function Layout({ children, params }: LayoutProps) {
   const session = await getAdminUserDTO();
-
-  // if (!session) {
-  //   redirect("/login");
-  // }
 
   return (
     <>
