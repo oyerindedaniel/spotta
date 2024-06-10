@@ -1,7 +1,6 @@
-import { RefreshToken } from "@/components/refresh-token";
-
 import { getUserDTO } from "@repo/data";
 import { LanguagesType } from "@repo/i18n";
+import { RefreshToken } from "@repo/ui";
 
 import { Navbar } from "./_components/layout/navbar";
 

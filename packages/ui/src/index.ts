@@ -44,3 +44,4 @@ export * from "./shared/rating";
 export * from "./shared/review";
 export * from "./shared/star";
 export * from "./shared/blur-image";
+export * from "./shared/refresh-token";

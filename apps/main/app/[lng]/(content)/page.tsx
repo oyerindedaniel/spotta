@@ -12,7 +12,7 @@ export default async function Page({
 
   return (
     <div className="flex h-[calc(100vh-64px)] justify-between gap-3 px-6 py-3 md:px-14">
-      <div className="w-[50%] self-center">
+      <div className="w-2/4 self-center">
         <h1 className="mb-6 text-6xl font-bold">
           Find a place you will love to live!
         </h1>
